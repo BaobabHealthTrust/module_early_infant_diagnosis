@@ -1,4 +1,4 @@
-class U5AssetsController < ApplicationController
+class EidAssetsController < ApplicationController
   unloadable 
   
   def display

@@ -19,16 +19,17 @@ function checkTimeForStoppingBreastFeeding(){
 }
 
 function checkConfirmationStatus(status){
-    if(__$("touchscreenInput" + tstCurrentPage).value.trim().toLowerCase() == status.trim().toLowerCase()){
-        showCategory("START ART!");
+    
+    if(__$("touchscreenInput" + tstCurrentPage).value.trim().toLowerCase() == "hiv infected" || __$("touchscreenInput" + tstCurrentPage).value.trim().toLowerCase() == "presumed severe hiv disease"){
+        showMessage("START ART!");
 
         return;
     }
     setTimeout("checkConfirmationStatus()", 100)
 }
 
-function setHIVStatusCheck(){
-    if(__$("1.1.4").value.trim().toLowerCase() == "positive"){
+function setHIVStatusCheck(id){
+    if(__$(id).value.trim().toLowerCase() == "positive"){
         checkStatus = true;
 
         checkHIVStatus();
@@ -37,7 +38,7 @@ function setHIVStatusCheck(){
 
 function checkHIVStatus(){
     if(__$("touchscreenInput" + tstCurrentPage).value.trim().toLowerCase() == "confirmed"){
-        showMessage("START ART");
+        showMessage("START ART!");
         checkStatus = false;
     }
 

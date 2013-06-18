@@ -15,7 +15,7 @@
 				Age of child (months) 
 			</td>
 			<td>
-<input type='text' id='1.1.1'  name='concept[Age of child]' helpText='Age of child (months) '  field_type='number'  pos='0'  tt_pageStyleClass='NumbersOnlyWithUnknown' />
+<input type='text' id='1.1.1'  name='concept[Age of child]' helpText='Age of child (months) '  value='<%= @patient.age_in_months %>'  pos='0'  tt_pageStyleClass='NumbersOnlyWithUnknown'  field_type='number' />
 			</td>
 		</tr>
 		<tr>
@@ -37,7 +37,7 @@
 				Rapid Antibody Testing Age (months) 
 			</td>
 			<td>
-<input type='text' id='1.1.3'  name='concept[Rapid Antibody Testing Age]' helpText='Rapid Antibody Testing Age (months) '  field_type='number'  pos='2'  tt_pageStyleClass='NumbersOnlyWithUnknown' />
+<input type='text' id='1.1.3'  name='concept[Rapid Antibody Testing Age]' helpText='Rapid Antibody Testing Age (months) '  absoluteMax='<%= @patient.age_in_months%>'  pos='2'  tt_pageStyleClass='NumbersOnlyWithUnknown'  field_type='number' />
 			</td>
 		</tr>
 		<tr>
@@ -55,10 +55,10 @@
 		</tr>
 		<tr>
 			<td>
-				DNA-PCR Testing Result given Age (months) 
+				DNA-PCR Testing Age (months) 
 			</td>
 			<td>
-<input type='text' id='1.1.5'  name='concept[DNA-PCR Testing Result given Age]' helpText='DNA-PCR Testing Result given Age (months) '  field_type='number'  pos='4'  tt_pageStyleClass='NumbersOnlyWithUnknown' />
+<input type='text' id='1.1.5'  name='concept[DNA-PCR Testing Result given Age]' helpText='DNA-PCR Testing Age (months) '  absoluteMax='<%= @patient.age_in_months%>'  pos='4'  tt_pageStyleClass='NumbersOnlyWithUnknown'  field_type='number' />
 			</td>
 		</tr>
 		<tr>
@@ -66,7 +66,7 @@
 				Confirmatory HIV test 
 			</td>
 			<td>
-<select id='1.1.6' name='concept[Confirmatory HIV test ]' helpText='Confirmatory HIV test ' tt_onLoad='setHIVStatusCheck()'  onchange='setHIVStatusCheck()'  tt_onUnLoad='unSetHIVStatus()'  pos='5' >
+<select id='1.1.6' name='concept[Confirmatory HIV test ]' helpText='Confirmatory HIV test ' onchange='setHIVStatusCheck("1.1.4")'  tt_onLoad='setHIVStatusCheck("1.1.4")'  tt_onUnLoad='unSetHIVStatus()'  pos='5' >
 <option></option>
 <option value='Confirmed'>Confirmed</option>
  <option value='Not confirmed'>Not confirmed</option>
@@ -85,6 +85,14 @@
  <option value='Alive On ART'>Alive On ART</option>
  <option value='Alive not on ART'>Alive not on ART</option>
  </select>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Mother ART Registration Number 
+			</td>
+			<td>
+<input type='text' id='1.1.8'  name='concept[Mother ART registration number]' helpText='Mother ART Registration Number '  condition='__$("1.1.7").value.toLowerCase().match(/alive/i)'  pos='7'  field_type='number' />
 			</td>
 		</tr>
 	</table>

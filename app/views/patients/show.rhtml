@@ -87,8 +87,8 @@ next_task = @task.encounter_type.gsub('_',' ') rescue nil
     <form id = 'dashboard' action='home.html'>
       <div>Patient Dashboard</div>
       <div id='project_name'>
-        <div style="margin-top: 0px; color: #6281A7; font-size: 0.55em;">
-          <%= @project.split(" ").join("<br />") %>
+        <div style="margin-top: 20px; color: #6281A7; font-size: 0.5em;">
+          <%= @project %>
         </div>
       </div>
       <span id='patient_name'>
@@ -104,7 +104,7 @@ next_task = @task.encounter_type.gsub('_',' ') rescue nil
       </select>
       <select id="links">
 
-        <% @links.each do |encounter, link| %>
+        <% @links.sort.each do |encounter, link| %>
 
           <% unless @links[encounter].class.to_s.upcase == "HASH" %>
 

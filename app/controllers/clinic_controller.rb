@@ -7,7 +7,7 @@ class ClinicController < ApplicationController
 
   def index
     
-    if session[:user_id].nil?
+    if session[:user_id].blank?
       reset_session
       
       user_login and return
