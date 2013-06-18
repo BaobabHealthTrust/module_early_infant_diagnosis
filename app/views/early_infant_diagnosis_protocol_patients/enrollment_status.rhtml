@@ -1,0 +1,91 @@
+<script type='text/javascript' language='javascript'>
+<!--
+	tt_cancel_show = '/patients/show/<%= @patient.id %>?user_id=<%= session[:user_id] %>';
+	tt_cancel_destination = '/patients/show/<%= @patient.id %>?user_id=<%= session[:user_id] %>';
+	</script>
+
+<form method='post' action='/encounters/create'>
+	<input type='hidden' name='program' value='EARLY INFANT DIAGNOSIS PROGRAM' />
+	<input type='hidden' name='encounter_type' value='HIV STATUS AT ENROLLMENT ' />
+	<input type='hidden' name='patient_id' value='<%= @patient.id %>' />
+	<input type='hidden' name='user_id' value='<%= session[:user_id] %>' />
+	<table>
+		<tr>
+			<td>
+				Age of child (months) 
+			</td>
+			<td>
+<input type='text' id='1.1.1'  name='concept[Age of child]' helpText='Age of child (months) '  pos='0'  field_type='number'  tt_pageStyleClass='NumbersOnlyWithUnknown' />
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Rapid Antibody Testing Result 
+			</td>
+			<td>
+<select id='1.1.2' name='concept[Rapid Antibody Testing Result ]' helpText='Rapid Antibody Testing Result ' pos='1' >
+<option></option>
+<option value='Inconclusive'>Inconclusive</option>
+ <option value='Positive'>Positive</option>
+ <option value='Negative'>Negative</option>
+ <option value='Not Done'>Not Done</option>
+ </select>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Rapid Antibody Testing Age (months) 
+			</td>
+			<td>
+<input type='text' id='1.1.3'  name='concept[Rapid Antibody Testing Age]' helpText='Rapid Antibody Testing Age (months) '  pos='2'  field_type='number'  tt_pageStyleClass='NumbersOnlyWithUnknown' />
+			</td>
+		</tr>
+		<tr>
+			<td>
+				DNA-PCR Testing Result 
+			</td>
+			<td>
+<select id='1.1.4' name='concept[DNA-PCR Testing Result ]' helpText='DNA-PCR Testing Result ' pos='3' >
+<option></option>
+<option value='Positive'>Positive</option>
+ <option value='Negative'>Negative</option>
+ <option value='Not done'>Not done</option>
+ </select>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				DNA-PCR Testing Result given Age (months) 
+			</td>
+			<td>
+<input type='text' id='1.1.5'  name='concept[DNA-PCR Testing Result given Age]' helpText='DNA-PCR Testing Result given Age (months) '  pos='4'  field_type='number'  tt_pageStyleClass='NumbersOnlyWithUnknown' />
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Confirmatory HIV test 
+			</td>
+			<td>
+<select id='1.1.6' name='concept[Confirmatory HIV test ]' helpText='Confirmatory HIV test ' onchange='setHIVStatusCheck()'  pos='5'  tt_onUnLoad='unSetHIVStatus()'  tt_onLoad='setHIVStatusCheck()' >
+<option></option>
+<option value='Confirmed'>Confirmed</option>
+ <option value='Not confirmed'>Not confirmed</option>
+ </select>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Mother HIV Status 
+			</td>
+			<td>
+<select id='1.1.7' name='concept[Mother HIV Status ]' helpText='Mother HIV Status ' pos='6' >
+<option></option>
+<option value='Unknown'>Unknown</option>
+ <option value='Died'>Died</option>
+ <option value='Alive On ART'>Alive On ART</option>
+ <option value='Alive not on ART'>Alive not on ART</option>
+ </select>
+			</td>
+		</tr>
+	</table>
+</form>

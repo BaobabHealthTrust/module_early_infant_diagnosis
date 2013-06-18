@@ -7,6 +7,12 @@ class ClinicController < ApplicationController
 
   def index
     
+    if session[:user_id].nil?
+      reset_session
+      
+      user_login and return
+    end
+    
     @location = Location.find(session[:location_id]) rescue nil
 
     session[:location_id] = @location.id if !@location.nil?

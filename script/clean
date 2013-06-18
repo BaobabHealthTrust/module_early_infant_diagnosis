@@ -2,7 +2,13 @@
 
 require "rubygems"
 
-controller = "#{File.expand_path('../../app/controllers', __FILE__)}/protocol_patients_controller.rb"
+def titleize(str)
+  return str.strip[0,1].upcase + str.strip[1,str.strip.length - 1].downcase
+end
+
+root = File.basename(Dir.pwd)
+
+controller = "#{File.expand_path('../../app/controllers', __FILE__)}/#{root.downcase}_protocol_patients_controller.rb"
 
 File.delete(controller) if File.exists?(controller)
 
@@ -10,7 +16,7 @@ taskflow = "#{File.expand_path('../../config', __FILE__)}/protocol_task_flow.yml
 
 File.delete(taskflow) if File.exists?(taskflow)
 
-folder = "#{File.expand_path('../../app/views', __FILE__)}/protocol_patients"
+folder = "#{File.expand_path('../../app/views', __FILE__)}/#{root.downcase}_protocol_patients"
 
 if File.exists?(folder)
 

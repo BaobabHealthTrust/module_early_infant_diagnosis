@@ -1,0 +1,125 @@
+<script type='text/javascript' language='javascript'>
+<!--
+	tt_cancel_show = '/patients/show/<%= @patient.id %>?user_id=<%= session[:user_id] %>';
+	tt_cancel_destination = '/patients/show/<%= @patient.id %>?user_id=<%= session[:user_id] %>';
+	</script>
+
+<form method='post' action='/encounters/create'>
+	<input type='hidden' name='program' value='EARLY INFANT DIAGNOSIS PROGRAM' />
+	<input type='hidden' name='encounter_type' value='RAPID ANTIBODY TEST ' />
+	<input type='hidden' name='patient_id' value='<%= @patient.id %>' />
+	<input type='hidden' name='user_id' value='<%= session[:user_id] %>' />
+	<table>
+		<tr>
+			<td>
+				Rapid Antibody Testing Sample Date 
+			</td>
+			<td>
+<input type='text' id='1.1.1'  name='concept[Rapid Antibody Testing Sample Date ]' helpText='Rapid Antibody Testing Sample Date '  field_type='date'  condition='<%= @patient.age_in_months.to_i < 24 %>'  pos='0' />
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Rapid Antibody Testing Age (months) 
+			</td>
+			<td>
+<input type='text' id='1.1.2'  name='concept[Rapid Antibody Testing Age]' helpText='Rapid Antibody Testing Age (months) '  field_type='number'  condition='<%= @patient.age_in_months.to_i < 24 %>'  pos='1'  tt_pageStyleClass='NumbersOnlyWithUnknown' />
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Rapid Antibody Testing HTC Serial No 
+			</td>
+			<td>
+<input type='text' id='1.1.3'  name='concept[Rapid Antibody Testing HTC Serial No ]' helpText='Rapid Antibody Testing HTC Serial No '  condition='<%= @patient.age_in_months.to_i < 24 %>'  pos='2' />
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Rapid Antibody Testing Result 
+			</td>
+			<td>
+<select id='1.1.4' name='concept[Rapid Antibody Testing Result ]' helpText='Rapid Antibody Testing Result ' condition='<%= @patient.age_in_months.to_i < 24 %>'  pos='3' >
+<option></option>
+<option value='Inconclusive'>Inconclusive</option>
+ <option value='Positive'>Positive</option>
+ <option value='Negative'>Negative</option>
+ </select>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Rapid Antibody Testing Sample Date 2 
+			</td>
+			<td>
+<input type='text' id='1.2.1'  name='concept[Rapid Antibody Testing Sample Date 2 ]' helpText='Rapid Antibody Testing Sample Date 2 '  field_type='date'  condition='<%= @patient.age_in_months.to_i > 12 and @patient.age_in_months.to_i < 24 %>'  pos='4' />
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Rapid Antibody Testing Age 2 (months) 
+			</td>
+			<td>
+<input type='text' id='1.2.2'  name='concept[Rapid Antibody Testing Age 2]' helpText='Rapid Antibody Testing Age 2 (months) '  field_type='number'  condition='<%= @patient.age_in_months.to_i > 12 and @patient.age_in_months.to_i < 24 %>'  pos='5'  tt_pageStyleClass='NumbersOnlyWithUnknown' />
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Rapid Antibody Testing HTC Serial No 2 
+			</td>
+			<td>
+<input type='text' id='1.2.3'  name='concept[Rapid Antibody Testing HTC Serial No 2 ]' helpText='Rapid Antibody Testing HTC Serial No 2 '  condition='<%= @patient.age_in_months.to_i > 12 and @patient.age_in_months.to_i < 24 %>'  pos='6' />
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Rapid Antibody Testing Result 2 
+			</td>
+			<td>
+<select id='1.2.4' name='concept[Rapid Antibody Testing Result 2 ]' helpText='Rapid Antibody Testing Result 2 ' condition='<%= @patient.age_in_months.to_i > 12 and @patient.age_in_months.to_i < 24 %>'  pos='7'  tt_pageStyleClass='NumbersOnlyWithUnknown' >
+<option></option>
+<option value='Inconclusive'>Inconclusive</option>
+ <option value='Positive'>Positive</option>
+ <option value='Negative'>Negative</option>
+ </select>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Rapid Antibody Testing Sample Date 3 
+			</td>
+			<td>
+<input type='text' id='1.3.1'  name='concept[Rapid Antibody Testing Sample Date 3 ]' helpText='Rapid Antibody Testing Sample Date 3 '  field_type='date'  condition='<%= @patient.age_in_months.to_i > 24 %>'  pos='8' />
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Rapid Antibody Testing Age 3 (months) 
+			</td>
+			<td>
+<input type='text' id='1.3.2'  name='concept[Rapid Antibody Testing Age 3]' helpText='Rapid Antibody Testing Age 3 (months) '  field_type='number'  condition='<%= @patient.age_in_months.to_i > 24 %>'  pos='9'  tt_pageStyleClass='NumbersOnlyWithUnknown' />
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Rapid Antibody Testing HTC Serial No 3 
+			</td>
+			<td>
+<input type='text' id='1.3.3'  name='concept[Rapid Antibody Testing HTC Serial No 3 ]' helpText='Rapid Antibody Testing HTC Serial No 3 '  condition='<%= @patient.age_in_months.to_i > 24 %>'  pos='10' />
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Rapid Antibody Testing Result 3 
+			</td>
+			<td>
+<select id='1.3.4' name='concept[Rapid Antibody Testing Result 3 ]' helpText='Rapid Antibody Testing Result 3 ' condition='<%= @patient.age_in_months.to_i > 24 %>'  pos='11' >
+<option></option>
+<option value='Inconclusive'>Inconclusive</option>
+ <option value='Positive'>Positive</option>
+ <option value='Negative'>Negative</option>
+ </select>
+			</td>
+		</tr>
+	</table>
+</form>

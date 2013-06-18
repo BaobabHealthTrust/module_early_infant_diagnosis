@@ -36,8 +36,6 @@ class PatientsController < ApplicationController
 
     end
 
-    # raise @is_positive.to_yaml
-
     @task = TaskFlow.new(params[:user_id], @patient.id)
 
     @links = {}
@@ -47,7 +45,15 @@ class PatientsController < ApplicationController
       next if task.downcase == "update baby outcome" and (@patient.current_babies.length == 0 rescue false)
       next if !@task.current_user_activities.include?(task)
        
-      @links[task.titleize] = "/protocol_patients/#{task.gsub(/\s/, "_")}?patient_id=#{
+      ctrller = "protocol_patients"
+            
+      if File.exists?("#{Rails.root}/config/protocol_task_flow.yml")
+        
+        ctrller = YAML.load_file("#{Rails.root}/config/protocol_task_flow.yml")["#{task.downcase.gsub(/\s/, "_")}"] rescue ""
+          
+      end
+      
+      @links[task.titleize] = "/#{ctrller}/#{task.gsub(/\s/, "_")}?patient_id=#{
       @patient.id}&user_id=#{params[:user_id]}" + (task.downcase == "update baby outcome" ?
           "&baby=1&baby_total=#{(@patient.current_babies.length rescue 0)}" : "")
       

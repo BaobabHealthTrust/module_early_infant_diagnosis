@@ -131,7 +131,15 @@ class TaskFlow
 
     normal_flow.each{|tsk|
       
-      tasks[tsk.downcase] = [flow[tsk.downcase], "/protocol_patients/#{tsk.downcase.gsub(/\s/, "_")
+      ctrller = "protocol_patients"
+            
+      if File.exists?("#{Rails.root}/config/protocol_task_flow.yml")
+        
+        ctrller = YAML.load_file("#{Rails.root}/config/protocol_task_flow.yml")["#{tsk.downcase.gsub(/\s/, "_")}"] rescue ""
+          
+      end
+      
+      tasks[tsk.downcase] = [flow[tsk.downcase], "/#{ctrller}/#{tsk.downcase.gsub(/\s/, "_")
           }?patient_id=#{self.patient.id}&user_id=#{self.user.id}", "#{tsk.upcase}", 
         "#{self.task_scopes[tsk.downcase][:concept]}", "#{self.task_scopes[tsk.downcase][:except_concept]}",
         "#{self.task_scopes[tsk.downcase][:scope]}", "#{self.task_scopes[tsk.downcase][:drug_concept]}",

@@ -1,0 +1,220 @@
+<script type='text/javascript' language='javascript'>
+<!--
+	tt_cancel_show = '/patients/show/<%= @patient.id %>?user_id=<%= session[:user_id] %>';
+	tt_cancel_destination = '/patients/show/<%= @patient.id %>?user_id=<%= session[:user_id] %>';
+	</script>
+
+<form method='post' action='/encounters/create'>
+	<input type='hidden' name='program' value='EARLY INFANT DIAGNOSIS PROGRAM' />
+	<input type='hidden' name='encounter_type' value='EID VISIT ' />
+	<input type='hidden' name='patient_id' value='<%= @patient.id %>' />
+	<input type='hidden' name='user_id' value='<%= session[:user_id] %>' />
+	<table>
+		<tr>
+			<td>
+				Visit date 
+			</td>
+			<td>
+<input type='text' id='1.1'  name='concept[Visit date ]' helpText='Visit date '  field_type='date'  pos='0' />
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Current age (yrs) 
+			</td>
+			<td>
+<input type='text' id='1.2'  name='concept[Age]' helpText='Current age (yrs) '  field_type='number'  pos='1'  tt_pageStyleClass='NumbersOnlyWithUnknown' />
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Height (cm) 
+			</td>
+			<td>
+<input type='text' id='1.3'  name='concept[Height (cm) ]' helpText='Height (cm) '  field_type='number'  pos='2'  tt_pageStyleClass='NumbersOnlyWithUnknown' />
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Weight 
+			</td>
+			<td>
+<input type='text' id='1.4'  name='concept[Weight ]' helpText='Weight '  field_type='number'  pos='3'  tt_pageStyleClass='NumbersOnlyWithUnknown' />
+			</td>
+		</tr>
+		<tr>
+			<td>
+				MUAC 
+			</td>
+			<td>
+<input type='text' id='1.5'  name='concept[MUAC ]' helpText='MUAC '  tt_onLoad='checkWasting()'  field_type='number'  pos='4'  tt_pageStyleClass='NumbersOnlyWithUnknown' />
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Breast feeding 
+			</td>
+			<td>
+<select id='1.7' name='concept[Breast feeding ]' helpText='Breast feeding ' pos='5' >
+<option></option>
+<option value='No'>No</option>
+ <option value='Yes'>Yes</option>
+ </select>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Infant feeding method 
+			</td>
+			<td>
+<select id='1.7.1.1' name='concept[Infant feeding method ]' helpText='Infant feeding method ' condition='__$("1.7").value == "Yes"'  pos='6' >
+<option></option>
+<option value='Breastfeeding complimentary'>Breastfeeding complimentary</option>
+ <option value='Mixed feeding'>Mixed feeding</option>
+ <option value='Breastfed exclusively'>Breastfed exclusively</option>
+ </select>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				When was breast feeding stopped? 
+			</td>
+			<td>
+<select id='1.7.2.1' name='concept[When was breast feeding stopped? ]' helpText='When was breast feeding stopped? ' condition='__$("1.7").value == "No"'  tt_onLoad='checkTimeForStoppingBreastFeeding()'  tt_onUnLoad='if(__$("touchscreenInput" + tstCurrentPage).value == "Breastfeeding stopped over 6 weeks ago"){__$("1.7.2.1.2.1").name = ""}'  pos='7' >
+<option></option>
+<option value='Breastfeeding stopped over 6 weeks ago'>Breastfeeding stopped over 6 weeks ago</option>
+ <option value='Breastfeeding stopped in last 6 weeks'>Breastfeeding stopped in last 6 weeks</option>
+ </select>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Appointment date to confirm HIV status 
+			</td>
+			<td>
+<input type='text' id='1.7.2.1.1.1'  name='concept[HIV test appointement date]' helpText='Appointment date to confirm HIV status '  tt_onLoad='showCategory("HIV test Appoint. Date")'  value='<%= Date.today %>'  field_type='calendar'  pos='8' />
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Is mother on ART? 
+			</td>
+			<td>
+<select id='1.8' name='concept[Is mother on ART? ]' helpText='Is mother on ART? ' pos='10' >
+<option></option>
+<option value='Unknown'>Unknown</option>
+ <option value='Died'>Died</option>
+ <option value='On ART'>On ART</option>
+ <option value='No ART'>No ART</option>
+ </select>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				TB status 
+			</td>
+			<td>
+<select id='1.9' name='concept[TB status ]' helpText='TB status ' pos='11' >
+<option></option>
+<option value='Unknown'>Unknown</option>
+ <option value='TB NOT suspected'>TB NOT suspected</option>
+ <option value='Confirmed TB NOT on treatment'>Confirmed TB NOT on treatment</option>
+ <option value='Confirmed TB on treatment'>Confirmed TB on treatment</option>
+ <option value='TB suspected'>TB suspected</option>
+ </select>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Any abnormalities 
+			</td>
+			<td>
+<select id='1.10' name='concept[Any abnormalities ]' helpText='Any abnormalities ' pos='12' >
+<option></option>
+<option value='Yes'>Yes</option>
+ <option value='No'>No</option>
+ </select>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Specify abnormalities 
+			</td>
+			<td>
+<input type='text' id='1.10.2.1'  name='concept[Specify]' helpText='Specify abnormalities '  condition='__$("1.10").value == "Yes"'  pos='13' />
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Childs current HIV status 
+			</td>
+			<td>
+<select id='1.11' name='concept[Childs current HIV status ]' helpText='Childs current HIV status ' pos='14' >
+<option></option>
+<option value='Not confirmed'>Not confirmed</option>
+ <option value='Confirmed'>Confirmed</option>
+ </select>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Confirmed 
+			</td>
+			<td>
+<select id='1.11.1.1' name='concept[Confirmed ]' helpText='Confirmed ' condition='__$("1.11").value == "Confirmed"'  tt_onLoad='checkConfirmationStatus("HIV infected")'  pos='15' >
+<option></option>
+<option value='HIV infected'>HIV infected</option>
+ <option value='Not HIV infected'>Not HIV infected</option>
+ </select>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Not confirmed 
+			</td>
+			<td>
+<select id='1.11.2.1' name='concept[Not confirmed ]' helpText='Not confirmed ' condition='__$("1.11").value == "Not confirmed"'  tt_onLoad='checkConfirmationStatus("Presumed Severe HIV Disease")'  pos='16' >
+<option></option>
+<option value='Presumed Severe HIV Disease'>Presumed Severe HIV Disease</option>
+ <option value='Not ART eligible'>Not ART eligible</option>
+ </select>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Allergic to sulphur 
+			</td>
+			<td>
+<select id='1.12.1' name='concept[Allergic to sulphur ]' helpText='Allergic to sulphur ' value='<%= @patient.allergic_to_sulphur.titleize %>'  condition='<%= @patient.allergic_to_sulphur.downcase != "unknown" %>'  pos='17' >
+<option></option>
+<option value='No'>No</option>
+ <option value='Yes'>Yes</option>
+ </select>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Outcome 
+			</td>
+			<td>
+<select id='1.13' name='concept[Outcome ]' helpText='Outcome ' pos='18' >
+<option></option>
+<option value='Died'>Died</option>
+ <option value='Defaulted'>Defaulted</option>
+ <option value='Transfer out'>Transfer out</option>
+ <option value='ART started'>ART started</option>
+ <option value='Discharged uninfected'>Discharged uninfected</option>
+ <option value='Continue follow-up'>Continue follow-up</option>
+ </select>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Next appointment date 
+			</td>
+			<td>
+<input type='text' id='1.14'  name='concept[Appointment date]' helpText='Next appointment date '  tt_onLoad='showCategory("Next Appointment Date")'  value='<%= Date.today %>'  field_type='calendar'  pos='19' />
+			</td>
+		</tr>
+	</table>
+</form>

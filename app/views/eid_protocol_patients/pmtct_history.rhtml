@@ -1,0 +1,91 @@
+<script type='text/javascript' language='javascript'>
+<!--
+	tt_cancel_show = '/patients/show/<%= @patient.id %>?user_id=<%= session[:user_id] %>';
+	tt_cancel_destination = '/patients/show/<%= @patient.id %>?user_id=<%= session[:user_id] %>';
+	</script>
+
+<form method='post' action='/encounters/create'>
+	<input type='hidden' name='program' value='EARLY INFANT DIAGNOSIS PROGRAM' />
+	<input type='hidden' name='encounter_type' value='PMTCT History ' />
+	<input type='hidden' name='patient_id' value='<%= @patient.id %>' />
+	<input type='hidden' name='user_id' value='<%= session[:user_id] %>' />
+	<table>
+		<tr>
+			<td>
+				ARVs in Pregnancy 
+			</td>
+			<td>
+<select id='1.1.1' name='concept[ARVs in Pregnancy ]' helpText='ARVs in Pregnancy ' pos='0' >
+<option></option>
+<option value='Unknown'>Unknown</option>
+ <option value='ART 4+w'>ART 4+w</option>
+ <option value='ART 0-3w'>ART 0-3w</option>
+ <option value='AZT 4+w'>AZT 4+w</option>
+ <option value='AZT 0-3w'>AZT 0-3w</option>
+ <option value='None'>None</option>
+ </select>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				ARVs in Labour 
+			</td>
+			<td>
+<select id='1.1.2' name='concept[ARVs in Labour ]' helpText='ARVs in Labour ' pos='1' >
+<option></option>
+<option value='Unknown'>Unknown</option>
+ <option value='ART'>ART</option>
+ <option value='NVP AZT3TC'>NVP AZT3TC</option>
+ <option value='AZT3TC'>AZT3TC</option>
+ <option value='sdNVP'>sdNVP</option>
+ <option value='None'>None</option>
+ </select>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Baby ARVs at Birth 
+			</td>
+			<td>
+<select id='1.1.3' name='concept[Baby ARVs at Birth ]' helpText='Baby ARVs at Birth ' pos='2' >
+<option></option>
+<option value='Unknown'>Unknown</option>
+ <option value='AZT'>AZT</option>
+ <option value='NVP AZT'>NVP AZT</option>
+ <option value='NVP'>NVP</option>
+ <option value='None'>None</option>
+ </select>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Baby ARVs continued 
+			</td>
+			<td>
+<select id='1.1.4' name='concept[Baby ARVs continued ]' helpText='Baby ARVs continued ' pos='3' >
+<option></option>
+<option value='Unknown'>Unknown</option>
+ <option value='AZT'>AZT</option>
+ <option value='NVP'>NVP</option>
+ <option value='None'>None</option>
+ </select>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Number of weeks ARVs taken 
+			</td>
+			<td>
+<input type='text' id='1.1.5'  name='concept[Number of weeks ARVs taken ]' helpText='Number of weeks ARVs taken '  field_type='number'  pos='4'  tt_pageStyleClass='NumbersOnlyWithUnknown' />
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Place of delivery 
+			</td>
+			<td>
+<input type='text' id='1.1.6'  name='concept[Place of delivery ]' helpText='Place of delivery '  pos='5'  ajaxUrl='/encounters/static_locations' />
+			</td>
+		</tr>
+	</table>
+</form>
