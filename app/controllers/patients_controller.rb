@@ -3,7 +3,7 @@ class PatientsController < ApplicationController
   unloadable  
 
   before_filter :sync_user, :except => [:index, :user_login, :user_logout, 
-      :set_datetime, :update_datetime, :reset_datetime]
+    :set_datetime, :update_datetime, :reset_datetime]
 
   def show
     
@@ -40,10 +40,35 @@ class PatientsController < ApplicationController
 
     @links = {}
 
+    if File.exists?("#{Rails.root}/config/protocol_task_flow.yml")
+      map = YAML.load_file("#{Rails.root}/config/protocol_task_flow.yml")["#{Rails.env
+        }"]["label.encounter.map"].split(",") rescue []
+    end
+
+    @label_encounter_map = {}
+
+    map.each{ |tie|
+      label = tie.split("|")[0]
+      encounter = tie.split("|")[1] rescue nil
+
+      @label_encounter_map[label] = encounter if !label.blank? && !encounter.blank?
+
+    }
+
+    @task_status_map = {}
+
     @task.tasks.each{|task|
 
       next if task.downcase == "update baby outcome" and (@patient.current_babies.length == 0 rescue false)
       next if !@task.current_user_activities.include?(task)
+
+      #check if task has already been done depending on scopes
+      scope = @task.task_scopes[task][:scope].upcase rescue nil
+      scope = "TODAY" if scope.blank?
+      encounter_name = @label_encounter_map[task.upcase]rescue nil
+      concept = @task.task_scopes[task][:concept].upcase rescue nil
+
+      @task_status_map[task] = done(scope, encounter_name, concept)
        
       ctrller = "protocol_patients"
             
@@ -71,6 +96,40 @@ class PatientsController < ApplicationController
 
     @babies = @patient.current_babies rescue []
     
+  end
+
+  def done(scope = "", encounter_name = "", concept = "")
+    return "notdone" if encounter_name.downcase == "notes"
+    scope = "" if concept.blank?
+    available = []
+
+    case scope
+    when "TODAY"
+      available = Encounter.find(:all, :joins => [:observations], :conditions =>
+          ["patient_id = ? AND encounter_type = ? AND obs.concept_id = ? AND DATE(encounter_datetime) = ?",
+          @task.patient.id, EncounterType.find_by_name(encounter_name).id , ConceptName.find_by_name(concept).concept_id, @task.current_date.to_date]) rescue []
+
+    when "RECENT"
+      available = Encounter.find(:all, :joins => [:observations], :conditions =>
+          ["patient_id = ? AND encounter_type = ? AND obs.concept_id = ? " +
+            "AND (DATE(encounter_datetime) >= ? AND DATE(encounter_datetime) <= ?)",
+          @task.patient.id, EncounterType.find_by_name(encounter_name).id, ConceptName.find_by_name(concept).concept_id,
+          (@task.current_date.to_date - 6.month), (@task.current_date.to_date + 6.month)]) rescue []
+
+    when "EXISTS"
+      available = Encounter.find(:all, :joins => [:observations], :conditions =>
+          ["patient_id = ? AND encounter_type = ? AND obs.concept_id = ?",
+          @task.patient.id, EncounterType.find_by_name(encounter_name).id, ConceptName.find_by_name(concept).concept_id]) rescue []
+
+    when ""
+      available = Encounter.find(:all, :conditions =>
+          ["patient_id = ? AND encounter_type = ? AND DATE(encounter_datetime) = ?",
+          @task.patient.id, EncounterType.find_by_name(encounter_name).id , @task.current_date.to_date]) rescue []
+    end
+
+    available = available.blank?? "notdone" : "done"
+    available
+
   end
 
   def current_visit
@@ -154,7 +213,7 @@ class PatientsController < ApplicationController
     render :text => (count.first.to_i > 0 ? {params[:date] => count}.to_json : 0)
   end
   
-protected
+  protected
 
   def sync_user
     if !session[:user].nil?

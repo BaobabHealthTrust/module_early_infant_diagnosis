@@ -1,6 +1,6 @@
 P.1. DNA-PCR TEST [program: EARLY INFANT DIAGNOSIS PROGRAM, scope: EXISTS, concept: DNA-PCR Testing Result]
 C.1.1. Given an exposed, when the child is being enrolled:
-Q.1.1.1. DNA-PCR Testing Sample Date [pos: 0, field_type: date]
+Q.1.1.1. DNA-PCR Testing Sample Date [pos: 0, field_type: date, tt_onLoad: showCategory("DNA-PCR Test")]
 
 Q.1.1.2. DNA-PCR Testing Sample ID [pos: 1]
 

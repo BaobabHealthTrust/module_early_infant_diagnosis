@@ -1,6 +1,6 @@
 P.1. PMTCT History [program:  EARLY INFANT DIAGNOSIS PROGRAM, scope: EXISTS, concept: ARVs In Labour]
 C.1.1. Given an exposed child under 24 months, collect the following details on enrollment:
-Q.1.1.1. What ARVs Were Given During Pregnancy? [concept: ARVs in Pregnancy, pos: 0]
+Q.1.1.1. What ARVs Were Given During Pregnancy? [concept: ARVs in Pregnancy, pos: 0, tt_onLoad: showCategory("PMTCT History")]
 O.1.1.1.1. None
 O.1.1.1.2. AZT 0-3w
 O.1.1.1.3. AZT 4+w
@@ -10,7 +10,7 @@ O.1.1.1.6. Unknown
 
 Q.1.1.2. What ARVs Were Given In Labour? [concept: ARVs in Labour, pos: 1]
 O.1.1.2.1. None
-O.1.1.2.2. NVP(Syrup)
+O.1.1.2.2. sdNVP
 O.1.1.2.3. AZT3TC
 O.1.1.2.4. NVP AZT3TC
 O.1.1.2.5. ART

@@ -15,7 +15,7 @@
 				Rapid Antibody Testing Sample Date 
 			</td>
 			<td>
-<input type='text' id='1.1.1'  name='concept[Rapid Antibody Testing Sample Date ]' helpText='Rapid Antibody Testing Sample Date '  pos='0'  field_type='date' />
+<input type='text' id='1.1.1'  name='concept[Rapid Antibody Testing Sample Date ]'   field_type='date'  helpText='Date of Rapid Antibody Test Sample'  tt_onLoad='showCategory("Rapid Antibody Test")'  pos='0' />
 			</td>
 		</tr>
 		<tr>
@@ -23,7 +23,7 @@
 				Rapid Antibody Testing Age (months) 
 			</td>
 			<td>
-<input type='text' id='1.1.2'  name='concept[Rapid Antibody Testing Age]' helpText='Rapid Antibody Testing Age (months) '  absoluteMax='<%= @patient.age_in_months%>'  pos='1'  tt_pageStyleClass='NumbersOnlyWithUnknown'  field_type='number' />
+<input type='text' id='1.1.2'  name='concept[Rapid Antibody Testing Age]'   tt_pageStyleClass='NumbersOnlyWithUnknown'  field_type='number'  helpText='Age at Rapid Antibody Test Sample'  absoluteMax='<%= @patient.age_in_months%>'  pos='1' />
 			</td>
 		</tr>
 		<tr>
