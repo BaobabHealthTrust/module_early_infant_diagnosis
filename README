@@ -46,7 +46,8 @@ B. WHEN A DATABASE ALREADY EXISTS
   	b. Edit application.yml.example in config with proper parameters as well
    
   
-C. Run the application with 
+C. Run the application with nginx
+ (Check in redmine under "knowledge base" on how to set up nginx)
    
    
    
