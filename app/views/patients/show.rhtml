@@ -64,10 +64,7 @@ next_task = @task.encounter_type.gsub('_',' ') rescue nil
 
       var nextTask = document.createElement("div");
       nextTask.id = "nextTask";
-      // nextTask.style.position = "absolute";
-      // nextTask.style.left = (pos[3] + (pos[0]/2) - (270/2)) + "px";
-      // nextTask.style.top = (pos[1] + 40) + "px";
-
+    
       __$("patient-dashboard-application").appendChild(nextTask);
     }
 
@@ -177,7 +174,10 @@ next_task = @task.encounter_type.gsub('_',' ') rescue nil
       </span>
       <span id='patient_id'><%= "#{@patient.national_id}" %></span>
       <span id='patient_residence'><%= "#{@patient.address}" %></span>
-      <span id='patient_age'><%= "#{(@patient.age > 0 ? @patient.age : "#{@patient.age_in_months} months")}" %></span>
+
+      <%session_date = session[:datetime].to_date rescue Date.today%>
+
+      <span id='patient_age'><%= "#{@patient.age(session_date)} yr/s   &nbsp&nbsp&nbsp #{(@patient.age_in_months(session_date)% 12)} months" %></span>
       <span id='patient_gender'><%= "#{@patient.gender}" %></span>
       <select id="tabs">
         <option value='/patients/current_visit/<%= @patient.id %>?user_id=<%= @user.id %>'>Current Visit</option>
@@ -214,95 +214,6 @@ next_task = @task.encounter_type.gsub('_',' ') rescue nil
 
       </select>
 
-      <!--select id="links">
-        <optgroup label="Level 1">
-          <option>Level 1.1</option>
-          <option>Level 1.2</option>
-        </optgroup>
-        <optgroup label="Level 2">
-          <option>Level 2.1</option>
-          <option>Level 2.2</option>
-          <option>Level 2.3</option>
-        </optgroup>
-        <optgroup label="Level 3">
-          <option>Level 3.1</option>
-          <option>Level 3.2</option>
-          <option>Level 3.3</option>
-          <option>Level 3.1</option>
-          <option>Level 3.2</option>
-          <option>Level 3.3</option>
-          <option>Level 3.1</option>
-          <option>Level 3.2</option>
-          <option>Level 3.3</option>
-          <option>Level 3.1</option>
-          <option>Level 3.2</option>
-          <option>Level 3.3</option>
-          <option>Level 3.1</option>
-          <option>Level 3.2</option>
-          <option>Level 3.3</option>
-          <option>Level 3.1</option>
-          <option>Level 3.2</option>
-          <option>Level 3.3</option>
-          <option>Level 3.1</option>
-          <option>Level 3.2</option>
-          <option>Level 3.3</option>
-          <option>Level 3.1</option>
-          <option>Level 3.2</option>
-          <option>Level 3.3</option>
-          <option>Level 3.1</option>
-          <option>Level 3.2</option>
-          <option>Level 3.3</option>
-          <option>Level 3.1</option>
-          <option>Level 3.2</option>
-          <option>Level 3.3</option>
-        </optgroup>
-        <optgroup label="Level 4">
-          <option>Level 4.1</option>
-          <option>Level 4.2</option>
-        </optgroup>
-        <optgroup label="Level 5">
-          <option>Level 5.1</option>
-          <option>Level 5.2</option>
-          <option>Level 5.3</option>
-        </optgroup>
-        <optgroup label="Level 6">
-          <option>Level 6.1</option>
-          <option>Level 6.2</option>
-          <option>Level 6.3</option>
-        </optgroup>
-        <optgroup label="Level 7">
-          <option>Level 7.1</option>
-          <option>Level 7.2</option>
-        </optgroup>
-        <optgroup label="Level 8">
-          <option>Level 8.1</option>
-          <option>Level 8.2</option>
-          <option>Level 8.3</option>
-        </optgroup>
-        <optgroup label="Level 9">
-          <option>Level 9.1</option>
-          <option>Level 9.2</option>
-          <option>Level 9.3</option>
-        </optgroup>
-        <optgroup label="Level 10"></optgroup>
-        <optgroup label="Level 11"></optgroup>
-        <optgroup label="Level 12"></optgroup>
-        <optgroup label="Level 13">
-          <option>Level 13.1</option>
-          <option>Level 13.2</option>
-        </optgroup>
-        <optgroup label="Level 14">
-          <option>Level 14.1</option>
-          <option>Level 14.2</option>
-          <option>Level 14.3</option>
-        </optgroup>
-        <optgroup label="Level 15">
-          <option>Level 15.1</option>
-          <option>Level 15.2</option>
-          <option>Level 15.3</option>
-        </optgroup>
-      </select-->
-
 
       <select id="navigation_links">
 
@@ -311,7 +222,9 @@ next_task = @task.encounter_type.gsub('_',' ') rescue nil
             Demographics
           </option>
         <% end %>
-
+        <option link="/patients/mastercard?patient_id=<%= @patient.id %>&user_id=<%= @user.id %>" ttSize = "160px">
+          Mastercard
+        </option>
         <% if @task.url != "/patients/show/#{@patient.id}?user_id=#{@user.id}" %>
           <option link="<%= @task.url  %>" ttSize = "160px">Continue</option>
         <% end %>

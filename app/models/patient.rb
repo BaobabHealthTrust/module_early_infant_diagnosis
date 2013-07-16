@@ -177,5 +177,84 @@ class Patient < ActiveRecord::Base
     status
   end
 
+  def mastercard(encounta)
+    result = {}
+    @enrolment_encounters = Encounter.find(:all, :select => ["encounter_id"], :conditions => ["encounter_type = ? and patient_id = ?",
+        EncounterType.find_by_name(encounta).id, self.patient_id]).collect{|enc| enc.encounter_id rescue nil} rescue []
+    return {} if  @enrolment_encounters.blank?
+   
+    @program_encounter_details =  ProgramEncounterDetail.find(:all, :joins => [:program_encounter],
+      :conditions => ["program_encounter.program_id = ? AND program_encounter.patient_id = ? AND encounter_id IN (?)",
+        Program.find_by_name("EARLY INFANT DIAGNOSIS PROGRAM").program_id, self.patient_id, @enrolment_encounters])
+  
+    (@program_encounter_details || []).each do |ped|
+
+      date = ped.encounter.encounter_datetime rescue nil
+      next if date.blank?
+      
+      obs = {}
+      ped.encounter.observations.collect{|ob|
+        name =  ConceptName.find_by_concept_id(ob.concept_id).name rescue nil
+        next if name.blank?
+        ans = ob.answer_string.strip rescue nil
+        next if ans.blank?
+        obs[name.upcase] = ans
+      }
+      result[date]  = obs
+
+    end
+
+    return rapid_test(result) if encounta.upcase == "RAPID ANTIBODY TEST"
+    
+    #sort hash for best answers
+    map_hash = {}
+    last_date = ""
+    result.keys.each{|date|
+      result[date].keys.each{|concept|
+        
+        if last_date.blank?
+          map_hash[concept.upcase] = result[date][concept.upcase]
+        else
+          #choose best answer for question; add as many checks as possible for this one; defaults to latest captured value i.e in if statmt
+          if (date.to_time > last_date.to_time)
+            map_hash[concept.upcase] = result[date][concept.upcase]
+          end
+        end
+      }
+      last_date = date
+    }
+    map_hash
+  end
+
+  def rapid_test(tests)
+    result = {}
+   
+    #initializing a target maximum of three tests
+    (1 .. 3).each{ |num|  result[num] = {} }
+
+    tests.keys.each do |date|
+      test_date = tests[date]["RAPID ANTIBODY TESTING SAMPLE DATE"].to_date rescue nil
+      test_age = self.age_in_months(test_date) rescue nil      
+      next if (test_age.blank? || test_age.class.to_s.upcase != "FIXNUM" || test_age < 0) rescue true
+      
+      field = test_age < 12 ? 1 : ((test_age >= 12 && test_age < 24)? 2 : 3)     
+      next if field.blank?
+
+      if result[field].blank? || (test_date > result[field]["RAPID ANTIBODY TESTING SAMPLE DATE"].to_date rescue true)
+        tests[date].keys.each{|ky|
+          result[field][ky] = tests[date][ky]
+        }
+      end
+      
+      field = nil
+    end
+    
+    result
+  end
+  
+  def birthweight
+    Observation.find(:first, :order => ["obs_datetime DESC"],
+      :conditions => ["person_id = ? AND concept_id =  ?", self.patient_id, ConceptName.find_by_name("BIRTH WEIGHT").concept_id]).answer_string.strip rescue nil
+  end
 
 end

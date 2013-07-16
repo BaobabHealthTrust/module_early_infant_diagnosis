@@ -15,7 +15,7 @@
 				DNA-PCR Testing Sample Date 
 			</td>
 			<td>
-<input type='text' id='1.1.1'  name='concept[DNA-PCR Testing Sample Date ]' helpText='DNA-PCR Testing Sample Date '  field_type='date'  tt_onLoad='showCategory("DNA-PCR Test")'  pos='0' />
+<input type='text' id='1.1.1'  name='concept[DNA-PCR Testing Sample Date ]' helpText='DNA-PCR Testing Sample Date '  field_type='date'  pos='0'  tt_onLoad='showCategory("DNA-PCR Test")' />
 			</td>
 		</tr>
 		<tr>
@@ -59,7 +59,7 @@
 				DNA-PCR Testing Result given Age (months) 
 			</td>
 			<td>
-<input type='text' id='1.1.6'  name='concept[DNA-PCR Testing Result given Age]' helpText='DNA-PCR Testing Result given Age (months) '  tt_pageStyleClass='NumbersOnlyWithUnknown'  field_type='number'  absoluteMax='<%= @patient.age_in_months + 1%>'  pos='5' />
+<input type='text' id='1.1.6'  name='concept[DNA-PCR Testing Result given Age]' helpText='DNA-PCR Testing Result given Age (months) '  field_type='number'  pos='5'  tt_pageStyleClass='NumbersOnlyWithUnknown'  absoluteMax='<%= @patient.age_in_months + 1%>' />
 			</td>
 		</tr>
 	</table>
