@@ -9,21 +9,41 @@
       var current = <%="#{session[:mastercard_counter].to_i + 1}" rescue 0%>;
 
       function next(){
-        current = current + 1;
-        if (current >= total){
-          current = total;
+        var iframe =  __$("main");
+        frameDoc = (iframe.contentDocument) ? iframe.contentDocument : iframe.contentWindow.document;
+
+        if (f$("page1")[0].style.display == "none"){
+          try{
+            var nodes = f$("page1")
+            for(var i = 0; i < nodes.length; i ++){
+              nodes[i].style.display = "block";
+            }
+            var nodes2 = f$("page2")
+            for(var i = 0; i < nodes.length; i ++){
+              nodes2[i].style.display = "none"
+            }
+          }catch(ex){}
+          __$("next").innerHTML = "<span>Next Page</span>"
+        }else{
+          try{
+            var nodes = f$("page1")
+            for(var i = 0; i < nodes.length; i ++){
+              nodes[i].style.display = "none"
+            }
+            var nodes2 = f$("page2")
+            for(var i = 0; i < nodes2.length; i ++){
+              nodes2[i].style.display = "block"
+            }
+          }catch(ex){}
+          __$("next").innerHTML = "<span>Prev Page</span>"
         }
-        document.location = "/patients/mastercard?show_mastercard_counter=true&current=" + current;
+
       }
 
-      function prev(){
-        current = current - 1 ;
-        if (current <= 0){
-          current = 1;
-        }
-        document.location = "/patients/mastercard?show_mastercard_counter=true&current=" + current;
+            
+      function f$(clas){
+        return frameDoc.getElementsByClassName(clas);
       }
-
 
     </script>
 
@@ -37,8 +57,7 @@
       }
       #main {
         width: 99.7%;
-        height: 88.5%;
-        overflow: hidden;
+        height: 88%;
         -moz-user-select:none;
       }
 
@@ -107,9 +126,15 @@
         </button>
 
 
-        <button class="button navButton blue" style="float: left;"
-                onmousedown="window.location = '/patients/print_mastercard?patient_id=<%=@patient.id%>&show_mastercard_counter=true&current=' + current;">
+        <button id="next" class="button navButton blue" style="float: right;"
+                onmousedown="next()">
 
+          <span>
+            Next Page
+          </span>
+        </button>
+        <button class="button navButton blue" style="float: right;"
+                onmousedown="window.location = '/patients/print_mastercard?patient_id=<%=@patient.id%>&show_mastercard_counter=true&current=' + current;">
           <span>
             Print Mastercard
           </span>

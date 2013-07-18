@@ -1,4 +1,4 @@
-P.1. RAPID ANTIBODY TEST [program: EARLY INFANT DIAGNOSIS PROGRAM]
+P.1. RAPID ANTIBODY TEST [program: EARLY INFANT DIAGNOSIS PROGRAM, scope: RECENT, concept: Rapid Antibody Testing Sample Date]
 C.1.1. Given an exposed child under 24 months, when the child is being enrolled:
 
 Q.1.1.1. Rapid Antibody Testing Sample Date [tt_onLoad: showCategory("Rapid Antibody Test"), helpText: Date of Rapid Antibody Test Sample, pos: 0, field_type: date]

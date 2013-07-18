@@ -45,11 +45,11 @@ Q.1.10.2.1. Specify abnormalities [pos: 13, concept: Specify]
 [
 Q.1.11. Childs current HIV status [pos: 14, helpText: Current HIV Status of Child]
 O.1.11.1. Confirmed
-Q.1.11.1.1. Confirmed [pos: 15, onchange: checkConfirmationStatus("HIV infected"), tt_onLoad: checkConfirmationStatus("HIV infected")]
+Q.1.11.1.1. Confirmed [pos: 15, helpText: Confirmation Status, onchange: checkConfirmationStatus("HIV infected"), tt_onLoad: checkConfirmationStatus("HIV infected")]
 O.1.11.1.1.1. Not HIV infected
 O.1.11.1.1.2. HIV infected
 O.1.11.2. Not confirmed
-Q.1.11.2.1. Not confirmed [pos: 16, tt_onLoad: checkConfirmationStatus("Presumed Severe HIV Disease")]
+Q.1.11.2.1. Not confirmed [pos: 16, helpText: Non-Confirmation Status,  tt_onLoad: checkConfirmationStatus("Presumed Severe HIV Disease")]
 O.1.11.2.1.1. Not ART eligible
 O.1.11.2.1.2. Presumed Severe HIV Disease
 

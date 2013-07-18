@@ -205,7 +205,10 @@ class Patient < ActiveRecord::Base
     end
 
     return rapid_test(result) if encounta.upcase == "RAPID ANTIBODY TEST"
-    
+    return dna_test(result) if encounta.upcase == "DNA-PCR TEST"
+    return numerize(result) if encounta.upcase == "EID VISIT"
+    return result if encounta.upcase == "NOTES"
+
     #sort hash for best answers
     map_hash = {}
     last_date = ""
@@ -232,7 +235,7 @@ class Patient < ActiveRecord::Base
     #initializing a target maximum of three tests
     (1 .. 3).each{ |num|  result[num] = {} }
 
-    tests.keys.each do |date|
+    (tests.keys.sort rescue []).each do |date|
       test_date = tests[date]["RAPID ANTIBODY TESTING SAMPLE DATE"].to_date rescue nil
       test_age = self.age_in_months(test_date) rescue nil      
       next if (test_age.blank? || test_age.class.to_s.upcase != "FIXNUM" || test_age < 0) rescue true
@@ -249,6 +252,64 @@ class Patient < ActiveRecord::Base
       field = nil
     end
     
+    result
+  end
+
+  def dna_test(tests)
+    
+    result = {}
+    #reorder tests inorder of sample date
+    (tests.keys.sort rescue []).each{|d|
+      sample_date = tests[d]["DNA-PCR TESTING SAMPLE DATE"].to_time rescue nil
+      unless sample_date.blank?
+        tests[sample_date] = tests[d]
+        tests.delete(d)
+      end 
+    }
+    
+    (tests.keys.sort rescue []).each do |date|
+
+      test_date = tests[date]["DNA-PCR TESTING SAMPLE DATE"].to_time rescue nil    
+      next if (test_date.blank? || test_date.class.to_s.upcase != "TIME" || (test_date < self.person.birthdate.to_time rescue false)) rescue true
+      
+      field = result.keys.sort.last.to_i + 1      
+      next if field.blank?
+      
+      result[field] = {} unless (result[field].present? rescue false)      
+      
+      if result[field].blank? || (test_date > result[field]["DNA-PCR TESTING SAMPLE DATE"].to_time rescue true)
+        tests[date].keys.each{|ky|
+          result[field][ky] = tests[date][ky]
+        }
+      end
+
+      field = nil
+    end
+
+    result
+  end
+
+  def numerize(data)
+
+    result = {}
+    (data.keys.sort rescue []).each{|date|
+
+      key = result.keys.sort.last.to_i + 1
+      result[key] = {} unless (result[key].present? rescue false)
+     
+      data[date].keys.each{|ky|
+        result[key][ky] = data[date][ky]
+      }
+      key = nil
+    }
+    result
+  end
+
+  def mastercard_details(encountaz = [])
+    result = {}
+    encountaz.each do |encounta|
+      result[encounta.upcase] = self.mastercard(encounta.upcase)
+    end
     result
   end
   

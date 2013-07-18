@@ -220,23 +220,38 @@ class PatientsController < ApplicationController
     @patient = Patient.find(params[:patient_id])
 
     @birthweight = @patient.birthweight rescue nil
-    
-    @mastercard = mastercard_demographics(@patient) rescue {}
-    @visits = visits(@patient)  rescue {}
+          
+    @enrolment_details = @patient.mastercard("HIV STATUS AT ENROLLMENT") rescue {}
+    @pmtct_history = @patient.mastercard("PMTCT HISTORY") rescue {}
+    @rad_test = @patient.mastercard("RAPID ANTIBODY TEST") rescue {}
+    @dna_test = @patient.mastercard("DNA-PCR TEST") rescue {}
+    @notes = @patient.mastercard("NOTES") rescue {}
+    @visits = @patient.mastercard("EID VISIT") rescue {}
+    #check if child is wasting
+    (@visits.keys rescue []).each {|visit|
+      
+      @visits[visit]["WASTING"] = "None"
+      #check BMI
+      weight = @visits[visit]["WEIGHT (KG)"].to_f rescue nil
+      weightVal = ((weight.to_i > 100) ? (weight/1000) : (weight)) rescue nil
+      height = @visits[visit]["HEIGHT (CM)"].to_f rescue nil
+      bmi = ((10000*weightVal)/(height * height)).round(1) rescue nil
+      next if bmi.blank?
+      
+      #check weight for age for severe wasting, etc
+      w_h_a = WeightHeightForAge.median_weight_height(@patient.age_in_months, @patient.person.gender) rescue nil
+      weightPercentile = ((weightVal/w_h_a.first) * 100).round(0).to_i rescue nil
+      heightPercentile = ((height/w_h_a.last) * 100).round(0).to_i rescue nil
 
-    @age_in_months_for_days = 0
-    @visits.keys.each do|day|
-			@age_in_months_for_days[day] =""
-    end
-   
-    @enrolment_details = @patient.mastercard("HIV STATUS AT ENROLLMENT")
-    @pmtct_history = @patient.mastercard("PMTCT HISTORY")
-    @rad_test = @patient.mastercard("RAPID ANTIBODY TEST")
+      next if weightPercentile.blank? || heightPercentile.blank?
+
+      if ((weightPercentile < 75) rescue false) || ((heightPercentile < 75) rescue false)
+        @visits[visit]["WASTING"] = "Severe"
+      elsif ((75 .. 79).include?(weightPercentile) rescue false) || ((75 .. 79).include?(heightPercentile) rescue false)
+        @visits[visit]["WASTING"] = "Moderate"
+      end           
+    }
     
-    @patient_bean =""
-		@guardian_phone_number = ""
-		@patient_phone_number = ""
-  
     render :layout => false
   end
 
