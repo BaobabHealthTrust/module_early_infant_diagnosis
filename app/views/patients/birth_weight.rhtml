@@ -1,0 +1,22 @@
+<script type='text/javascript' language='javascript'>
+<!--
+	tt_cancel_show = '/patients/show/<%= @patient.id %>?user_id=<%= session[:user_id] %>';
+	tt_cancel_destination = '/patients/show/<%= @patient.id %>?user_id=<%= session[:user_id] %>';
+	</script>
+
+<form method='post' action='/encounters/create'>
+	<input type='hidden' name='program' value='EARLY INFANT DIAGNOSIS PROGRAM' />
+	<input type='hidden' name='encounter_type' value='Baby Delivery' />
+	<input type='hidden' name='patient_id' value='<%= @patient.id %>' />
+	<input type='hidden' name='user_id' value='<%= session[:user_id] %>' />
+	<table>
+		<tr>
+			<td>
+				Birth Weight
+			</td>
+			<td>
+<input type='text' id='1.1'  name='concept[Birth Weight]' helpText=" Child's Birth Weight (Grams) "  max='2500 ', min='4500' absoluteMin='100', absoluteMax='8000'  field_type='number'  pos='0' tt_PageStyleClass= "NumbersOnlyWithUnknown"   />
+			</td>
+		</tr>
+	</table>
+</form>

@@ -1,0 +1,49 @@
+<div>
+  <table id="nots" width="100%" style="text-align: center; min-width: 100%; display: block; margin-top: -12px; padding: 2px; " cellspacing="0" cellpadding="5">
+    <tr>
+      <td style="width: 100%; font-size: 16px; text-align: left; font-weight: bold; border-bottom: 1px solid #000;">
+        &nbsp;Notes
+      </td>
+      <td style="width: 100%; border-bottom: 1px solid #000;">
+        &nbsp;
+      </td>
+      <td style="width: 100%; border-bottom: 1px solid #000;">
+        &nbsp;
+      </td>
+      <td style="width: 100%; border-bottom: 1px solid #000;">
+        &nbsp;
+      </td>
+      <td style="width: 100%; border-bottom: 1px solid #000;">
+        &nbsp;
+      </td>
+      <td style="width: 100%; border-bottom: 1px solid #000;">
+        &nbsp;
+      </td>
+      <td style="width: 100%; border-bottom: 1px solid #000;">
+        &nbsp;
+      </td><td style="width: 100%; border-bottom: 1px solid #000;">
+        &nbsp;
+      </td>
+      <td style="width: 100%; border-bottom: 1px solid #000;">
+        &nbsp;
+      </td>
+
+    </tr>
+    <%(@notes.keys.sort.reverse rescue []).each {|date|%>
+      <tr>
+        <td colspan="9"  style="font-size: 13px; text-align: left; min-width: 100%; border-bottom: 1px solid #000;">
+          <%= "<span style='margin-right: 20px; font-size: 15px;'> (" + date.strftime("%d/%b/%Y  %H:%M") +
+            ")</span> - <i>&nbsp&nbsp&nbsp" +  @notes[date]["CLINICIAN NOTES"] + "</i>" %>
+        </td>
+      </tr>
+    <%}%>
+
+    <%(1 .. 8).each {|line|%>
+      <tr>
+        <td colspan="9"  style="min-width: 100%; border-bottom: 1px solid #000;">
+        &nbsp
+        </td>
+      </tr>
+    <%}%>
+  </table>
+</div>
