@@ -38,10 +38,12 @@
       </tr>
     <%}%>
 
-    <%(1 .. 8).each {|line|%>
+    <%
+    lines = (@notes.keys.length > 18 rescue false) ? 18 : (18 - @notes.keys.length)
+    (1 .. lines).each {|line|%>
       <tr>
         <td colspan="9"  style="min-width: 100%; border-bottom: 1px solid #000;">
-        &nbsp
+          &nbsp
         </td>
       </tr>
     <%}%>

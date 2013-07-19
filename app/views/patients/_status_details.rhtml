@@ -4,122 +4,126 @@
     font-size: 0.8em;
   }
 </style>
-<div width="100%" style="width:100%; margin-left: 10%;">
-  <table width="100%" border="0" cellspacing="0" cellpadding="5" style="width: 100%">
-    <tr>
-      <td>
-        &nbsp;
-      </td>
-      <td align="center" colspan="6">
-        <span style="font-size: 1.2em; vertical-align: bottom;">PMTCT History at Enrolment</span>
-      </td>
-      <td>
-        &nbsp;
-      </td>
-      <td align="center" colspan="6">
-        <span style="font-size: 1.2em; vertical-align: bottom;">Status at Enrolment</span>
-      </td>
-    </tr>
-    <tr>
-      <td style="padding-left: 100px;">
-        ARVs in Pregnancy
-      </td>
-      <td colspan="6"style="border-left: 2px solid #000; border-right: 2px solid #000; border-top: 2px solid #000;" align="center">
-        <%= @pmtct_history["ARVS IN PREGNANCY"] %>&nbsp
-      </td>
+<%if params[:page]%>
+  <div width="100%" style="width:98%; margin-left: 10px; margin-right: 0px !important;">
+  <%else%>
+    <div width="100%" style="width:100%; margin-left: 100px; margin-right: 0px !important;">
+    <%end%>
+    <table width="100%" border="0" cellspacing="0" cellpadding="5" style="width: 116%; ">
+      <tr>
+        <td style="width: 18%">
+          &nbsp;
+        </td>
+        <td align="center" colspan="6" style="width: 30%;">
+          <span style="font-size: 1.2em; vertical-align: bottom;">PMTCT History at Enrolment</span>
+        </td>
+        <td style="width: 18%;">
+          &nbsp;
+        </td>
+        <td align="center" colspan="6" style="width: 30%;">
+          <span style="font-size: 1.2em; vertical-align: bottom;">Status at Enrolment</span>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding-left: 20px;">
+          ARVs in Pregnancy
+        </td>
+        <td colspan="6"style="border-left: 2px solid #000; border-right: 2px solid #000; border-top: 2px solid #000;" align="center">
+          <%= @pmtct_history["ARVS IN PREGNANCY"] %>&nbsp
+        </td>
 
-      <td style="width: 70px;">
-        Age at Enrolment
-      </td>
-      <td colspan="5" style="border-left: 2px solid #000; border-top: 2px solid #000; text-align: center; border-right: 2px solid #000;">
-        &nbsp;<%=  @enrolment_details["AGE OF CHILD"].blank?? "&nbsp" : @enrolment_details["AGE OF CHILD"].to_i.to_s + "  Months" rescue "Unknown"%>
-      </td>
-    </tr>
-    <tr>
-      <td style="padding-left: 100px;">
-        ARVs in Labour
-      </td>
-      <td colspan="6"style="border-left: 2px solid #000; border-right: 2px solid #000; border-top: 1px solid #000;" align="center">
-        <%= @pmtct_history["ARVS IN LABOUR"] %>&nbsp
-      </td>
-      <td>
-        Child Rapid Test
-      </td>
-      <td colspan="3" style="text-align: center; border-left: 2px solid #000; border-top: 1px solid #000;">
-        <%= @enrolment_details["RAPID ANTIBODY TESTING RESULT"] rescue "Uknown"%>&nbsp&nbsp
-      </td>
+        <td >
+          Age at Enrolment
+        </td>
+        <td colspan="5" style="border-left: 2px solid #000; border-top: 2px solid #000; text-align: center; border-right: 2px solid #000;">
+          &nbsp;<%=  @enrolment_details["AGE OF CHILD"].blank?? "&nbsp" : @enrolment_details["AGE OF CHILD"].to_i.to_s + "  Months" rescue "Unknown"%>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding-left: 20px;">
+          ARVs in Labour
+        </td>
+        <td colspan="6"style="border-left: 2px solid #000; border-right: 2px solid #000; border-top: 1px solid #000;" align="center">
+          <%= @pmtct_history["ARVS IN LABOUR"] %>&nbsp
+        </td>
+        <td>
+          Child Rapid Test
+        </td>
+        <td colspan="3" style="text-align: center; border-left: 2px solid #000; border-top: 1px solid #000;">
+          <%= @enrolment_details["RAPID ANTIBODY TESTING RESULT"] rescue "Uknown"%>&nbsp&nbsp
+        </td>
 
-      <td colspan="2" style="border-left: 1px solid #000; border-top: 1px solid #000; border-right: 2px solid #000; width: 60px;">
-        <sup>Age:  </sup>&nbsp;&nbsp; <%= @enrolment_details["RAPID ANTIBODY TESTING AGE"].blank?? " " : (@enrolment_details["RAPID ANTIBODY TESTING AGE"].to_i.to_s + "&nbsp;&nbsp;Months" rescue "Uknown")%>
-      </td>
-    </tr>
-    <tr>
-      <td style="padding-left: 100px;">
-        Baby ARVs at Birth
-      </td>
+        <td colspan="2" style="border-left: 1px solid #000; border-top: 1px solid #000; border-right: 2px solid #000; width: 60px;">
+          <sup>Age:  </sup>&nbsp;&nbsp; <%= @enrolment_details["RAPID ANTIBODY TESTING AGE"].blank?? " " : (@enrolment_details["RAPID ANTIBODY TESTING AGE"].to_i.to_s + "&nbsp;&nbsp;Months" rescue "Uknown")%>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding-left: 20px;">
+          Baby ARVs at Birth
+        </td>
 
-      <td colspan="6"style="border-left: 2px solid #000; border-right: 2px solid #000; border-top: 1px solid #000;" align="center">
-        <%= @pmtct_history["BABY ARVS AT BIRTH"] %>&nbsp
-      </td>
-      <td>
-        Child PCR
-      </td>
-      <td colspan="3" style="text-align: center; border-left: 2px solid #000; border-top: 1px solid #000;">
-        <%= @enrolment_details["DNA-PCR TESTING RESULT"] rescue "Uknown"%>&nbsp&nbsp
-      </td>
+        <td colspan="6"style="border-left: 2px solid #000; border-right: 2px solid #000; border-top: 1px solid #000;" align="center">
+          <%= @pmtct_history["BABY ARVS AT BIRTH"] %>&nbsp
+        </td>
+        <td>
+          Child PCR
+        </td>
+        <td colspan="3" style="text-align: center; border-left: 2px solid #000; border-top: 1px solid #000;">
+          <%= @enrolment_details["DNA-PCR TESTING RESULT"] rescue "Uknown"%>&nbsp&nbsp
+        </td>
 
-      <td colspan="2" style="border-left: 1px solid #000; border-top: 1px solid #000; border-right: 2px solid #000; width: 60px;">
-        <sup>Age:  </sup>&nbsp;&nbsp; <%= @enrolment_details["DNA-PCR TESTING RESULT GIVEN AGE"].blank?? " " : (@enrolment_details["DNA-PCR TESTING RESULT GIVEN AGE"].to_i.to_s + "&nbsp;&nbsp;Months" rescue "Uknown")%>
-      </td>
-    </tr>
-    <tr>
-      <td style="padding-left: 100px;">
-        Baby ARVs cont'd
-      </td>
+        <td colspan="2" style="border-left: 1px solid #000; border-top: 1px solid #000; border-right: 2px solid #000; width: 60px;">
+          <sup>Age:  </sup>&nbsp;&nbsp; <%= @enrolment_details["DNA-PCR TESTING RESULT GIVEN AGE"].blank?? " " : (@enrolment_details["DNA-PCR TESTING RESULT GIVEN AGE"].to_i.to_s + "&nbsp;&nbsp;Months" rescue "Uknown")%>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding-left: 20px;">
+          Baby ARVs cont'd
+        </td>
 
-      <td colspan="6"style="border-left: 2px solid #000; border-right: 2px solid #000; border-top: 1px solid #000;" align="center">
-        <%= @pmtct_history["BABY ARVS CONTINUED"] %>&nbsp
-      </td>
+        <td colspan="6"style="border-left: 2px solid #000; border-right: 2px solid #000; border-top: 1px solid #000;" align="center">
+          <%= @pmtct_history["BABY ARVS CONTINUED"] %>&nbsp
+        </td>
 
-      <td>
-        <i>Conclusion</i><br />HIV infection
-      </td>
+        <td>
+          <i>Conclusion</i><br />HIV infection
+        </td>
 
-      <td colspan="5" style="text-align: center; border-left: 2px solid #000; border-right: 2px solid #000; border-top: 1px solid #000;" colspan="2">
-        &nbsp<%= @enrolment_details["CONFIRMATORY HIV TEST"].blank?? "" : (@enrolment_details["CONFIRMATORY HIV TEST"].upcase == "CONFIRMED" ? @enrolment_details["CONFIRMATORY HIV TEST"] + ((@enrolment_details["DNA-PCR TESTING RESULT"].upcase == "POSITIVE" || @enrolment_details["RAPID ANTIBODY TESTING RESULT"].upcase == "POSITIVE" ) ?  " ---> start ART!" : "") :  @enrolment_details["CONFIRMATORY HIV TEST"]) %>&nbsp
-      </td>
-    <tr>
-      <td style="padding-left: 100px;">
-        Baby ARVs Adherence
-      </td>
-      <td style="text-align: center; border-left: 2px solid #000; border-right: 2px solid #000; border-top: 1px solid #000;"colspan="6">
-        <i>No. of weeks ARVs taken</i>: &nbsp&nbsp  <%= @pmtct_history["NUMBER OF WEEKS ARVS TAKEN"].to_i.to_s + " Wks" %>&nbsp
-      </td>
-      <td>
-        Mother Status
-      </td>
-      <td colspan="5" style="text-align: center; border-left: 2px solid #000; border-top: 1px solid #000; border-right: 2px solid #000;">
-        <%= @enrolment_details["MOTHER HIV STATUS"] rescue "Uknown"%>&nbsp
-      </td>
+        <td colspan="5" style="text-align: center; border-left: 2px solid #000; border-right: 2px solid #000; border-top: 1px solid #000;" colspan="2">
+          &nbsp<%= @enrolment_details["CONFIRMATORY HIV TEST"].blank?? "" : (@enrolment_details["CONFIRMATORY HIV TEST"].upcase == "CONFIRMED" ? @enrolment_details["CONFIRMATORY HIV TEST"] + ((@enrolment_details["DNA-PCR TESTING RESULT"].upcase == "POSITIVE" || @enrolment_details["RAPID ANTIBODY TESTING RESULT"].upcase == "POSITIVE" ) ?  " ---> start ART!" : "") :  @enrolment_details["CONFIRMATORY HIV TEST"]) %>&nbsp
+        </td>
+      <tr>
+        <td style="padding-left: 20px;">
+          Baby ARVs Adherence
+        </td>
+        <td style="text-align: center; border-left: 2px solid #000; border-right: 2px solid #000; border-top: 1px solid #000;"colspan="6">
+          <i>No. of weeks ARVs taken</i>: &nbsp&nbsp  <%= @pmtct_history["NUMBER OF WEEKS ARVS TAKEN"].to_i.to_s + " Wks" %>&nbsp
+        </td>
+        <td>
+          Mother Status
+        </td>
+        <td colspan="5" style="text-align: center; border-left: 2px solid #000; border-top: 1px solid #000; border-right: 2px solid #000;">
+          <%= @enrolment_details["MOTHER HIV STATUS"] rescue "Uknown"%>&nbsp
+        </td>
 
-    </tr>
-    <tr>
-      <td style="padding-left: 100px;">
-        Delivery Place
-      </td>
-      <td colspan="6" style="text-align: center; border-top: 1px solid #000; border-right: 2px solid #000;
-          border-bottom: 2px solid #000; border-left: 2px solid #000;">
-        <%= @pmtct_history["PLACE OF DELIVERY"]%> &nbsp;
-      </td>
-      <td>
-        Mother ART<br />Reg. no.
-      </td>
-      <td colspan="6" style="text-align: center; border-top: 1px solid #000; border-right: 2px solid #000;
-          border-left: 2px solid #000; border-bottom: 2px solid #000;">
-        &nbsp;<%= @enrolment_details["MOTHER ART REGISTRATION NUMBER"] rescue "Uknown"%>
-      </td>
-    </tr>
-  </table>
-</div>
+      </tr>
+      <tr>
+        <td style="padding-left: 20px;">
+          Delivery Place
+        </td>
+        <td colspan="6" style="text-align: center; border-top: 1px solid #000; border-right: 2px solid #000;
+            border-bottom: 2px solid #000; border-left: 2px solid #000;">
+          <%= @pmtct_history["PLACE OF DELIVERY"]%> &nbsp;
+        </td>
+        <td>
+          Mother ART<br />Reg. no.
+        </td>
+        <td colspan="6" style="text-align: center; border-top: 1px solid #000; border-right: 2px solid #000;
+            border-left: 2px solid #000; border-bottom: 2px solid #000;">
+          &nbsp;<%= @enrolment_details["MOTHER ART REGISTRATION NUMBER"] rescue "Uknown"%>
+        </td>
+      </tr>
+    </table>
+  </div>
 
 

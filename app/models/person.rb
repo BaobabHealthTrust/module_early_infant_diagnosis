@@ -28,5 +28,23 @@ class Person < ActiveRecord::Base
     self.person_attributes.each{|row| row.void(reason) }
     # We are going to rely on patient => encounter => obs to void those
   end
+  def home_phone_number
+    self.person_attributes.find_by_person_attribute_type_id(
+      PersonAttributeType.find_by_name("Home Phone Number").id).value rescue ""
+  end
 
+  def nationality
+    self.person_attributes.find_by_person_attribute_type_id(
+      PersonAttributeType.find_by_name("Citizenship").id).value rescue ""
+  end
+
+  def office_phone_number
+    self.person_attributes.find_by_person_attribute_type_id(
+      PersonAttributeType.find_by_name("Office Phone Number").id).value rescue ""
+  end
+
+  def cell_phone_number
+    self.person_attributes.find_by_person_attribute_type_id(
+      PersonAttributeType.find_by_name("Cell Phone Number").id).value rescue ""
+  end
 end

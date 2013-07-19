@@ -1,96 +1,111 @@
-<div width="100%" style="width:100%; margin-left: 35%; margin-top: 2%;">
-  <table id="r_a_t" style="text-align: center; margin: 5px;  width: 100%; display: block; padding: 0px; " cellspacing="0" cellpadding="5">
-    <tr>
-      <td colspan="2" style="font-size: 1.2em;">
-        DNA - PCR Testing
-      </td>
-      <td align="center" colspan="3" >
-        Result received from lab
-      </td>
-      <td align="center" colspan="2">
-        Result given to guardian
-      </td>
-    </tr>
-    <tr>
-      <td align="center" style="width: 20%;">
-        Sample Date
-      </td>
-      <td align="center" style="width: 18%">
-        Sample ID
-      </td>
-      <td align="center" style="width: 16%">
-        Date
-      </td>
-      <td align="center" colspan="2" style="width: 15%">
-        Result
-      </td>
-      <td align="center" style="width: 20%">
-        Date
-      </td>
-      <td align="center">
-        Age
-      </td>
-    </tr>
-    <tr>
-      <td style="border: 2px solid #000;  padding: 10px;">
-        &nbsp;<%= @dna_test[1]["DNA-PCR TESTING SAMPLE DATE"] rescue "&nbsp"%>
-      </td>
-      <td style="border-top: 2px solid #000; border-bottom: 2px solid #000; padding: 10px;">
-        &nbsp;<%= @dna_test[1]["DNA-PCR TESTING SAMPLE ID"] rescue "&nbsp"%>
-      </td>
-      <td style="border: 2px solid #000;  padding: 10px;">
-        &nbsp;<%= @dna_test[1]["DNA-PCR TESTING RESULT RECEIVED DATE"] rescue "&nbsp"%>
-      </td>
-      <td colspan="2" style="border-top: 2px solid #000; border-right: 2px solid #000; border-bottom: 2px solid #000">
-        &nbsp;<%= @dna_test[1]["DNA-PCR TESTING RESULT"] rescue "&nbsp"%>
-      </td>
-      <td style="border-top: 2px solid #000; border-bottom: 2px solid #000; width: 18%">
-        &nbsp;<%= @dna_test[1]["DNA-PCR TESTING RESULT GIVEN DATE"] rescue "&nbsp"%>
-      </td>
-      <td style="border: 2px solid #000; width: 18%">
-        &nbsp;<%= @dna_test[1]["DNA-PCR TESTING RESULT GIVEN AGE"] rescue "&nbsp"%>
-      </td>
-    </tr>
-    <tr>
-      <td style="border: 2px solid #000; border-top: 0px solid #000;  padding: 10px;">
-        &nbsp;<%= @dna_test[2]["DNA-PCR TESTING SAMPLE DATE"] rescue "&nbsp"%>
-      </td>
-      <td style="border-bottom: 2px solid #000;  padding: 10px;">
-        &nbsp;<%= @dna_test[2]["DNA-PCR TESTING SAMPLE ID"] rescue "&nbsp"%>
-      </td>
-      <td style="border: 2px solid #000; border-top: 0px solid #000;">
-        &nbsp;<%= @dna_test[2]["DNA-PCR TESTING RESULT RECEIVED DATE"] rescue "&nbsp"%>
-      </td>
-      <td colspan="2" style="border-bottom: 2px solid #000; border-right: 2px solid #000;">
-        &nbsp;<%= @dna_test[2]["DNA-PCR TESTING RESULT"] rescue "&nbsp"%>
-      </td>
-      <td style="border-bottom: 2px solid #000">
-        &nbsp;<%= @dna_test[2]["DNA-PCR TESTING RESULT GIVEN DATE"] rescue "&nbsp"%>
-      </td>
-      <td style="border: 2px solid #000; border-top: 0px solid #000; width: 18%">
-        &nbsp;<%= @dna_test[2]["DNA-PCR TESTING RESULT GIVEN AGE"] rescue "&nbsp"%>
-      </td>
+<%if params[:page]%>
+  <div width="100%" style="width:100%; margin-right: 0px !important; margin-top:2%;">
+    <% if  (@dna_test.keys.length > 0 rescue false)%>
+      <table id="r_a_t" style="text-align: center; width: 650px; max-width: 650px; display: block;" cellspacing="0" cellpadding="5">
+      <%else%>
+        <table id="r_a_t" style="text-align: center; width: 100%; max-width: 100%; display: block;" cellspacing="0" cellpadding="5">
+        <%end%>
+      <%else%>
 
-    </tr>
-    <tr>
-      <td style="border: 2px solid #000; border-top: 0px solid #000;   padding: 10px;">
-        &nbsp;<%= @dna_test[3]["DNA-PCR TESTING SAMPLE DATE"] rescue "&nbsp"%>
-      </td>
-      <td style="border-bottom: 2px solid #000;   padding: 10px;">
-        &nbsp;<%= @dna_test[3]["DNA-PCR TESTING SAMPLE ID"] rescue "&nbsp"%>
-      </td>
-      <td style="border: 2px solid #000; border-top: 0px solid #000;">
-        &nbsp;<%= @dna_test[3]["DNA-PCR TESTING RESULT RECEIVED DATE"] rescue "&nbsp"%>
-      </td>
-      <td colspan="2" style="border-bottom: 2px solid #000; border-right: 2px solid #000;">
-        &nbsp;<%= @dna_test[3]["DNA-PCR TESTING RESULT"] rescue "&nbsp"%>
-      </td>
-      <td style="border-bottom: 2px solid #000">
-        &nbsp;<%= @dna_test[3]["DNA-PCR TESTING RESULT GIVEN DATE"] rescue "&nbsp"%>
-      </td>
-      <td style="border: 2px solid #000; border-top: 0px solid #000;">
-        &nbsp;<%= @dna_test[3]["DNA-PCR TESTING RESULT GIVEN AGE"] rescue "&nbsp"%>
-      </td>
-    </tr>
-  </table>
-</div>
+        <div width="100%" style="width:112%; margin-left: 26%; margin-top:4%; margin-right: 0px !important;">
+          <% if  (@dna_test.keys.length > 0 rescue false)%>
+            <table id="r_a_t" style="text-align: center; margin-left: 13%; width: 100%; display: block;" cellspacing="0" cellpadding="5">
+            <%else%>
+              <table id="r_a_t" style="text-align: center; margin-left: 13.5%; width: 90%; display: block;" cellspacing="0" cellpadding="5">
+              <%end%>
+            <%end%>
+
+            <tr>
+              <td colspan="2" style="font-size: 1.2em;">
+                DNA - PCR Testing
+              </td>
+              <td align="center" colspan="3" >
+                Result received from lab
+              </td>
+              <td align="center" colspan="2">
+                Result given to guardian
+              </td>
+            </tr>
+            <tr>
+              <td align="center" style="width: 18%;">
+                Sample Date
+              </td>
+              <td align="center" style="width: 19%">
+                Sample ID
+              </td>
+              <td align="center" style="width: 19%">
+                Date
+              </td>
+              <td align="center" colspan="2" style="width: 18%">
+                Result
+              </td>
+              <td align="center" style="width: 18%">
+                Date
+              </td>
+              <td align="center">
+                Age
+              </td>
+            </tr>
+            <tr>
+              <td style="border: 2px solid #000;  padding: 10px;">
+                &nbsp;<%= @dna_test[1]["DNA-PCR TESTING SAMPLE DATE"] rescue "&nbsp"%>
+              </td>
+              <td style="border-top: 2px solid #000; border-bottom: 2px solid #000; padding: 10px;">
+                &nbsp;<%= @dna_test[1]["DNA-PCR TESTING SAMPLE ID"] rescue "&nbsp"%>
+              </td>
+              <td style="border: 2px solid #000;  padding: 10px;">
+                &nbsp;<%= @dna_test[1]["DNA-PCR TESTING RESULT RECEIVED DATE"] rescue "&nbsp"%>
+              </td>
+              <td colspan="2" style="border-top: 2px solid #000; border-right: 2px solid #000; border-bottom: 2px solid #000">
+                &nbsp;<%= @dna_test[1]["DNA-PCR TESTING RESULT"] rescue "&nbsp"%>
+              </td>
+              <td style="border-top: 2px solid #000; border-bottom: 2px solid #000; width: 18%">
+                &nbsp;<%= @dna_test[1]["DNA-PCR TESTING RESULT GIVEN DATE"] rescue "&nbsp"%>
+              </td>
+              <td style="border: 2px solid #000; width: 18%">
+                &nbsp;<%= @dna_test[1]["DNA-PCR TESTING RESULT GIVEN AGE"] rescue "&nbsp"%>
+              </td>
+            </tr>
+            <tr>
+              <td style="border: 2px solid #000; border-top: 0px solid #000;  padding: 10px;">
+                &nbsp;<%= @dna_test[2]["DNA-PCR TESTING SAMPLE DATE"] rescue "&nbsp"%>
+              </td>
+              <td style="border-bottom: 2px solid #000;  padding: 10px;">
+                &nbsp;<%= @dna_test[2]["DNA-PCR TESTING SAMPLE ID"] rescue "&nbsp"%>
+              </td>
+              <td style="border: 2px solid #000; border-top: 0px solid #000;">
+                &nbsp;<%= @dna_test[2]["DNA-PCR TESTING RESULT RECEIVED DATE"] rescue "&nbsp"%>
+              </td>
+              <td colspan="2" style="border-bottom: 2px solid #000; border-right: 2px solid #000;">
+                &nbsp;<%= @dna_test[2]["DNA-PCR TESTING RESULT"] rescue "&nbsp"%>
+              </td>
+              <td style="border-bottom: 2px solid #000">
+                &nbsp;<%= @dna_test[2]["DNA-PCR TESTING RESULT GIVEN DATE"] rescue "&nbsp"%>
+              </td>
+              <td style="border: 2px solid #000; border-top: 0px solid #000; width: 18%">
+                &nbsp;<%= @dna_test[2]["DNA-PCR TESTING RESULT GIVEN AGE"] rescue "&nbsp"%>
+              </td>
+
+            </tr>
+            <tr>
+              <td style="border: 2px solid #000; border-top: 0px solid #000;   padding: 10px;">
+                &nbsp;<%= @dna_test[3]["DNA-PCR TESTING SAMPLE DATE"] rescue "&nbsp"%>
+              </td>
+              <td style="border-bottom: 2px solid #000;   padding: 10px;">
+                &nbsp;<%= @dna_test[3]["DNA-PCR TESTING SAMPLE ID"] rescue "&nbsp"%>
+              </td>
+              <td style="border: 2px solid #000; border-top: 0px solid #000;">
+                &nbsp;<%= @dna_test[3]["DNA-PCR TESTING RESULT RECEIVED DATE"] rescue "&nbsp"%>
+              </td>
+              <td colspan="2" style="border-bottom: 2px solid #000; border-right: 2px solid #000;">
+                &nbsp;<%= @dna_test[3]["DNA-PCR TESTING RESULT"] rescue "&nbsp"%>
+              </td>
+              <td style="border-bottom: 2px solid #000">
+                &nbsp;<%= @dna_test[3]["DNA-PCR TESTING RESULT GIVEN DATE"] rescue "&nbsp"%>
+              </td>
+              <td style="border: 2px solid #000; border-top: 0px solid #000; margin-right: 5px;">
+                &nbsp;<%= @dna_test[3]["DNA-PCR TESTING RESULT GIVEN AGE"] rescue "&nbsp"%>
+              </td>
+            </tr>
+          </table>
+      </div>

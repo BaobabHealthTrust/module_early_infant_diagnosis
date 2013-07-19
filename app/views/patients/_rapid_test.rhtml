@@ -1,81 +1,85 @@
-<div width="100%" style="width:100%; margin-left: 12%; margin-top: 2%;">
-  <table id="r_a_t" width="100%" style="width: 100%; text-align: center; display: block; margin: 5px; padding: 4px; " cellspacing="0" cellpadding="5">
-    <tr>
-      <td rowspan="2" style="padding-right: 70px;">
-        &nbsp;
-      </td>
-      <td style="font-size: 1.2em;" colspan="6">
-        Rapid Antibody Testing
-      </td>
-    </tr>
-    <tr>
-      <td align="center" style="width: 30%">
-        Sample Date
-      </td>
-      <td align="center" style="width: 20%">
-        Age
-      </td>
-      <td align="center" style="width: 35%">
-        HTC Serial No.
-      </td>
-      <td align="center" colspan="3" style="width: 35%">
-        Result
-      </td>
-    </tr>
-    <tr>
-      <td>
-        Enrolme<br />nt
-      </td>
-    
-      <td style="border-left: 2px solid #000; border-top: 2px solid #000;">
-        &nbsp;<%= @rad_test[1]["RAPID ANTIBODY TESTING SAMPLE DATE"] rescue "&nbsp"%>
-      </td>
-      <td style="border-left: 1px solid #000; border-top: 2px solid #000;">
-        &nbsp;<%= (@rad_test[1]["RAPID ANTIBODY TESTING AGE"].blank? rescue false) ? "&nbsp;" : (@rad_test[1]["RAPID ANTIBODY TESTING AGE"].to_i.to_s rescue "") %>
-      </td>
-      <td style="border-left: 1px solid #000; border-top: 2px solid #000;">
-        &nbsp;<%= @rad_test[1]["RAPID ANTIBODY TESTING HTC SERIAL NO"] rescue "&nbsp"%>
-      </td>
-      <td colspan="3" style="border-left: 1px solid #000; border-right: 2px solid #000;  border-top: 2px solid #000;">
-        &nbsp;<%= @rad_test[1]["RAPID ANTIBODY TESTING RESULT"] rescue ""%>
-      </td>
+<%if params[:page]%>
+  <div width="100%" style="width:88%; margin-left: -20px; margin-top: 2%;">
+  <%else%>
+    <div width="100%" style="width:110%; margin-left: -20px; margin-top: 2%;">
+    <%end%>
+    <table id="r_a_t" width="100%" style="width: 100%; text-align: center; display: block; margin: 5px; padding: 4px; " cellspacing="0" cellpadding="5">
+      <tr>
+        <td rowspan="2" style="padding-right: 90px;">
+          &nbsp;
+        </td>
+        <td style="font-size: 1.2em;" colspan="6">
+          Rapid Antibody Testing
+        </td>
+      </tr>
+      <tr>
+        <td align="center" style="width: 17%">
+          Sample Date
+        </td>
+        <td align="center" style="width: 17%">
+          Age
+        </td>
+        <td align="center" style="width: 25%">
+          HTC Serial No.
+        </td>
+        <td align="center" colspan="3" style="width: 25%">
+          Result
+        </td>
+      </tr>
+      <tr>
+        <td>
+          Enrolme<br />nt
+        </td>
 
-    </tr>
-    <tr>
-      <td style="width: 20%">
-        From 12<br />months
-      </td>
-      <td style="border-left: 2px solid #000; border-top: 1px solid #000;">
-        &nbsp;<%= @rad_test[2]["RAPID ANTIBODY TESTING SAMPLE DATE"] rescue "&nbsp"%>
-      </td>
-      <td style="border-left: 1px solid #000; border-top: 1px solid #000;">
-        &nbsp;<%= (@rad_test[2]["RAPID ANTIBODY TESTING AGE"].blank? rescue false)? "&nbsp;" : (@rad_test[2]["RAPID ANTIBODY TESTING AGE"].to_i.to_s rescue "&nbsp") %>
-      </td>
-      <td style="border-left: 1px solid #000; border-top: 1px solid #000;">
-        &nbsp;<%= @rad_test[2]["RAPID ANTIBODY TESTING HTC SERIAL NO"]  rescue "&nbsp"%>
-      </td>
-      <td colspan="3" style="border-left: 1px solid #000; border-right: 2px solid #000; border-top: 1px solid #000;">
-        &nbsp;<%= @rad_test[2]["RAPID ANTIBODY TESTING RESULT"] rescue "&nbsp"%>
-      </td>
+        <td style="border-left: 2px solid #000; border-top: 2px solid #000;">
+          &nbsp;<%= @rad_test[1]["RAPID ANTIBODY TESTING SAMPLE DATE"] rescue "&nbsp"%>
+        </td>
+        <td style="border-left: 1px solid #000; border-top: 2px solid #000;">
+          &nbsp;<%= (@rad_test[1]["RAPID ANTIBODY TESTING AGE"].blank? rescue false) ? "&nbsp;" : (@rad_test[1]["RAPID ANTIBODY TESTING AGE"].to_i.to_s rescue "") %>
+        </td>
+        <td style="border-left: 1px solid #000; border-top: 2px solid #000;">
+          &nbsp;<%= @rad_test[1]["RAPID ANTIBODY TESTING HTC SERIAL NO"] rescue "&nbsp"%>
+        </td>
+        <td colspan="3" style="border-left: 1px solid #000; border-right: 2px solid #000;  border-top: 2px solid #000;">
+          &nbsp;<%= @rad_test[1]["RAPID ANTIBODY TESTING RESULT"] rescue ""%>
+        </td>
 
-    </tr>
-    <tr>
-      <td>
-        From 24<br />months
-      </td>
-      <td style="border-left: 2px solid #000; border-top: 1px solid #000; border-bottom: 2px solid #000;">
-        &nbsp;<%= @rad_test[3]["RAPID ANTIBODY TESTING SAMPLE DATE"] rescue "&nbsp"%>
-      </td>
-      <td style="border-left: 1px solid #000; border-top: 1px solid #000; border-bottom: 2px solid #000;">
-        &nbsp;<%= (@rad_test[3]["RAPID ANTIBODY TESTING AGE"].blank? rescue false)? "&nbsp;" : (@rad_test[3]["RAPID ANTIBODY TESTING AGE"].to_i.to_s rescue "&nbsp") %>
-      </td>
-      <td style="border-left: 1px solid #000; border-top: 1px solid #000; border-bottom: 2px solid #000;">
-        &nbsp;<%= @rad_test[3]["RAPID ANTIBODY TESTING HTC SERIAL NO"] rescue "&nbsp"%>
-      </td>
-      <td colspan="3" style="border-left: 1px solid #000; border-right: 2px solid #000; border-top: 1px solid #000; border-bottom: 2px solid #000;">
-        &nbsp;<%= @rad_test[3]["RAPID ANTIBODY TESTING RESULT"] rescue "&nbsp"%>
-      </td>
+      </tr>
+      <tr>
+        <td>
+          From 12<br />months
+        </td>
+        <td style="border-left: 2px solid #000; border-top: 1px solid #000;">
+          &nbsp;<%= @rad_test[2]["RAPID ANTIBODY TESTING SAMPLE DATE"] rescue "&nbsp"%>
+        </td>
+        <td style="border-left: 1px solid #000; border-top: 1px solid #000;">
+          &nbsp;<%= (@rad_test[2]["RAPID ANTIBODY TESTING AGE"].blank? rescue false)? "&nbsp;" : (@rad_test[2]["RAPID ANTIBODY TESTING AGE"].to_i.to_s rescue "&nbsp") %>
+        </td>
+        <td style="border-left: 1px solid #000; border-top: 1px solid #000;">
+          &nbsp;<%= @rad_test[2]["RAPID ANTIBODY TESTING HTC SERIAL NO"]  rescue "&nbsp"%>
+        </td>
+        <td colspan="3" style="border-left: 1px solid #000; border-right: 2px solid #000; border-top: 1px solid #000;">
+          &nbsp;<%= @rad_test[2]["RAPID ANTIBODY TESTING RESULT"] rescue "&nbsp"%>
+        </td>
 
-    </tr>
-  </table>
-</div>
+      </tr>
+      <tr>
+        <td>
+          From 24<br />months
+        </td>
+        <td style="border-left: 2px solid #000; border-top: 1px solid #000; border-bottom: 2px solid #000;">
+          &nbsp;<%= @rad_test[3]["RAPID ANTIBODY TESTING SAMPLE DATE"] rescue "&nbsp"%>
+        </td>
+        <td style="border-left: 1px solid #000; border-top: 1px solid #000; border-bottom: 2px solid #000;">
+          &nbsp;<%= (@rad_test[3]["RAPID ANTIBODY TESTING AGE"].blank? rescue false)? "&nbsp;" : (@rad_test[3]["RAPID ANTIBODY TESTING AGE"].to_i.to_s rescue "&nbsp") %>
+        </td>
+        <td style="border-left: 1px solid #000; border-top: 1px solid #000; border-bottom: 2px solid #000;">
+          &nbsp;<%= @rad_test[3]["RAPID ANTIBODY TESTING HTC SERIAL NO"] rescue "&nbsp"%>
+        </td>
+        <td colspan="3" style="border-left: 1px solid #000; border-right: 2px solid #000; border-top: 1px solid #000; border-bottom: 2px solid #000;">
+          &nbsp;<%= @rad_test[3]["RAPID ANTIBODY TESTING RESULT"] rescue "&nbsp"%>
+        </td>
+
+      </tr>
+    </table>
+  </div>

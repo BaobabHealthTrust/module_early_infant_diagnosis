@@ -317,5 +317,49 @@ class Patient < ActiveRecord::Base
     Observation.find(:first, :order => ["obs_datetime DESC"],
       :conditions => ["person_id = ? AND concept_id =  ?", self.patient_id, ConceptName.find_by_name("BIRTH WEIGHT").concept_id]).answer_string.strip rescue nil
   end
+  
+  def guardian
+    guardian_type = RelationshipType.find_by_a_is_to_b_and_b_is_to_a("Patient", "Guardian").relationship_type_id rescue nil
+    return "" if guardian_type.blank?
+    person_id = Relationship.find(:first,:order => "date_created DESC",
+      :conditions =>["person_b = ? and relationship = ?", self.patient_id, guardian_type]).person_a rescue nil
+    guardian_name = Patient.find(person_id).name rescue ""
+    guardian_name
+  end
+
+  def transfer_in_date    
+    self.program_encounters.find(:first, 
+      :select => ["date_time"],
+      :order => ["date_time ASC"],
+      :conditions => ["patient_id = ? AND program_id = ?",
+        self.patient_id, Program.find_by_name("EARLY INFANT DIAGNOSIS PROGRAM").id]
+    ).date_time.strftime("%d/%b/%Y") rescue nil
+  end
+
+  def mother
+    type = RelationshipType.find_by_a_is_to_b_and_b_is_to_a("Parent", "Child").relationship_type_id rescue nil
+    return "" if type.blank?
+    person_id = Relationship.find(:first,:order => "date_created DESC",
+      :conditions =>["person_b = ? and relationship = ?", self.patient_id, type]).person_a rescue nil
+    p = Patient.find(person_id) rescue nil
+    p
+  end
+
+  def agreesFP
+    encs= self.encounters.find(:all, :conditions => ["encounter_type = ?",  EncounterType.find_by_name("EID VISIT").id],
+      :order => ["encounter_datetime DESC"]).collect{|enc| enc.encounter_id} rescue []
+    @agrees = "N"
+
+    ProgramEncounterDetail.find(:all, :joins => [:program_encounter],
+      :conditions => ["program_encounter.program_id = ? AND program_encounter.patient_id = ? AND encounter_id IN (?)",
+        Program.find_by_name("EARLY INFANT DIAGNOSIS PROGRAM").program_id, 
+        self.patient_id, encs]).collect{|enc| enc.encounter}.each{ |encounta|
+      
+      if encounta.observations.collect{|ob| ob.answer_string.upcase.strip}.include?("CONTINUE FOLLOW-UP")
+        @agrees = "Y"
+      end
+    } 
+    @agrees
+  end
 
 end
