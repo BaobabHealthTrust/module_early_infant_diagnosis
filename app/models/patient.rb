@@ -197,6 +197,7 @@ class Patient < ActiveRecord::Base
         name =  ConceptName.find_by_concept_id(ob.concept_id).name rescue nil
         next if name.blank?
         ans = ob.answer_string.strip rescue nil
+        ans = "Negative" rescue nil if ((ob.answer_string.strip.present? && ob.answer_string.strip == "-") rescue false)
         next if ans.blank?
         obs[name.upcase] = ans
       }

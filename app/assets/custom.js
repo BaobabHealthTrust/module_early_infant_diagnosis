@@ -5,6 +5,21 @@
 
 var checkStatus = false;
 
+function dateLimit(str){
+
+    try{ 
+        var id = str.split("|")[0];
+        var limit = str.split("|")[1].trim();
+        if (limit.toLowerCase().trim() == "unknown"){
+            
+        }else{           
+            $(id).setAttribute("min", limit);
+        }
+    }catch(ex){
+        
+    }
+}
+
 function checkTimeForStoppingBreastFeeding(){
     if(__$("touchscreenInput" + tstCurrentPage).value.trim().toLowerCase() == "Breastfeeding stopped over 6 weeks ago".trim().toLowerCase()){
         showMessage("Confirm HIV status!");
@@ -19,17 +34,16 @@ function checkTimeForStoppingBreastFeeding(){
 }
 
 function checkConfirmationStatus(status){
-    
-    if(__$("touchscreenInput" + tstCurrentPage).value.trim().toLowerCase() == "hiv infected" || __$("touchscreenInput" + tstCurrentPage).value.trim().toLowerCase() == "presumed severe hiv disease"){
-        showMessage("START ART!");
+    if(__$("touchscreenInput" + tstCurrentPage).value.trim().toLowerCase() == status.trim().toLowerCase()){
+        showCategory("START ART!");
 
         return;
     }
     setTimeout("checkConfirmationStatus()", 100)
 }
 
-function setHIVStatusCheck(id){
-    if(__$(id).value.trim().toLowerCase() == "positive"){
+function setHIVStatusCheck(){
+    if(__$("1.1.4").value.trim().toLowerCase() == "positive"){
         checkStatus = true;
 
         checkHIVStatus();
@@ -38,7 +52,7 @@ function setHIVStatusCheck(id){
 
 function checkHIVStatus(){
     if(__$("touchscreenInput" + tstCurrentPage).value.trim().toLowerCase() == "confirmed"){
-        showMessage("START ART!");
+        showMessage("START ART");
         checkStatus = false;
     }
 

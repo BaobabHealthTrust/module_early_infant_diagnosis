@@ -69,11 +69,12 @@ class PatientsController < ApplicationController
       @links[task.titleize] = "/#{ctrller}/#{task.gsub(/\s/, "_")}?patient_id=#{
       @patient.id}&user_id=#{params[:user_id]}" + (task.downcase == "update baby outcome" ?
           "&baby=1&baby_total=#{(@patient.current_babies.length rescue 0)}" : "")
-      
     }
 
     @links["Give Drugs"] = "/encounters/give_drugs?patient_id=#{@patient.id}&user_id=#{@user.id}"
-    
+ 
+    @first_level_order = ["Enrollment Status", "Pmtct History", "Rapid Antibody Test", "Dna Pcr Test", "Eid Visit", "Notes", "Give Drugs"]
+
     @project = get_global_property_value("project.name") rescue "Unknown"
 
     @demographics_url = get_global_property_value("patient.registration.url") rescue nil
@@ -81,6 +82,7 @@ class PatientsController < ApplicationController
     if !@demographics_url.nil?
       @demographics_url = @demographics_url + "/demographics/#{@patient.id}?user_id=#{@user.id}&ext=true"
     end
+    
     @demographics_url = "http://" + @demographics_url if (!@demographics_url.match(/http:/) rescue false)
     @task.next_task
 
@@ -243,7 +245,7 @@ class PatientsController < ApplicationController
     @enrolment_details = @patient.mastercard("HIV STATUS AT ENROLLMENT") rescue {}
     @pmtct_history = @patient.mastercard("PMTCT HISTORY") rescue {}
     @rad_test = @patient.mastercard("RAPID ANTIBODY TEST") rescue {}
-    @dna_test = @patient.mastercard("DNA-PCR TEST") #rescue {}
+    @dna_test = @patient.mastercard("DNA-PCR TEST") rescue {}
     @notes = @patient.mastercard("NOTES") rescue {}
     @visits = @patient.mastercard("EID VISIT") rescue {}
     @guardian = @patient.guardian rescue ""

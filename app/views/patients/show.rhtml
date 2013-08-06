@@ -185,9 +185,10 @@ next_task = @task.encounter_type.gsub('_',' ') rescue nil
       </select>
       <select id="links">
 
-        <% @links.sort.each do |encounter, link| %>
+        <%  @first_level_order.each do |encounter|
 
-          <% unless @links[encounter].class.to_s.upcase == "HASH" %>
+          link = @links[encounter]
+          unless @links[encounter].class.to_s.upcase == "HASH" %>
 
             <optgroup value='<%= link %>' label="<%= (!@task.labels[encounter.downcase].nil? ?
                           @task.labels[encounter.downcase] : encounter) %>" >

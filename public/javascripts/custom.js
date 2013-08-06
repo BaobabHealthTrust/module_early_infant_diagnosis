@@ -5,6 +5,22 @@
 
 var checkStatus = false;
 
+function dateLimit(str){
+
+    try{ 
+        var id = str.split("|")[0];
+        var limit = str.split("|")[1];
+        if (limit.toLowerCase().trim() == "unknown"){
+            
+        }else{
+           
+            $(id).setAttribute("absoluteMin", limit);
+        }
+    }catch(ex){
+        
+    }
+}
+
 function checkTimeForStoppingBreastFeeding(){
     if(__$("touchscreenInput" + tstCurrentPage).value.trim().toLowerCase() == "Breastfeeding stopped over 6 weeks ago".trim().toLowerCase()){
         showMessage("Confirm HIV status!");

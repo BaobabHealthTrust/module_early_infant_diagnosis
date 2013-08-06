@@ -3,7 +3,7 @@ class TaskFlow
 
   attr_accessor :patient, :person, :user, :current_date, :tasks, :current_user_activities,
     :encounter_type, :url, :task_scopes, :task_list, :labels
-    
+
   def initialize(user_id, patient_id, session_date = Date.today)
     self.patient = Patient.find(patient_id)
     self.user = User.find(user_id)
@@ -19,7 +19,7 @@ class TaskFlow
       concepts = {}
 
       YAML.load_file("#{Rails.root}/config/protocol_task_flow.yml")["#{Rails.env
-        }"]["concept"].strip.split(",").map{|e| 
+        }"]["concept"].strip.split(",").map{|e|
         s = e.split("|")
         concepts[s[0].downcase] = s[1]
       } rescue {}
@@ -27,7 +27,7 @@ class TaskFlow
       except_concepts = {}
 
       YAML.load_file("#{Rails.root}/config/protocol_task_flow.yml")["#{Rails.env
-        }"]["except_concept"].strip.split(",").map{|e| 
+        }"]["except_concept"].strip.split(",").map{|e|
         s = e.split("|")
         except_concepts[s[0].downcase] = s[1]
       } rescue {}
@@ -35,7 +35,7 @@ class TaskFlow
       drug_concepts = {}
 
       YAML.load_file("#{Rails.root}/config/protocol_task_flow.yml")["#{Rails.env
-        }"]["drug_concept"].strip.split(",").map{|e| 
+        }"]["drug_concept"].strip.split(",").map{|e|
         s = e.split("|")
         drug_concepts[s[0].downcase] = s[1]
       } rescue {}
@@ -43,7 +43,7 @@ class TaskFlow
       special_fields = {}
 
       YAML.load_file("#{Rails.root}/config/protocol_task_flow.yml")["#{Rails.env
-        }"]["special_fields"].strip.split(",").map{|e| 
+        }"]["special_fields"].strip.split(",").map{|e|
         s = e.split("|")
         special_fields[s[0].downcase] = s[1]
       } rescue {}
@@ -71,14 +71,14 @@ class TaskFlow
           :special_field => (special_fields[item[0].downcase] rescue nil)
         }
       }
-      
+
     end
 
     project = get_global_property_value("project.name").downcase.gsub(/\s/, ".") rescue nil
 
     self.current_user_activities = UserProperty.find_by_user_id_and_property(user_id,
       "#{project}.activities").property_value.split(",").collect{|a| a.downcase} rescue {}
-      
+
   end
 
   def get_global_property_value(param)
@@ -87,7 +87,7 @@ class TaskFlow
   end
 
   def next_task
-    
+
     # scope: [ TODAY | EXISTS | CURRENT PROGRAM | RECENT ]
 
     normal_flow = self.tasks
@@ -113,52 +113,53 @@ class TaskFlow
     end
 
     @label_encounter_map = {}
-    
+
     map.each{ |tie|
       label = tie.split("|")[0]
       encounter = tie.split("|")[1] rescue nil
 
       @label_encounter_map[label] = encounter if !label.blank? && !encounter.blank?
-     
+
     }
-    
+
     @patient = self.patient
 
-    # tasks[task] = [weight, path, encounter_type, concept_id, exception_concept_id, 
+    # tasks[task] = [weight, path, encounter_type, concept_id, exception_concept_id,
     #     scope, drug_concept_id, special_field_or_encounter_present, next_if_NOT_user_does_not_have_this_activity]
 
     tasks = {}
 
     normal_flow.each{|tsk|
-      
+
       ctrller = "protocol_patients"
-            
+
       if File.exists?("#{Rails.root}/config/protocol_task_flow.yml")
-        
+
         ctrller = YAML.load_file("#{Rails.root}/config/protocol_task_flow.yml")["#{tsk.downcase.gsub(/\s/, "_")}"] rescue ""
-          
+
       end
-      
+
       tasks[tsk.downcase] = [flow[tsk.downcase], "/#{ctrller}/#{tsk.downcase.gsub(/\s/, "_")
-          }?patient_id=#{self.patient.id}&user_id=#{self.user.id}", "#{tsk.upcase}", 
+          }?patient_id=#{self.patient.id}&user_id=#{self.user.id}", "#{tsk.upcase}",
         "#{self.task_scopes[tsk.downcase][:concept]}", "#{self.task_scopes[tsk.downcase][:except_concept]}",
         "#{self.task_scopes[tsk.downcase][:scope]}", "#{self.task_scopes[tsk.downcase][:drug_concept]}",
-        "#{self.task_scopes[tsk.downcase][:special_field]}", 
+        "#{self.task_scopes[tsk.downcase][:special_field]}",
         (self.current_user_activities.include?(tsk.downcase))
       ]
 
     }
 
     sorted_tasks = {}
+    first_level_order = ["Enrollment Status", "Pmtct History", "Rapid Antibody Test", "Dna Pcr Test", "Eid Visit"]
 
     tasks.each{|t,v|
-      sorted_tasks[v[0]] = t
+      next if first_level_order[v[0] - 1].blank? || !normal_flow.include?(first_level_order[v[0] - 1].downcase)
+      sorted_tasks[v[0]] = first_level_order[v[0] - 1].downcase
     }
 
+    sorted_tasks = sorted_tasks.sort
     self.task_list = tasks
 
-    sorted_tasks = sorted_tasks.sort
-    
     sorted_tasks.each do |pos, tsk|
 
       @encounter_name = @label_encounter_map[tasks[tsk][2]]rescue nil
@@ -167,10 +168,11 @@ class TaskFlow
         normal_flow -= [tsk.downcase]
         next
       end
-      
+
       # next if tasks[tsk][8] == false
       # If user does not have this activity, goto the patient dashboard
-      if tasks[tsk][8] == false        
+      
+      if tasks[tsk][8] == false
         self.encounter_type = tsk
         self.url = "/patients/show/#{self.patient.id}?user_id=#{self.user.id}"
         return self
@@ -178,16 +180,16 @@ class TaskFlow
 
       case tasks[tsk][5]
       when "TODAY"
-       
+
         checked_already = false
 
         if !tasks[tsk][3].blank? && checked_already == false    # Check for presence of specific concept_id
           available = Encounter.find(:all, :joins => [:observations], :conditions =>
               ["patient_id = ? AND encounter_type = ? AND obs.concept_id = ? AND DATE(encounter_datetime) = ?",
               self.patient.id, EncounterType.find_by_name(@encounter_name).id , ConceptName.find_by_name(tasks[tsk][3]).concept_id, self.current_date.to_date]) rescue []
-              
+
           checked_already = tasks[tsk][7]
-          
+
           if available.length > 0
             if normal_flow.include?(tsk.downcase)
               normal_flow -= [tsk.downcase]
@@ -228,7 +230,7 @@ class TaskFlow
           available = Encounter.find(:all, :joins => [:observations], :conditions =>
               ["patient_id = ? AND encounter_type = ? AND DATE(encounter_datetime) = ?",
               self.patient.id, EncounterType.find_by_name(@encounter_name).id, self.current_date.to_date]) rescue []
-           
+
           if available.length > 0
             if normal_flow.include?(tsk.downcase)
               normal_flow -= [tsk.downcase]
@@ -236,7 +238,7 @@ class TaskFlow
             end
           end
         end
-    
+
         self.encounter_type = tsk
 
         if normal_flow.include?(tsk.downcase)
@@ -257,8 +259,8 @@ class TaskFlow
               (self.current_date.to_date - 6.month), (self.current_date.to_date + 6.month)]) rescue []
 
           checked_already = tasks[tsk][7]
-          
-          if available.length > 0           
+
+          if available.length > 0
             if normal_flow.include?(tsk.downcase)
               normal_flow -= [tsk.downcase]
               next
