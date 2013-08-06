@@ -246,6 +246,7 @@ class Patient < ActiveRecord::Base
       if result[field].blank? || (test_date > result[field]["RAPID ANTIBODY TESTING SAMPLE DATE"].to_date rescue true)
         tests[date].keys.each{|ky|
           result[field][ky] = tests[date][ky]
+          result[field]["RAPID ANTIBODY TESTING SAMPLE AGE"] = self.age_in_months((result[field]["RAPID ANTIBODY TESTING SAMPLE DATE"].to_date rescue Date.today))
         }
       end
       
@@ -256,7 +257,7 @@ class Patient < ActiveRecord::Base
   end
 
   def dna_test(tests)
-    
+
     result = {}
     #reorder tests inorder of sample date
     (tests.keys.sort rescue []).each{|d|
@@ -279,8 +280,9 @@ class Patient < ActiveRecord::Base
       
       if result[field].blank? || (test_date > result[field]["DNA-PCR TESTING SAMPLE DATE"].to_time rescue true)
         tests[date].keys.each{|ky|
-          result[field][ky] = tests[date][ky]
+          result[field][ky] = tests[date][ky]         
         }
+        result[field]["DNA-PCR TESTING RESULT GIVEN AGE"] = self.age_in_months((tests[date]["DNA-PCR TESTING RESULT GIVEN DATE"].to_date rescue Date.today))
       end
 
       field = nil

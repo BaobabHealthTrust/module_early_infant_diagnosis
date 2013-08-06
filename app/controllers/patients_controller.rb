@@ -72,6 +72,8 @@ class PatientsController < ApplicationController
       
     }
 
+    @links["Give Drugs"] = "/encounters/give_drugs?patient_id=#{@patient.id}&user_id=#{@user.id}"
+    
     @project = get_global_property_value("project.name") rescue "Unknown"
 
     @demographics_url = get_global_property_value("patient.registration.url") rescue nil
@@ -124,28 +126,29 @@ class PatientsController < ApplicationController
     @patient = Patient.find(params[:id] || params[:patient_id]) rescue nil
 
     ProgramEncounter.current_date = (session[:date_time] || Time.now)
-    
+
     @programs = @patient.program_encounters.current.collect{|p|
 
       [
         p.id,
         p.to_s,
         p.program_encounter_types.collect{|e|
+          next if e.encounter.blank?
           [
             e.encounter_id, e.encounter.type.name,
             e.encounter.encounter_datetime.strftime("%H:%M"),
             e.encounter.creator
           ]
-        },
+        }.uniq,
         p.date_time.strftime("%d-%b-%Y")
       ]
-    } if !@patient.nil?
+    } if !@patient.blank?
 
     # raise @programs.inspect
 
     render :layout => false
   end
-
+  
   def visit_history
     @patient = Patient.find(params[:id] || params[:patient_id]) rescue nil
 
@@ -159,8 +162,8 @@ class PatientsController < ApplicationController
             e.encounter_id, e.encounter.type.name,
             e.encounter.encounter_datetime.strftime("%H:%M"),
             e.encounter.creator
-          ]
-        },
+          ] rescue []
+        }.uniq,
         p.date_time.strftime("%d-%b-%Y")
       ]
     } if !@patient.nil?
@@ -215,10 +218,10 @@ class PatientsController < ApplicationController
   end
 
   def phone_numbers(patient)
-    @patient = patient
-    @phone_numbers = ((@patient.person.cell_phone_number.blank?? "" : @patient.person.cell_phone_number + "</br>") +
-        (@patient.person.home_phone_number.blank?? "" : @patient.person.home_phone_number + "</br>" ) +
-        (@patient.person.office_phone_number.blank?? "" : @patient.person.office_phone_number)) rescue ""
+   
+    @phone_numbers = ((patient.person.cell_phone_number.blank?? "" : patient.person.cell_phone_number + "</br>") +
+        (patient.person.home_phone_number.blank?? "" : patient.person.home_phone_number + "</br>" ) +
+        (patient.person.office_phone_number.blank?? "" : patient.person.office_phone_number)) rescue ""
     @phone_numbers = "None" if @phone_numbers.blank?
     @phone_numbers
   end
@@ -227,7 +230,11 @@ class PatientsController < ApplicationController
     
     @type = "pink"
     @patient = Patient.find(params[:patient_id])
-    @guardian = @patient.guardian rescue ""
+    
+    @name = @patient.name rescue ""
+    @birthdate = @patient.person.birthdate
+    @sex = @patient.gender rescue ""
+    
     @arv_number = @patient.arv_number rescue ""
     @transfer_in_date = @patient.transfer_in_date rescue ""
     @agreesFP = @patient.agreesFP rescue ""
@@ -236,10 +243,11 @@ class PatientsController < ApplicationController
     @enrolment_details = @patient.mastercard("HIV STATUS AT ENROLLMENT") rescue {}
     @pmtct_history = @patient.mastercard("PMTCT HISTORY") rescue {}
     @rad_test = @patient.mastercard("RAPID ANTIBODY TEST") rescue {}
-    @dna_test = @patient.mastercard("DNA-PCR TEST") rescue {}
+    @dna_test = @patient.mastercard("DNA-PCR TEST") #rescue {}
     @notes = @patient.mastercard("NOTES") rescue {}
     @visits = @patient.mastercard("EID VISIT") rescue {}
-    @guardian = @patient.guardian rescue ""      
+    @guardian = @patient.guardian rescue ""
+    
     @phone_numbers = phone_numbers(@patient.mother) rescue "None" #pass guardian in parameter
     @phone_numbers = "None" if @phone_numbers.blank?
    

@@ -1,0 +1,30 @@
+<link href='/touchscreentoolkit/lib/stylesheets/dispense.css' type='text/css' rel='stylesheet' />
+
+<link href='/touchscreentoolkit/lib/stylesheets/drug-style.css' type='text/css' rel='stylesheet' />
+
+<script type='text/javascript' src='/touchscreentoolkit/lib/javascripts/dispense.js' ></script>
+
+<script type='text/javascript' src='/touchscreentoolkit/lib/javascripts/generics.js' ></script>
+
+<script type='text/javascript' language='javascript'>
+<!--
+	tt_cancel_show = '/patients/show/<%= @patient.id %>?user_id=<%= session[:user_id] %>';
+	tt_cancel_destination = '/patients/show/<%= @patient.id %>?user_id=<%= session[:user_id] %>';
+	</script>
+
+<form method='post' action='/encounters/create'>
+	<input type='hidden' name='program' value='EARLY INFANT DIAGNOSIS PROGRAM' />
+	<input type='hidden' name='encounter_type' value='Dispensing ' />
+	<input type='hidden' name='patient_id' value='<%= @patient.id %>' />
+	<input type='hidden' name='user_id' value='<%= session[:user_id] %>' />
+	<table>
+		<tr>
+			<td>
+				Treatment 
+			</td>
+			<td>
+<input type='text' id='1.1.1'  name='concept[Treatment ]' helpText='Treatment '  tt_onLoad='generateGenerics(<%= @patient.id %>); showCategory("Give Drugs"); __$("category").style.fontSize = "30px";  tt_onUnLoad'  optional='true'  pos='0'  tt_pageStyleClass='NoControls' />
+			</td>
+		</tr>
+	</table>
+</form>

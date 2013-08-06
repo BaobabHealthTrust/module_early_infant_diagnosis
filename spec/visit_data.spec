@@ -4,7 +4,7 @@ Q.1.1. Visit date [pos: 0, field_type: date, tt_onLoad: showCategory("EID Visit"
 
 Q.1.3. Height (cm) [helpText: Baby height (cm), pos: 2, min: 15, max: 120, tt_onLoad: showCategory("EID Visit"), absoluteMin: 15, absoluteMax: 160,  field_type: number, tt_pageStyleClass: NumbersOnlyWithUnknown]
 
-Q.1.4. Weight (grams) [helptext: Baby weight (grams), concept: weight, pos: 3, min: 2500, absoluteMin: 100, max: 39999, absoluteMax: 80000, field_type: number, tt_pageStyleClass: NumbersOnlyWithUnknown]
+Q.1.4. Weight (grams) [helptext: Baby weight (grams), concept: weight, pos: 3, min: 2500, absoluteMin: 100, max: 10000, absoluteMax: 30000, field_type: number, tt_pageStyleClass: NumbersOnlyWithUnknown]
 
 Q.1.5. MUAC [helpText: Mid Upper Arm Circumference (cm), pos: 4, field_type: number, absoluteMax: 200, absoluteMin: 5, tt_pageStyleClass: NumbersOnlyWithUnknown, tt_onLoad: checkWasting()]
 
@@ -57,8 +57,6 @@ Q.1.12.1. Allergic to sulphur [helpText: Is Child Allergic to Sulphur?, pos: 17,
 O.1.12.1.1. Yes
 O.1.12.1.2. No
 0.1.12.1.3. Unknown
-
-Q.1.12.2. Number of CPT tablets dispensed [ pos: 18, condition: (__$("1.12.1").value.toUpperCase().trim() == "NO") || (<%= @patient.allergic_to_sulphur.downcase == "yes"%>), field_type: number, tt_pageStyleClass: NumbersOnlyWithUnknown]
 
 Q.1.13. Outcome [tt_onLoad: __$("category").style.display = "none", pos: 19]
 O.1.13.1. Continue follow-up
