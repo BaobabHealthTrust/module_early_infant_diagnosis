@@ -69,6 +69,13 @@ next_task = @task.encounter_type.gsub('_',' ') rescue nil
     }
 
     __$("nextTask").innerHTML = "<b>Next Task:</b><br /><i><%= next_task.titleize %></i>";
+
+<% if ((@patient.is_exposed?).present?) && (@patient.age <= 6 rescue true)%>
+      var exp = document.createElement("div");
+      exp.id = "exposure";
+      __$("mainContainer").appendChild(exp);
+      __$("exposure").innerHTML = "<i>Exp.</i>";
+<%end%>
   }
   
   setTimeout("setFlags()", 100);
@@ -158,6 +165,15 @@ next_task = @task.encounter_type.gsub('_',' ') rescue nil
     margin-left: auto;
     margin-right: auto;
   }
+
+  #exposure{
+    position: absolute;
+    z-index: 100;
+    top: 38%;
+    color: #CC4400;
+    right: 4%;
+    float: right;
+  }
 </style>
 
 <div id='contented'>
@@ -183,38 +199,40 @@ next_task = @task.encounter_type.gsub('_',' ') rescue nil
         <option value='/patients/current_visit/<%= @patient.id %>?user_id=<%= @user.id %>'>Current Visit</option>
         <option value='/patients/visit_history/<%= @patient.id %>?user_id=<%= @user.id %>'>Visit History</option>
       </select>
-      <select id="links">
 
-        <%  @first_level_order.each do |encounter|
+      <% if (@patient.age <= 6 rescue true)%>
+        <select id="links">
 
-          link = @links[encounter]
-          unless @links[encounter].class.to_s.upcase == "HASH" %>
+          <%  @first_level_order.each do |encounter|
 
-            <optgroup value='<%= link %>' label="<%= (!@task.labels[encounter.downcase].nil? ?
-                          @task.labels[encounter.downcase] : encounter) %>" >
-            </optgroup>
+            link = @links[encounter]
+            unless @links[encounter].class.to_s.upcase == "HASH" %>
 
-          <% else %>
+              <optgroup value='<%= link %>' label="<%= (!@task.labels[encounter.downcase].nil? ?
+                            @task.labels[encounter.downcase] : encounter) %>" >
+              </optgroup>
 
-            <optgroup label="<%= (!@task.labels[encounter.downcase].nil? ?
-                          @task.labels[encounter.downcase] : encounter) %>" >
+            <% else %>
 
-              <% link.each do |label, path| %>
+              <optgroup label="<%= (!@task.labels[encounter.downcase].nil? ?
+                            @task.labels[encounter.downcase] : encounter) %>" >
 
-                <option value="<%= path %>">
-                  <%= label %>
-                </option>
+                <% link.each do |label, path| %>
 
-              <% end %>
+                  <option value="<%= path %>">
+                    <%= label %>
+                  </option>
 
-            </optgroup>
+                <% end %>
+
+              </optgroup>
+
+            <% end %>
 
           <% end %>
 
-        <% end %>
-
-      </select>
-
+        </select>
+      <%end%>
 
       <select id="navigation_links">
 

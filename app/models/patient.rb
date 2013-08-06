@@ -365,4 +365,63 @@ class Patient < ActiveRecord::Base
     @agrees
   end
 
+  def hiv_status
+
+    @hiv_concepts = ["Previous HIV Test Status From Before Current Facility Visit", "HIV STATUS", "DNA-PCR Testing Result", "Rapid Antibody Testing Result", "Alive On ART"].collect{
+      |concept| ConceptName.find_by_name(concept).concept_id rescue nil}.compact rescue []
+
+    status = self.encounters.collect { |e|
+      e.observations.find(:last, :conditions => ["concept_id IN (?)",
+          @hiv_concepts]).answer_string rescue nil
+    }.compact.flatten.last.strip rescue ""
+
+    status = "unknown" if status.blank?
+    status = "positive" if ["reactive"].include?(status.downcase)
+    status = "negative" if ["non reactive", "non-reactive less than 3 months"].include?(status.downcase)
+    status
+  end
+
+  def mother
+    @mother_type = RelationshipType.find_by_a_is_to_b_and_b_is_to_a("Parent", "Child").relationship_type_id
+    rels = Relationship.find_all_by_person_b_and_relationship(self.patient_id, @mother_type) rescue nil
+    @mother = nil
+    rels.each{|r|
+      @mother = Patient.find(r.person_a) if Patient.find(r.person_a).gender.match(/f/i)
+    }
+    @mother
+  end
+
+  def is_exposed?
+    status = ""
+
+    status = "yes" if self.mother.hiv_status.strip == "positive"
+    concepts = ["MOTHER HIV STATUS"].collect{|name| ConceptName.find_by_name(name).concept_id rescue nil}
+    status = "yes" if ((["reactive", "positive", "yes"].include?(Observation.find(:last, :order => ["obs_datetime ASC"],
+            :conditions => ["person_id = ? AND concept_id IN (?)",
+              self.patient_id, concepts]).answer_string.downcase.sub("-", "negative"))) rescue false)
+    status
+  end
+
+  def low_birth_weight?
+    status = ""
+    concepts = ["BIRTH WEIGHT"].collect{|name| ConceptName.find_by_name(name).concept_id rescue nil}
+    ob = Observation.find(:last, :order => ["obs_datetime ASC"],
+      :conditions => ["person_id = ? AND concept_id IN (?)",
+        self.patient_id, concepts]).answer_string.strip rescue nil
+    status = "Yes" if ((ob.to_i > 1 && ob.to_i < 2500) rescue false)
+    status
+  end
+
+  def twin_outcome?
+    status = ""
+    @mother_type = RelationshipType.find_by_a_is_to_b_and_b_is_to_a("Parent", "Child").relationship_type_id
+    rels = Relationship.find_all_by_person_a_and_relationship(self.mother.patient_id, @mother_type) rescue nil
+    rels.each{|r|
+      status = "Yes" if ((((Person.find(r.person_b).birthdate - 1.months) < self.person.birthdate) ||
+            ((Person.find(r.person_b).birthdate + 1.months) > self.person.birthdate)) rescue false)
+    }
+
+    status
+  end
+
 end
