@@ -3,7 +3,7 @@
 
 <script type="text/javascript" language="javascript">
   <!--
-  tt_cancel_destination = "<%= @return_url %>"
+  tt_cancel_destination = "/patients/show?patient_id=<%= @patient.id %>&user_id=<%= session[:user]["user_id"] %>"
   var generics = <%= @generics.to_json rescue {} %>;
   var frequencies = <%= @frequencies.to_json rescue {} %>;
   var diagnosisList = <%= @diagnosis.to_json rescue {} %>;
