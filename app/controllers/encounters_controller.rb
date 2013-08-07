@@ -4,7 +4,9 @@ class EncountersController < ApplicationController
 
   def create
 
-    User.current = User.find(@user["user_id"]) rescue nil
+
+    User.current = User.find(session[:user]["user_id"])
+    redirect_to "/patients/show/#{params[:patient_id]}?user_id=#{User.current.user_id}" if params[:prescription].blank?
 
     Location.current = Location.find(params[:location_id] || session[:location_id]) rescue nil
 
@@ -527,7 +529,10 @@ class EncountersController < ApplicationController
   end
 
   def create_prescription
+
     User.current = User.find(session[:user]["user_id"])
+    redirect_to "/patients/show/#{params[:patient_id]}?user_id=#{User.current.user_id}" and return if params[:prescription].blank?
+
     if params[:prescription]
 
       params[:prescription].each do |prescription|
