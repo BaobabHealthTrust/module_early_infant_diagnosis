@@ -383,17 +383,38 @@ class EncountersController < ApplicationController
     render :text => [].to_json
   end
 
+
   def list_encounters
     result = []
 
     program = ProgramEncounter.find(params[:program_id]) rescue nil
 
+    @task = TaskFlow.new(params[:user_id], program.patient_id)
+
+    if File.exists?("#{Rails.root}/config/protocol_task_flow.yml")
+      map = YAML.load_file("#{Rails.root}/config/protocol_task_flow.yml")["#{Rails.env
+        }"]["label.encounter.map"].split(",") rescue []
+    end
+
+    @label_encounter_map = {}
+
+    map.each{ |tie|
+      label = tie.split("|")[0]
+      encounter = tie.split("|")[1] rescue nil
+
+      concept = @task.task_scopes[label.titleize.downcase.strip][:concept].upcase rescue ""
+      key  = encounter + "|" + concept
+      @label_encounter_map[key] = label if !label.blank? && !encounter.blank?
+    }
+
     unless program.nil?
       result = program.program_encounter_types.find(:all, :joins => [:encounter],
         :order => ["encounter_datetime DESC"]).collect{|e|
         next if e.encounter.blank?
+        labl = labell(e.encounter_id, @label_encounter_map).titleize rescue nil
+        labl = e.encounter.type.name.titleize if labl.blank?
         [
-          e.encounter_id, e.encounter.type.name.titleize,
+          e.encounter_id, labl,
           e.encounter.encounter_datetime.strftime("%H:%M"),
           e.encounter.creator,
           e.encounter.encounter_datetime.strftime("%d-%b-%Y")
@@ -404,6 +425,16 @@ class EncountersController < ApplicationController
     render :text => result.to_json
   end
 
+  def labell(encounter_id, hash)
+    encounter = Encounter.find(encounter_id)
+    concepts = encounter.observations.collect{|ob| ob.concept.name.name.downcase}
+    lbl = ""
+    hash.each{|val, label|
+      lbl = label if (concepts.include?(val.split("|")[1].downcase) rescue false)
+    }
+    lbl.gsub(/examination/i , "exam")
+  end
+  
   def static_locations
     search_string = (params[:search_string] || "").upcase
     extras = ["Health Facility", "Home", "TBA", "Other"]

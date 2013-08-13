@@ -234,21 +234,23 @@ next_task = @task.encounter_type.gsub('_',' ') rescue nil
         </select>
       <%end%>
 
-      <select id="navigation_links">
+      <% if (@patient.age <= 6 rescue true)%>
+        <select id="navigation_links">
 
-        <% if !@demographics_url.nil? %>
-          <option link="<%= @demographics_url %>" ttSize = "160px">
-            Demographics
+          <% if !@demographics_url.nil? %>
+            <option link="<%= @demographics_url %>" ttSize = "160px">
+              Demographics
+            </option>
+          <% end %>
+          <option link="/patients/mastercard?patient_id=<%= @patient.id %>&user_id=<%= @user.id %>" ttSize = "160px">
+            Mastercard
           </option>
-        <% end %>
-        <option link="/patients/mastercard?patient_id=<%= @patient.id %>&user_id=<%= @user.id %>" ttSize = "160px">
-          Mastercard
-        </option>
-        <% if @task.url != "/patients/show/#{@patient.id}?user_id=#{@user.id}" %>
-          <option link="<%= @task.url  %>" ttSize = "160px">Continue</option>
-        <% end %>
+          <% if @task.url != "/patients/show/#{@patient.id}?user_id=#{@user.id}" %>
+            <option link="<%= @task.url  %>" ttSize = "160px">Continue</option>
+          <% end %>
 
-      </select>
+        </select>
+      <%end%>
 
       <input type='submit' value='Finish' />
     </form>
