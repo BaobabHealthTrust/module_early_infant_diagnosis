@@ -1,8 +1,10 @@
 log/
 tmp/
+config/roles/
 nbproject/
 *.swap
-*.yml
+config/database.yml
+config/application.yml
 app/controllers/protocol_patients_controller.rb
 app/views/protocol_patients/
 analyze_protocol
