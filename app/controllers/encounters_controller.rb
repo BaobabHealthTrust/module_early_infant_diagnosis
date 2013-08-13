@@ -342,7 +342,7 @@ class EncountersController < ApplicationController
 
       redirect_to params[:next_url] and return if !params[:next_url].nil?
 
-      redirect_to @task.next_task.url and return
+      redirect_to @task.next_task.url and return rescue nil
 
     end
 

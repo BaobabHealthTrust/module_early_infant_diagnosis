@@ -37,25 +37,25 @@ class ApplicationController < ActionController::Base
 
   def check_user
 
-    if !params[:token].nil?
+    if !params[:token].blank?
       session[:token] = params[:token]
     end
 
-    if !params[:user_id].nil?
+    if !params[:user_id].blank?
       session[:user_id] = params[:user_id]
     end
 
-    if !params[:location_id].nil?
+    if !params[:location_id].blank?
       session[:location_id] = params[:location_id]
     end
 
     link = get_global_property_value("user.management.url").to_s rescue nil
 
-    if link.nil?
+    if link.blank?
       flash[:error] = "Missing configuration for <br/>user management connection!"
 
       redirect_to "/no_user" and return
-    end    
+    end
 
     # Track final destination
     file = "#{File.expand_path("#{Rails.root}/tmp", __FILE__)}/current.path.yml"
@@ -66,7 +66,7 @@ class ApplicationController < ActionController::Base
 
     f.close
 
-    if session[:token].nil?
+    if session[:token].blank?
       redirect_to "/user_login?internal=true" and return
     end
 

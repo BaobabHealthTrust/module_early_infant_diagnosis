@@ -21,7 +21,7 @@ class PatientsController < ApplicationController
     
     redirect_to "/encounters/no_user" and return if @user.nil?
 
-    redirect_to "/patients/birth_weight?user_id=#{params['user_id']}&patient_id=#{@patient.id}" and return if @patient.birthweight.blank? rescue nil
+    redirect_to "/patients/birth_weight?user_id=#{params['user_id']}&patient_id=#{@patient.id}" and return if (@patient.birthweight.blank? rescue false)
     #redirect_to "/patients/guardian?user_id=#{params['user_id']}&patient_id=#{@patient.id}" and return if (@patient.guardian.blank? rescue true)
     
     @task = TaskFlow.new(params[:user_id], @patient.id)

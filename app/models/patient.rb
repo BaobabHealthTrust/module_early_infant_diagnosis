@@ -394,7 +394,7 @@ class Patient < ActiveRecord::Base
   def is_exposed?
     status = ""
 
-    status = "yes" if self.mother.hiv_status.strip == "positive"
+    status = "yes" if self.mother.hiv_status.strip == "positive" rescue nil
     concepts = ["MOTHER HIV STATUS"].collect{|name| ConceptName.find_by_name(name).concept_id rescue nil}
     status = "yes" if ((["reactive", "positive", "yes"].include?(Observation.find(:last, :order => ["obs_datetime ASC"],
             :conditions => ["person_id = ? AND concept_id IN (?)",
