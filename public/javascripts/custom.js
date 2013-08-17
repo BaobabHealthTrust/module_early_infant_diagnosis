@@ -3,7 +3,8 @@
  *
  **/
 
-var checkStatus = false;
+var checkStatus = false
+var coStatus = ""
 
 function dateLimit(str){
 
@@ -35,11 +36,20 @@ function checkTimeForStoppingBreastFeeding(){
 }
 
 function checkConfirmationStatus(status){
-    if(__$("touchscreenInput" + tstCurrentPage).value.trim().toLowerCase() == status.trim().toLowerCase()){
-        showCategory("START ART!");
+    try{
+        if (status){
+            conStatus = status
+        }
+    }catch(dd){
 
-        return;
     }
+    try{
+        if(__$("touchscreenInput" + tstCurrentPage).value.trim().toLowerCase() == conStatus.trim().toLowerCase()){
+            showCategory("START ART!");
+
+            return;
+        }
+    }catch(c){}
     setTimeout("checkConfirmationStatus()", 100)
 }
 

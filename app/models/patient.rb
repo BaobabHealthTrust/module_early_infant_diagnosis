@@ -370,14 +370,14 @@ class Patient < ActiveRecord::Base
     @hiv_concepts = ["Previous HIV Test Status From Before Current Facility Visit", "HIV STATUS", "DNA-PCR Testing Result", "Rapid Antibody Testing Result", "Alive On ART"].collect{
       |concept| ConceptName.find_by_name(concept).concept_id rescue nil}.compact rescue []
 
-    status = self.encounters.collect { |e|
+    status = self.encounters.find(:all, :order => ["encounter_datetime ASC"]).collect { |e|
       e.observations.find(:last, :conditions => ["concept_id IN (?)",
           @hiv_concepts]).answer_string rescue nil
     }.compact.flatten.last.strip rescue ""
 
     status = "unknown" if status.blank?
-    status = "positive" if ["reactive"].include?(status.downcase)
-    status = "negative" if ["non reactive", "non-reactive less than 3 months"].include?(status.downcase)
+    status = "positive" if ["reactive", "hiv infected", "positive", "+"].include?(status.downcase.strip)
+    status = "negative" if ["non reactive", "non-reactive", "non-reactive less than 3 months", "-"].include?(status.downcase.strip)
     status
   end
 
@@ -394,11 +394,11 @@ class Patient < ActiveRecord::Base
   def is_exposed?
     status = ""
 
-    status = "yes" if self.mother.hiv_status.strip == "positive" rescue nil
+    status = "yes" if ((self.mother.hiv_status.strip == "positive") rescue false)
     concepts = ["MOTHER HIV STATUS"].collect{|name| ConceptName.find_by_name(name).concept_id rescue nil}
     status = "yes" if ((["reactive", "positive", "yes"].include?(Observation.find(:last, :order => ["obs_datetime ASC"],
             :conditions => ["person_id = ? AND concept_id IN (?)",
-              self.patient_id, concepts]).answer_string.downcase.sub("-", "negative"))) rescue false)
+              self.patient_id, concepts]).answer_string.downcase.sub("-", "negative").strip)) rescue false)
     status
   end
 

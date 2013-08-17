@@ -35,7 +35,7 @@ function checkTimeForStoppingBreastFeeding(){
 
 function checkConfirmationStatus(status){
     if(__$("touchscreenInput" + tstCurrentPage).value.trim().toLowerCase() == status.trim().toLowerCase()){
-        showCategory("START ART!");
+        showMessage("START ART!");
 
         return;
     }

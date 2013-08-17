@@ -2,7 +2,7 @@ P.1. EID VISIT [program: EARLY INFANT DIAGNOSIS PROGRAM, scope: TODAY, concept: 
 C.1. Given an enrolled exposed child under 24 months, when they come for a visit, 	capture the following data:
 Q.1.1. Visit date [pos: 0, field_type: date, tt_onLoad: showCategory("EID Visit"), condition: false, value: <%= session["datetime"].to_date rescue Date.today%>]
 
-Q.1.3. Height (cm) [helpText: Baby height (cm), pos: 2, min: 15, max: 120, tt_onLoad: showCategory("EID Visit"), absoluteMin: 15, absoluteMax: 160,  field_type: number, tt_pageStyleClass: NumbersOnlyWithUnknown]
+Q.1.3. Height (cm) [helpText: Baby height (cm), pos: 2, min: 20, max: 120, tt_onLoad: showCategory("EID Visit"), absoluteMin: 15, absoluteMax: 160,  field_type: number, tt_pageStyleClass: NumbersOnlyWithUnknown]
 
 Q.1.4. Weight (grams) [helptext: Baby weight (grams), concept: weight, pos: 3, min: 2500, absoluteMin: 100, max: 10000, absoluteMax: 30000, field_type: number, tt_pageStyleClass: NumbersOnlyWithUnknown]
 

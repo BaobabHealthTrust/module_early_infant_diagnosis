@@ -30,4 +30,4 @@ O.1.1.4.3. AZT
 O.1.1.4.4. Unknown
 
 Q.1.1.5. Number of weeks ARVs taken [pos: 4, field_type: number, tt_pageStyleClass: NumbersOnlyWithUnknown]
-Q.1.1.6. Place of delivery [pos: 5, ajaxUrl: /encounters/static_locations]
+Q.1.1.6. Place of delivery [pos: 5, ajaxUrl: /encounters/static_locations?search_string=]

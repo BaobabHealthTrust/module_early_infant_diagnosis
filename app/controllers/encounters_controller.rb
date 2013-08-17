@@ -4,7 +4,10 @@ class EncountersController < ApplicationController
 
   def create
 
-
+    d = (session[:datetime].to_date rescue Date.today)
+    t = Time.now
+    session_date = DateTime.new(d.year, d.month, d.day, t.hour, t.min, t.sec)
+    
     User.current = User.find(session[:user]["user_id"])
     redirect_to "/patients/show/#{params[:patient_id]}?user_id=#{User.current.user_id}" if params[:prescription].blank?
 
@@ -21,6 +24,7 @@ class EncountersController < ApplicationController
           :patient_id => patient.id,
           :provider_id => (params[:user_id]),
           :encounter_type => type,
+          :encounter_datetime => session_date,
           :location_id => (session[:location_id] || params[:location_id])
         )
 
@@ -36,13 +40,13 @@ class EncountersController < ApplicationController
 
             @program_encounter = ProgramEncounter.find_by_program_id(@program.id,
               :conditions => ["patient_id = ? AND DATE(date_time) = ?",
-                patient.id, Date.today.strftime("%Y-%m-%d")])
+                patient.id, session_date.strftime("%Y-%m-%d")])
 
             if @program_encounter.blank?
 
               @program_encounter = ProgramEncounter.create(
                 :patient_id => patient.id,
-                :date_time => Time.now,
+                :date_time => session_date,
                 :program_id => @program.id
               )
 
@@ -62,7 +66,7 @@ class EncountersController < ApplicationController
               @current = PatientProgram.create(
                 :patient_id => patient.id,
                 :program_id => @program.id,
-                :date_enrolled => Time.now
+                :date_enrolled => session_date
               )
 
             end
@@ -95,8 +99,8 @@ class EncountersController < ApplicationController
 
                 @current.transition({
                     :state => "#{value}",
-                    :start_date => Time.now,
-                    :end_date => Time.now
+                    :start_date => session_date,
+                    :end_date => session_date
                   }) if !selected_state.nil?
               end
 
@@ -144,7 +148,7 @@ class EncountersController < ApplicationController
 
               when "time"
 
-                obs.update_attribute("value_datetime", "#{Date.today.strftime("%Y-%m-%d")} " + value)
+                obs.update_attribute("value_datetime", "#{session_date.strftime("%Y-%m-%d")} " + value)
 
               when "number"
 
@@ -182,8 +186,8 @@ class EncountersController < ApplicationController
 
                   @current.transition({
                       :state => "#{item}",
-                      :start_date => Time.now,
-                      :end_date => Time.now
+                      :start_date => session_date,
+                      :end_date => session_date
                     }) if !selected_state.nil?
                 end
 
@@ -231,7 +235,7 @@ class EncountersController < ApplicationController
 
                 when "time"
 
-                  obs.update_attribute("value_datetime", "#{Date.today.strftime("%Y-%m-%d")} " + item)
+                  obs.update_attribute("value_datetime", "#{session_date.strftime("%Y-%m-%d")} " + item)
 
                 when "number"
 
@@ -258,10 +262,10 @@ class EncountersController < ApplicationController
 
           end
 
-        end if !params[:concept].nil?
+        end if !params[:concept].blank?
 
 
-        if !params[:prescription].nil?
+        if !params[:prescription].blank?
 
           params[:prescription].each do |prescription|
 
@@ -334,16 +338,16 @@ class EncountersController < ApplicationController
           :obs_datetime => @encounter.encounter_datetime,
           :encounter_id => @encounter.id,
           :value_text => baby_id
-        ) if !baby_id.nil?
+        ) if !baby_id.blank?
 
       end
 
-      @task = TaskFlow.new(params[:user_id] || User.first.id, patient.id)
-
-      redirect_to params[:next_url] and return if !params[:next_url].nil?
-
-      redirect_to @task.next_task.url and return rescue nil
-
+      @task = TaskFlow.new(params[:user_id] || User.first.id, patient.id, session_date)
+      if !params[:next_url].nil?
+        redirect_to params[:next_url] and return
+      else
+        redirect_to @task.next_task.url and return rescue nil
+      end
     end
 
   end
@@ -386,10 +390,14 @@ class EncountersController < ApplicationController
 
   def list_encounters
     result = []
+    
+    d = (session[:datetime].to_date rescue Date.today)
+    t = Time.now
+    session_date = DateTime.new(d.year, d.month, d.day, t.hour, t.min, t.sec)
 
     program = ProgramEncounter.find(params[:program_id]) rescue nil
 
-    @task = TaskFlow.new(params[:user_id], program.patient_id)
+    @task = TaskFlow.new(params[:user_id], program.patient_id, session_date)
 
     if File.exists?("#{Rails.root}/config/protocol_task_flow.yml")
       map = YAML.load_file("#{Rails.root}/config/protocol_task_flow.yml")["#{Rails.env
@@ -561,6 +569,9 @@ class EncountersController < ApplicationController
 
   def create_prescription
 
+    d = (session[:datetime].to_date rescue Date.today)
+    t = Time.now
+    session_date = DateTime.new(d.year, d.month, d.day, t.hour, t.min, t.sec)
     User.current = User.find(session[:user]["user_id"])
     redirect_to "/patients/show/#{params[:patient_id]}?user_id=#{User.current.user_id}" and return if params[:prescription].blank?
 
@@ -573,14 +584,14 @@ class EncountersController < ApplicationController
 
         type = EncounterType.find_by_name(params[:encounter][:encounter_type_name]).id rescue nil
         encounter = @patient.encounters.find(:first, :order => ["encounter_datetime DESC"],
-          :conditions => ["voided = 0 AND encounter_type = ? AND DATE(encounter_datetime) = ?", type, (session[:datetime].to_date rescue Date.today)]) rescue nil
+          :conditions => ["voided = 0 AND encounter_type = ? AND DATE(encounter_datetime) = ?", type, session_date.to_date]) rescue nil
 
-                 
         if !type.blank? && encounter.blank?
           encounter = Encounter.create(
             :patient_id => @patient.id,
             :provider_id => (User.current.user_id),
             :encounter_type => type,
+            :encounter_datetime => session_date,
             :location_id => (session[:location_id] || params[:location_id])
           )
         end
@@ -596,13 +607,13 @@ class EncountersController < ApplicationController
 
               @program_encounter = ProgramEncounter.find_by_program_id(@program.id,
                 :conditions => ["patient_id = ? AND DATE(date_time) = ?",
-                  @patient.id, Date.today.strftime("%Y-%m-%d")])
+                  @patient.id, session_date.to_date.strftime("%Y-%m-%d")])
 
               if @program_encounter.blank?
 
                 @program_encounter = ProgramEncounter.create(
                   :patient_id => @patient.id,
-                  :date_time => encounter.encounter_datetime,
+                  :date_time => session_date,
                   :program_id => @program.id
                 )
 
@@ -622,7 +633,7 @@ class EncountersController < ApplicationController
                 @current = PatientProgram.create(
                   :patient_id => @patient.id,
                   :program_id => @program.id,
-                  :date_enrolled => Time.now
+                  :date_enrolled => session_date
                 )
 
               end
@@ -691,13 +702,6 @@ class EncountersController < ApplicationController
       encounter.encounter_datetime ||= session[:datetime]
       encounter.save
 
-      if !params[:formulation]
-        #redirect_to "/patients/print_exam_label/?patient_id=#{@patient.id}" and return if (encounter.type.name.upcase rescue "") ==
-        #  "TREATMENT"
-        next
-        #redirect_to next_task(@patient) and return
-      end
-
       unless params[:location]
         session_date = session[:datetime] || params[:encounter_datetime] || Time.now()
       else
@@ -743,5 +747,5 @@ class EncountersController < ApplicationController
     redirect_to "/patients/show/#{params[:patient_id]}?user_id=#{User.current.user_id}"
 
   end
-
+  
 end

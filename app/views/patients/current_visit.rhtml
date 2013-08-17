@@ -344,18 +344,16 @@
                 cell2.style.verticalAlign = "middle";
 
                 row.appendChild(cell2);
-                
-                if (textcell.innerHTML.toUpperCase().trim() != "TREATMENT"){
-                  var imgDel = document.createElement("img");
-                  imgDel.src = "/touchscreentoolkit/lib/images/cancel_flat_small_red.png";
-                  imgDel.alt = "X";
-                  imgDel.setAttribute("encounter_id", result[i][0]);
-                  imgDel.onclick = function(){
-                    confirmDeletion('Do you really want to delete this encounter?', this.getAttribute("encounter_id"));
-                  }
-
-                  cell2.appendChild(imgDel);
+                              
+                var imgDel = document.createElement("img");
+                imgDel.src = "/touchscreentoolkit/lib/images/cancel_flat_small_red.png";
+                imgDel.alt = "X";
+                imgDel.setAttribute("encounter_id", result[i][0]);
+                imgDel.onclick = function(){
+                  confirmDeletion('Do you really want to delete this encounter?', this.getAttribute("encounter_id"));
                 }
+
+                cell2.appendChild(imgDel);
               }catch(c){}
             }
 

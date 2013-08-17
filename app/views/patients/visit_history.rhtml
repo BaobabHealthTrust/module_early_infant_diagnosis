@@ -262,90 +262,89 @@
             controlsSet2 = [];
 
             for(var i = 0; i < result.length; i++){
+              try{
+                controlsSet2.push("encounter" + result[i][0]);
 
-              controlsSet2.push("encounter" + result[i][0]);
+                var li = document.createElement("li");
+                li.id = "tblEncounter" + result[i][0];
 
-              var li = document.createElement("li");
-              li.id = "tblEncounter" + result[i][0];
+                optionsList.appendChild(li);
 
-              optionsList.appendChild(li);
+                var tbl = document.createElement("div");
+                tbl.style.display = "table";
+                tbl.style.width = "100%";
+                tbl.style.borderBottom = "1px dotted #6281a7";
 
-              var tbl = document.createElement("div");
-              tbl.style.display = "table";
-              tbl.style.width = "100%";
-              tbl.style.borderBottom = "1px dotted #6281a7";
+                li.appendChild(tbl);
 
-              li.appendChild(tbl);
+                var row = document.createElement("div");
+                row.style.display = "table-row";
 
-              var row = document.createElement("div");
-              row.style.display = "table-row";
+                tbl.appendChild(row);
 
-              tbl.appendChild(row);
+                var cell0 = document.createElement("div");
+                cell0.style.display = "table-cell";
+                cell0.style.width = "40px";
+                cell0.style.fontWeight = "bold";
+                cell0.style.color = "#1f3b5e";
+                cell0.style.padding = "5px";
+                cell0.style.fontStyle = "italic";
+                cell0.innerHTML = result[i][2];
+                cell0.style.verticalAlign = "middle";
 
-              var cell0 = document.createElement("div");
-              cell0.style.display = "table-cell";
-              cell0.style.width = "40px";
-              cell0.style.fontWeight = "bold";
-              cell0.style.color = "#1f3b5e";
-              cell0.style.padding = "5px";
-              cell0.style.fontStyle = "italic";
-              cell0.innerHTML = result[i][2];
-              cell0.style.verticalAlign = "middle";
+                row.appendChild(cell0);
 
-              row.appendChild(cell0);
+                var cell1 = document.createElement("div");
+                cell1.style.display = "table-cell";
+                cell1.id = "parent_encounter" + result[i][0];
+                cell1.style.padding = "5px";
+                cell1.style.textAlign = "left";
+                cell1.style.margin = "5px";
+                cell1.style.cursor = "pointer";
+                cell1.style.color = "#1f3b5e";
+                cell1.setAttribute("encounter_id", result[i][0]);
+                cell1.style.verticalAlign = "middle";
+                cell1.onclick = function(){
+                  checkRadio('encounter' + this.getAttribute('encounter_id'), controlsSet2);
+                  ajaxCustomRequest(__$('obs'), '/list_observations?user_id=<%= params[:user_id] %>&encounter_id=' +
+                    this.getAttribute("encounter_id"));
+                }
 
-              var cell1 = document.createElement("div");
-              cell1.style.display = "table-cell";
-              cell1.id = "parent_encounter" + result[i][0];
-              cell1.style.padding = "5px";
-              cell1.style.textAlign = "left";
-              cell1.style.margin = "5px";
-              cell1.style.cursor = "pointer";
-              cell1.style.color = "#1f3b5e";
-              cell1.setAttribute("encounter_id", result[i][0]);
-              cell1.style.verticalAlign = "middle";
-              cell1.onclick = function(){
-                checkRadio('encounter' + this.getAttribute('encounter_id'), controlsSet2);
-                ajaxCustomRequest(__$('obs'), '/list_observations?user_id=<%= params[:user_id] %>&encounter_id=' +
-                  this.getAttribute("encounter_id"));
-              }
+                row.appendChild(cell1);
 
-              row.appendChild(cell1);
+                var textcell = document.createElement("div");
+                textcell.style.cssFloat = "left";
+                textcell.style.margin = "5px";
+                textcell.style.color = "#1f3b5e";
+                textcell.innerHTML = result[i][1].trim().split(":")[0];
 
-              var textcell = document.createElement("div");
-              textcell.style.cssFloat = "left";
-              textcell.style.margin = "5px";
-              textcell.style.color = "#1f3b5e";
-              textcell.innerHTML = result[i][1].trim().split(":")[0];
+                cell1.appendChild(textcell);
 
-              cell1.appendChild(textcell);
+                var imgRadio = document.createElement("img");
+                imgRadio.src = "/touchscreentoolkit/lib/images/unchecked.png";
+                imgRadio.alt = "O";
+                imgRadio.id = "";
+                imgRadio.height = "30";
+                imgRadio.style.cssFloat = "right";
+                imgRadio.setAttribute("encounter_id", result[i][0]);
+                imgRadio.id = "encounter" + result[i][0];
+                imgRadio.onclick = function(){
+                  ajaxCustomRequest(__$('obs'), '/list_observations?user_id=<%= params[:user_id] %>&encounter_id=' +
+                    this.getAttribute("encounter_id"));
+                }
 
-              var imgRadio = document.createElement("img");
-              imgRadio.src = "/touchscreentoolkit/lib/images/unchecked.png";
-              imgRadio.alt = "O";
-              imgRadio.id = "";
-              imgRadio.height = "30";
-              imgRadio.style.cssFloat = "right";
-              imgRadio.setAttribute("encounter_id", result[i][0]);
-              imgRadio.id = "encounter" + result[i][0];
-              imgRadio.onclick = function(){
-                ajaxCustomRequest(__$('obs'), '/list_observations?user_id=<%= params[:user_id] %>&encounter_id=' +
-                  this.getAttribute("encounter_id"));
-              }
+                cell1.appendChild(imgRadio);
 
-              cell1.appendChild(imgRadio);
+                var cell2 = document.createElement("div");
+                cell2.style.display = "table-cell";
+                cell2.style.padding = "5px";
+                cell2.style.width = "30px";
+                cell2.style.textAlign = "right";
+                cell2.style.cursor = "pointer";
+                cell2.style.verticalAlign = "middle";
 
-              var cell2 = document.createElement("div");
-              cell2.style.display = "table-cell";
-              cell2.style.padding = "5px";
-              cell2.style.width = "30px";
-              cell2.style.textAlign = "right";
-              cell2.style.cursor = "pointer";
-              cell2.style.verticalAlign = "middle";
+                row.appendChild(cell2);
 
-              row.appendChild(cell2);
-
-              if (textcell.innerHTML.toUpperCase().trim() != "TREATMENT"){
                 var imgDel = document.createElement("img");
                 imgDel.src = "/touchscreentoolkit/lib/images/cancel_flat_small_red.png";
                 imgDel.alt = "X";
@@ -355,7 +354,7 @@
                 }
 
                 cell2.appendChild(imgDel);
-              }
+              }catch(c){}
             }
 
           } else {
