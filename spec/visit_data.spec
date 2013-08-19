@@ -38,10 +38,10 @@ O.1.9.3. Confirmed TB NOT on treatment
 O.1.9.4. TB NOT suspected
 O.1.9.5. Unknown
 
-Q.1.10. Any abnormalities [pos: 12]
+Q.1.10. Any abnormalities or sicknesses [pos: 12]
 O.1.10.1. No
 O.1.10.2. Yes
-Q.1.10.2.1. Specify abnormalities [pos: 13, concept: Specify]
+Q.1.10.2.1. Specify abnormality or sickness [pos: 13, concept: Specify]
 [
 Q.1.11. Childs current HIV status [pos: 14, helpText: Current HIV Status of Child]
 O.1.11.1. Confirmed

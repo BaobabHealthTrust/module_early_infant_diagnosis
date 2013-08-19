@@ -442,8 +442,15 @@ class EncountersController < ApplicationController
     }
     lbl.gsub(/examination/i , "exam")
   end
-  
+
   def static_locations
+		search_string = params[:search_string].upcase
+		filter_list = params[:filter_list].split(/, */) rescue []
+		locations =  Location.find(:all, :select =>'name', :conditions => ["name LIKE ?", '%' + search_string + '%'])
+		render :text => "<li>" + locations.map{|location| location.name }.join("</li><li>") + "</li>"
+	end
+  
+  def static_locations2
     search_string = (params[:search_string] || "").upcase
     extras = ["Health Facility", "Home", "TBA", "Other"]
 
