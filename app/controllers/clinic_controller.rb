@@ -3,7 +3,7 @@ class ClinicController < ApplicationController
   unloadable  
 
   before_filter :sync_user, :except => [:index, :user_login, :user_logout, 
-      :set_datetime, :update_datetime, :reset_datetime]
+    :set_datetime, :update_datetime, :reset_datetime]
 
   def index
     
@@ -84,15 +84,16 @@ class ClinicController < ApplicationController
   end
 
   def update_datetime
-    unless params[:set_day]== "" or params[:set_month]== "" or params[:set_year]== ""
+
+    unless params[:retrospective_date].blank?
       # set for 1 second after midnight to designate it as a retrospective date
-      date_of_encounter = Time.mktime(params[:set_year].to_i,
-        params[:set_month].to_i,
-        params[:set_day].to_i,0,0,1)
-      session[:datetime] = date_of_encounter #if date_of_encounter.to_date != Date.today
+      date_of_encounter = (params[:retrospective_date] + " " + Time.now.strftime("%H:%M")).to_time
+
+      session[:datetime] = date_of_encounter if date_of_encounter.to_date != Date.today
     end
 
-    redirect_to "/clinic?user_id=#{params[:user_id]}&location_id=#{params[:location_id]}"
+    redirect_to "/clinic?user_id=#{params[:user_id]}&location_id=#{params[:location_id]}" and return
+
   end
 
   def reset_datetime
@@ -595,7 +596,7 @@ class ClinicController < ApplicationController
     render :text => @fields.to_json
   end
 
-protected
+  protected
 
   def sync_user
     if !session[:user].nil?
