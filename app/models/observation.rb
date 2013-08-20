@@ -123,7 +123,7 @@ class Observation < ActiveRecord::Base
       coded_answer_name ||= self.answer_concept.concept_names.name rescue nil
     end
     coded_name = "#{coded_answer_name rescue ''} #{self.value_modifier}#{self.value_text} #{self.value_numeric}#{(name.upcase.match("TIME")?  self.value_datetime.strftime("%H:%M") : self.value_datetime.strftime("%d/%b/%Y")) rescue nil}#{self.value_boolean && (self.value_boolean == true ? 'Yes' : 'No' rescue nil)}#{' ['+order.to_s+']' if order_id && tags.include?('order')}"
-    
+    coded_name = "Negative" if coded_name == "-"
     #the following code is a hack
     #we need to find a better way because value_coded can also be a location - not only a concept
     return coded_name unless coded_name.blank?
@@ -137,7 +137,8 @@ class Observation < ActiveRecord::Base
 		if answer.nil?
 			answer = Concept.find_with_voided(self.value_coded).fullname + ' - retired'
 		end
-	
+
+    answer = "Negative" if answer == "-"
 		return answer
   end
 
