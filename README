@@ -46,8 +46,71 @@ B. WHEN A DATABASE ALREADY EXISTS
   	b. Edit application.yml.example in config with proper parameters as well
    
   
-C. Run the application with nginx
- (Check in redmine under "knowledge base" on how to set up nginx)
+#####################################################################################
+When the application is up and running, we need to create users and give them proper roles
+
+C. USER MANAGEMENT SETUP (ADMIN BASED)
+
+    Under administration tab, there are features that allow an admin to authorize specific features to a particular group of users depending
+    on the assigned roles.
+
+
+    1. Create a user
+
+        Administration tab >> Manage Users >> Add User
+
+        * At the end admin will be asked to assign roles to the created user.
+
+        * User roles can be edited using the designated buttons (the pencil button for adding).
+
+      A user can have one of the statuses "Active", "Blocked" and "Pending". When just created, the status defaults to "Pending".
+
+      Administration tab >> Manage Users >> Status,  to change user status.
+
+
+    2. Assign application activities to specific roles
+
+        Administration tab >> Manage activities
+
+        All features implemented in the application are listed below each role available e.g Nurse, Clerk, Program Manager.
+
+        Select a feature to make it available to all users within that particular role.
+
+D. USER MANAGEMENT SETUP (USER BASED)
+
+    1. Choosing features to perform
+
+        A user can select specific tasks to be performing in the system based on location or availability of such services at a particular site
+
+        My account tab >> My Activities
+
+     2. Change location e.g from Labour Ward to Post-natal ward High risk
+
+        My Account tab >> Change Location
+
+     3. Changing username, password and other user based demographics
+
+        My Account tab >> Change password, to change user password
+
+        My Account tab >> Edit demographics, to change the first name, last name and other demographics for the user.
+
+E. SELECT DEMOGRAPHICS FIELDS TO COLLECT DURING REGISTRATION (ADMIN ONLY)
+
+     Administration tab >> Demographics Fields
+
+     Here an admin has to select demographics fields to collect during patient registration, these fields are sent to patient registration module everytime
+     a patient registration task is triggered.
+
+     NB: Some demographics fields depend on others to be collected e.g home village depends on home TA which also depends on home district.
+         When such fields are selected, they trigger their associated fields to be selected too.
+
+E. ADDING PROJECT MEMBERS (ADMIN ONLY)
+    To give a user access to the project, admin has to select the user under
+
+        Administration tab >> Project Members
+
+    This can also be done directly under Administration tab.
+
    
    
    
