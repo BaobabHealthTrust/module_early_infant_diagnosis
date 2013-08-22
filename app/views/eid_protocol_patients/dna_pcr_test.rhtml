@@ -15,7 +15,7 @@
 				DNA-PCR Sample Date, 
 			</td>
 			<td>
-<input type='text' id='1.1.1'  name='concept[DNA-PCR Testing Sample Date]'   field_type='date'  pos='0'  helpText='DNA-PCR Sample Date'  absoluteMin='<%= @patient.person.birthdate%>'  tt_onLoad='showCategory("DNA-PCR Test")' />
+<input type='text' id='1.1.1'  name='concept[DNA-PCR Testing Sample Date]'   helpText='DNA-PCR Sample Date'  field_type='date'  absoluteMin='<%= @patient.person.birthdate%>'  pos='0'  tt_onLoad='showCategory("DNA-PCR Test")' />
 			</td>
 		</tr>
 		<tr>
@@ -23,7 +23,7 @@
 				DNA-PCR Sample ID 
 			</td>
 			<td>
-<input type='text' id='1.1.2'  name='concept[DNA-PCR Testing Sample ID]'   pos='1'  helpText='DNA-PCR Sample ID' />
+<input type='text' id='1.1.2'  name='concept[DNA-PCR Testing Sample ID]'   helpText='DNA-PCR Sample ID'  pos='1' />
 			</td>
 		</tr>
 		<tr>
@@ -31,7 +31,7 @@
 				Date DNA-PCR Result Received 
 			</td>
 			<td>
-<input type='text' id='1.1.3'  name='concept[DNA-PCR Testing Result received Date]'   field_type='date'  pos='2'  helpText='Date DNA-PCR Result Received'  absoluteMin='<%= @patient.person.birthdate%>' />
+<input type='text' id='1.1.3'  name='concept[DNA-PCR Testing Result received Date]'   helpText='Date DNA-PCR Result Received'  field_type='date'  absoluteMin='<%= @patient.person.birthdate%>'  pos='2' />
 			</td>
 		</tr>
 		<tr>
@@ -39,7 +39,7 @@
 				DNA-PCR Result 
 			</td>
 			<td>
-<select id='1.1.4' name='concept[DNA-PCR Testing Result]'  pos='3'  helpText='DNA-PCR result' >
+<select id='1.1.4' name='concept[DNA-PCR Testing Result]'  helpText='DNA-PCR result'  pos='3' >
 <option></option>
 <option value='Positive'>Positive</option>
  <option value='Negative'>Negative</option>
@@ -51,7 +51,7 @@
 				Date DNA-PCR Result Given 
 			</td>
 			<td>
-<input type='text' id='1.1.5'  name='concept[DNA-PCR Testing Result given Date]'   field_type='date'  pos='4'  helpText='Date DNA-PCR Result Given'  absoluteMin='<%= @patient.person.birthdate%>' />
+<input type='text' id='1.1.5'  name='concept[DNA-PCR Testing Result given Date]'   helpText='Date DNA-PCR Result Given'  field_type='date'  absoluteMin='<%= @patient.person.birthdate%>'  pos='4' />
 			</td>
 		</tr>
 	</table>

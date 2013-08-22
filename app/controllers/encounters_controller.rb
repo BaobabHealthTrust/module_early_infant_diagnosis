@@ -480,6 +480,21 @@ class EncountersController < ApplicationController
 
   end
 
+   def concept_set
+
+    search_string         = (params[:search_string] || '').upcase
+    set = params[:id].gsub(/\_/, " ")
+
+    set_concepts    = Concept.find_by_name("#{set}").concept_answers.collect{|c| c.answer.fullname}.uniq rescue ["Unknown"]
+    set_concepts = set_concepts.push(set_concepts.delete("Unknown")) rescue set_concepts
+    set_concepts = set_concepts.insert(0, set_concepts.delete("None")) rescue set_concepts
+   
+    @results = set_concepts.collect{|e| e}.delete_if{|x| ((!x.upcase.match(/^#{search_string}/i)) rescue true)}
+
+    render :text => "<li>" + @results.join("</li><li>") + "</li>"
+
+  end
+
   def generics
     search_string = (params[:search_string] || '').upcase
     filter_list = params[:filter_list].split(/, */) rescue []
