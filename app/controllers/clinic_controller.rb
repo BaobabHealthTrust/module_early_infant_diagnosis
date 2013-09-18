@@ -6,16 +6,22 @@ class ClinicController < ApplicationController
     :set_datetime, :update_datetime, :reset_datetime]
 
   def index
-    
     if session[:user_id].blank? || params[:user_id].blank?
       reset_session
-      
+
       user_login and return
     end
-    
-    @location = Location.find(session[:location_id]) rescue nil
 
-    session[:location_id] = @location.id if !@location.nil?
+    if params[:ext_patient_id]
+
+      patient = Patient.find(params[:ext_patient_id])
+      create_registration(patient) rescue nil
+
+    end
+
+    @location = Location.find(params[:location_id] || session[:location_id]) rescue nil
+
+    session[:location_id] = @location.id if !@location.blank? 
     
     redirect_to "/patients/show/#{params[:ext_patient_id]}?user_id=#{params[:user_id]}&location_id=#{
     params[:location_id]}" if !params[:ext_patient_id].nil?
@@ -40,6 +46,54 @@ class ClinicController < ApplicationController
 
     @selected = YAML.load_file("#{Rails.root}/config/application.yml")["#{Rails.env
         }"]["demographic.fields"].split(",") rescue []
+
+  end
+
+
+  def create_registration(patient)
+
+    if (!patient.encounters.collect{|enc| enc.name.upcase.strip rescue nil}.include?("REGISTRATION") rescue false)
+
+      @encounter = Encounter.create(:patient_id => patient.patient_id,
+        :encounter_type => EncounterType.find_by_name("REGISTRATION").id,
+        :encounter_datetime => (session[:datetime].to_time rescue Time.now),
+        :provider_id => (session[:user_id] || params[:user_id]),
+        :location_id => session[:location_id],
+        :creator => (session[:user_id] || params[:user_id])
+      )
+
+      Observation.create(:person_id => patient.patient_id,
+        :concept_id => ConceptName.find_by_name("Workstation location").concept_id,
+        :value_text => Location.find(session[:location_id]).name,
+        :location_id => session[:location_id],
+        :encounter_id => @encounter.id,
+        :creator => (session[:user_id] || params[:user_id]),
+        :obs_datetime => (session[:datetime] || Time.now)
+      )
+
+      @program = Program.find_by_concept_id(ConceptName.find_by_name("EARLY INFANT DIAGNOSIS PROGRAM").concept_id) rescue nil
+
+      @program_encounter = ProgramEncounter.find_by_program_id(@program.id,
+        :conditions => ["patient_id = ? AND DATE(date_time) = ?",
+          patient.id,  (session[:datetime].to_time rescue Time.now).to_date.strftime("%Y-%m-%d")])
+
+      if @program_encounter.blank?
+
+        @program_encounter = ProgramEncounter.create(
+          :patient_id => patient.id,
+          :date_time =>  (session[:datetime].to_time rescue Time.now),
+          :program_id => @program.id
+        )
+
+      end
+
+      ProgramEncounterDetail.create(
+        :encounter_id => @encounter.id.to_i,
+        :program_encounter_id => @program_encounter.id,
+        :program_id => @program.id
+      )
+
+    end
 
   end
 
