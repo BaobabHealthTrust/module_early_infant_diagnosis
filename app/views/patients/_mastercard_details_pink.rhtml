@@ -465,7 +465,7 @@
     </td>
 
     <td colspan="2">
-      &nbsp;<%= @visits[visit]["ANY ABNORMALITIES"].match(/NO/i) ? "NAD" : "&nbspSick: <i>" + (@visits[visit]["SPECIFY"] + "</i>" rescue "") %>
+      &nbsp;<%= (@visits[visit]["ANY ABNORMALITIES"].match(/NO/i) rescue false) ? "NAD" : "&nbspSick: <i>" + (@visits[visit]["SPECIFY"] + "</i>" rescue "") %>
     </td>
 
     <td colspan="2">
