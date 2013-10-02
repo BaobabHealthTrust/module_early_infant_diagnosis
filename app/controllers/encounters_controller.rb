@@ -166,7 +166,7 @@ class EncountersController < ApplicationController
               end
 
             else
-raise key.to_yaml
+
               redirect_to "/encounters/missing_concept?concept=#{key}" and return if !value.blank?
 
             end
