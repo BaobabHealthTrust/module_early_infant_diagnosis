@@ -186,7 +186,28 @@ class ClinicController < ApplicationController
   end
 
   def overview
+   
+    @program_encounter_details =  ProgramEncounterDetail.find(:all, :select => ["encounter_id"], :joins => [:program_encounter],
+      :conditions => ["program_encounter.program_id = ?",
+        Program.find_by_name("EARLY INFANT DIAGNOSIS PROGRAM").program_id]).collect{|ped| ped.encounter_id} rescue []
+    
+    @types = ["REGISTRATION"]
+    User.current = User.find(session[:user_id] || params[:user_id])
+
+    @me = Encounter.statistics(@types, :conditions =>
+        ['DATE(encounter_datetime) = DATE(NOW()) AND encounter.creator = ? AND encounter.location_id = ? AND encounter.encounter_id IN (?)',
+        User.current.user_id, session[:location_id], @program_encounter_details])
+   
+    @today = Encounter.statistics(@types, :conditions => ['DATE(encounter_datetime) = DATE(NOW()) AND encounter.location_id = ? AND encounter.encounter_id IN (?)',
+        session[:location_id], @program_encounter_details])
+
+    @year = Encounter.statistics(@types, :conditions => ['YEAR(encounter_datetime) = YEAR(NOW()) AND encounter.location_id = ? AND encounter.encounter_id IN (?)',
+        session[:location_id], @program_encounter_details])
+
+    @ever = Encounter.statistics(@types, :conditions => ['encounter.location_id = ? AND encounter.encounter_id IN (?)', session[:location_id], @program_encounter_details])
+ 
     render :layout => false
+    
   end
 
   def reports
@@ -196,7 +217,7 @@ class ClinicController < ApplicationController
   def project_users
     if !session[:user].nil?
       @user = session[:user]
-    else 
+    else
       @user = JSON.parse(RestClient.get("#{@link}/verify/#{(session[:user_id])}")) rescue {}
     end
     render :layout => false
@@ -401,10 +422,10 @@ class ClinicController < ApplicationController
     render :text => activities.to_json
   end
 
-  def project_members    
+  def project_members
   end
 
-  def my_activities    
+  def my_activities
   end
 
   def check_user_activities
@@ -655,7 +676,7 @@ class ClinicController < ApplicationController
   def sync_user
     if !session[:user].nil?
       @user = session[:user]
-    else 
+    else
       @user = JSON.parse(RestClient.get("#{@link}/verify/#{(session[:user_id])}")) rescue {}
     end
   end

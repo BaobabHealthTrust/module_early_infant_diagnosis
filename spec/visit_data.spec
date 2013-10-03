@@ -45,7 +45,7 @@ Q.1.10.2.1. Specify abnormality or sickness [pos: 13, concept: Specify]
 [
 Q.1.11. Childs current HIV status [pos: 14, helpText: Current HIV Status of Child]
 O.1.11.1. Confirmed
-Q.1.11.1.1. Confirmed [pos: 15, helpText: Confirmation Status, onchange: checkConfirmationStatus("HIV infected"), tt_onLoad: checkConfirmationStatus("HIV infected")]
+Q.1.11.1.1. Confirmed [pos: 15, helpText: Confirmation Status, onchange: checkConfirmationStatus("HIV infected"), tt_onLoad: checkConfirmationStatus("HIV infected"), value: <%=  @patient.confirmation_status rescue nil%>]
 O.1.11.1.1.1. Not HIV infected
 O.1.11.1.1.2. HIV infected
 O.1.11.2. Not confirmed

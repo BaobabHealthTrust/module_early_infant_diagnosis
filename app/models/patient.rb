@@ -424,4 +424,17 @@ class Patient < ActiveRecord::Base
     status
   end
 
+  def confirmation_status
+    status = ""
+
+    status = "HIV Infected" if ((self.hiv_status.strip == "positive") rescue false)
+    concepts = ["Confirmed", "DNA-PCR Testing Result"].collect{|name| ConceptName.find_by_name(name).concept_id rescue nil}
+    status = "HIV Infected" if ((["hiv infected", "positive"].include?(Observation.find(:last, :order => ["obs_datetime ASC"],
+            :conditions => ["person_id = ? AND concept_id IN (?)",
+              self.patient_id, concepts]).answer_string.downcase.sub("-", "negative").strip)) rescue false)
+
+    status = "Not HIV Infected" if status.blank?
+    status
+  end
+
 end

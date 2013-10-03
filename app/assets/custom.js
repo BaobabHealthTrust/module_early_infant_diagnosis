@@ -3,20 +3,22 @@
  *
  **/
 
-var checkStatus = false;
+var checkStatus = false
+var coStatus = ""
 
 function dateLimit(str){
 
-    try{ 
+    try{
         var id = str.split("|")[0];
-        var limit = str.split("|")[1].trim();
+        var limit = str.split("|")[1];
         if (limit.toLowerCase().trim() == "unknown"){
-            
-        }else{           
-            $(id).setAttribute("min", limit);
+
+        }else{
+
+            $(id).setAttribute("absoluteMin", limit);
         }
     }catch(ex){
-        
+
     }
 }
 
@@ -34,11 +36,20 @@ function checkTimeForStoppingBreastFeeding(){
 }
 
 function checkConfirmationStatus(status){
-    if(__$("touchscreenInput" + tstCurrentPage).value.trim().toLowerCase() == status.trim().toLowerCase()){
-        showMessage("START ART!");
+    try{
+        if (status){
+            conStatus = status
+        }
+    }catch(dd){
 
-        return;
     }
+    try{
+        if(__$("touchscreenInput" + tstCurrentPage).value.trim().toLowerCase() == conStatus.trim().toLowerCase()){
+            showCategory("START ART!");
+
+            return;
+        }
+    }catch(c){}
     setTimeout("checkConfirmationStatus()", 100)
 }
 
@@ -65,5 +76,5 @@ function unSetHIVStatus(){
 }
 
 function checkWasting(){
-    
+
 }

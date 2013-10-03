@@ -23,7 +23,7 @@
 				Treatment 
 			</td>
 			<td>
-<input type='text' id='1.1.1'  name='concept[Treatment ]' helpText='Treatment '  optional='true'  tt_onLoad='generateGenerics(<%= @patient.id %>); showCategory("Give Drugs"); __$("category").style.fontSize = "30px";  tt_onUnLoad'  pos='0'  tt_pageStyleClass='NoControls' />
+<input type='text' id='1.1.1'  name='concept[Treatment ]' helpText='Treatment '  tt_pageStyleClass='NoControls'  tt_onLoad='generateGenerics(<%= @patient.id %>); showCategory("Give Drugs"); __$("category").style.fontSize = "30px";  tt_onUnLoad'  pos='0'  optional='true' />
 			</td>
 		</tr>
 	</table>
