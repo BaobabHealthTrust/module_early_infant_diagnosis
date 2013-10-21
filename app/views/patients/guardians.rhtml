@@ -1,0 +1,52 @@
+<script type="text/javascript" language="javascript">
+  var name  = "<%= @name%>";
+  var facility = "<%= @facility%>"
+  var district = "<%= @district %>" 
+ 
+  
+  tt_cancel_destination = "/patients/show?patient_id=<%= @patient.id%>?user_id=<%= session[:user_id] %>"
+  tt_cancel_show = "/patients/show?patient_id=<%= @patient.id%>?user_id=<%= session[:user_id] %>"
+  
+  function gotto_reg(){
+    window.location = "/patients/guardians?patient_id=<%= @patient.id %>&new_guardian=true"
+  }
+  
+  function addExtraButtons(){
+
+    var buttondiv = document.getElementById("buttons");
+    
+    buttondiv.innerHTML += "<div id='tt_extraButtons'></div>"
+    buttondiv.innerHTML+= "<button class='green blueButton' id='export_to_csv' onmousedown='gotto_reg();'><span>Register New Guardian</span></button>"
+
+  } 
+ 
+</script>
+
+<style>
+  .blueButton{
+    background:url(/images/btn_blue.png) repeat;
+    font-size:1.3em;
+    line-height:50px;
+    float: right;
+    margin-top: 10px;
+    -moz-radius: 5px;
+    max-width:300px;
+    color: white;
+    font-weight:bold;
+  }
+</style>
+
+<% form_tag :controller => "patients", :action => "guardians" do %>
+
+  <%= hidden_field_tag "patient_id", @patient.id%>
+  <%= hidden_field_tag "user_id", session[:user_id]%>
+
+  <%= select_tag "current_guardian", options_for_select(@guardians_map),
+    {
+    :helptext => "Select guardian available",
+    :tt_onLoad => "addExtraButtons()"
+  } %>
+
+
+
+<% end %>

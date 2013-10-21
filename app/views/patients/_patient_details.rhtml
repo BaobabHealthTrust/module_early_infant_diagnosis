@@ -21,7 +21,7 @@
         <td style="width: 20%;">
           Child Name
         </td>
-        
+
         <td colspan="6" style="text-align: center; border-top: 1px solid #000; border-left: 1px solid #000;
             border-right: 1px solid #000; font-style: italic; width: 70%;">
           <%= @name rescue "&nbsp;" %>&nbsp;
@@ -49,7 +49,7 @@
         </td>
         <td colspan="6" style="text-align: center; border-top: 1px solid #000; border-left: 1px solid #000;
             border-right: 1px solid #000; font-style: italic;">
-          <%= @mother rescue "&nbsp;" %>&nbsp;
+          <%= @guardian_details[0] rescue "&nbsp;" %>&nbsp;
         </td>
       </tr>
       <tr>
@@ -59,13 +59,13 @@
 
         <td colspan="6" style="text-align: center; border-top: 1px solid #000; border-left: 1px solid #000;
             border-right: 1px solid #000; font-style: italic;">
-          <%= ((@patient.person.addresses.last.state_province rescue '') + ", &nbsp" + (@patient.address rescue "&nbsp") + ",&nbsp " + (@patient.person.addresses.last.address1 rescue "") rescue "&nbsp") %>&nbsp;
+          Guardian:  <%=  @guardian_details[1] rescue "&nbsp" %>&nbsp;
         </td>
       </tr>
       <tr>
-        <td colspan="6" style="border-top: 1px solid #000; border-left: 1px solid #000;
+        <td colspan="6" style="text-align: center; border-top: 1px solid #000; border-left: 1px solid #000;
             border-right: 1px solid #000; font-style: italic;">
-          <%= @patient_bean.address rescue "&nbsp;" %>&nbsp;
+          Child: <%= @patient.address %>&nbsp;
         </td>
       </tr>
       <tr>
@@ -84,7 +84,7 @@
         <td colspan="2" style="text-align: center; border-top: 1px solid #000; border-left: 1px solid #000;
             border-right: 1px solid #000; border-bottom: 1px solid #000;">
           <sup>Guardian Phone:</sup>&nbsp;
-          <%=  @phone_numbers rescue "&nbsp;" %>
+          <%=  @guardian_details[2] rescue "&nbsp;" %>
         </td>
       </tr>
     </table>

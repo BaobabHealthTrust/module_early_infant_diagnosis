@@ -324,12 +324,59 @@ class Patient < ActiveRecord::Base
   def guardian
     guardian_type = RelationshipType.find_by_a_is_to_b_and_b_is_to_a("Patient", "Guardian").relationship_type_id rescue nil
     return "" if guardian_type.blank?
+
     person_id = Relationship.find(:first,:order => "date_created DESC",
-      :conditions =>["person_b = ? and relationship = ?", self.patient_id, guardian_type]).person_a rescue nil
+      :conditions =>["person_a = ? and relationship = ?", self.patient_id, guardian_type]).person_b rescue nil
+
     guardian_name = Patient.find(person_id).name rescue ""
     guardian_name
   end
 
+  def recent_guardian(today = Date.today)
+    guardian_type = RelationshipType.find_by_a_is_to_b_and_b_is_to_a("Patient", "Guardian").relationship_type_id rescue nil
+    return "" if guardian_type.blank?
+
+    person_id = Relationship.find(:first,:order => "date_created DESC",
+      :conditions =>["person_a = ? and relationship = ? AND DATE(date_created) = ? ", self.patient_id, guardian_type, today.to_date]).person_b rescue nil
+    guardian_name = Patient.find(person_id).name rescue ""
+    guardian_name
+  end
+
+  def guardian_details(today = Date.today)
+    
+    guardian_type = RelationshipType.find_by_a_is_to_b_and_b_is_to_a("Patient", "Guardian").relationship_type_id rescue nil
+    return "" if guardian_type.blank?
+
+    person_id = Relationship.find(:first,:order => "date_created DESC",
+      :conditions =>["person_a = ? and relationship = ? AND DATE(date_created) = ? ", self.patient_id, guardian_type, today.to_date]).person_b rescue nil
+
+    return [] if person_id.blank?
+    
+    guardian = Patient.find(person_id) rescue ""
+    guardian_name = guardian.name rescue nil
+    guardian_address = guardian.address rescue nil
+    guardian_phones = (guardian.person.home_phone_number + "," +  guardian.person.office_phone_number +
+        "," + guardian.person.cell_phone_number).gsub(/\,/, "")
+
+    [guardian_name, guardian_address, guardian_phones]
+    
+  end
+
+  def guardians_map
+    guardian_type = RelationshipType.find_by_a_is_to_b_and_b_is_to_a("Patient", "Guardian").relationship_type_id rescue nil
+    return "" if guardian_type.blank?
+
+    map = Relationship.find(:all, :select => [:person_b], :order => "date_created DESC",
+      :conditions =>["person_a = ? and relationship = ?", self.patient_id, guardian_type]).collect{|rel|
+
+      guardian_name = Patient.find(rel.person_b).name
+      
+      [guardian_name, rel.person_b]
+      
+    }
+    
+  end
+  
   def transfer_in_date    
     self.program_encounters.find(:first, 
       :select => ["date_time"],
@@ -337,15 +384,6 @@ class Patient < ActiveRecord::Base
       :conditions => ["patient_id = ? AND program_id = ?",
         self.patient_id, Program.find_by_name("EARLY INFANT DIAGNOSIS PROGRAM").id]
     ).date_time.strftime("%d/%b/%Y") rescue nil
-  end
-
-  def mother
-    type = RelationshipType.find_by_a_is_to_b_and_b_is_to_a("Parent", "Child").relationship_type_id rescue nil
-    return "" if type.blank?
-    person_id = Relationship.find(:first,:order => "date_created DESC",
-      :conditions =>["person_b = ? and relationship = ?", self.patient_id, type]).person_a rescue nil
-    p = Patient.find(person_id) rescue nil
-    p
   end
 
   def agreesFP

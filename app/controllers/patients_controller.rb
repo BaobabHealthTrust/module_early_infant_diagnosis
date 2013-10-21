@@ -9,21 +9,24 @@ class PatientsController < ApplicationController
     
     @patient = Patient.find(params[:id] || params[:patient_id]) rescue nil
 
-    if @patient.nil?
+    if @patient.blank?
       redirect_to "/encounters/no_patient" and return
     end
 
-    if params[:user_id].nil?
+    if params[:user_id].blank?
       redirect_to "/encounters/no_user" and return
     end
 
-    @user = User.find(params[:user_id]) rescue nil
+    @user = User.find(params[:user_id] || session[:user_id]) rescue nil
     
-    redirect_to "/encounters/no_user" and return if @user.nil?
-
+    redirect_to "/encounters/no_user" and return if @user.blank?
+    
+    @guardian = @patient.recent_guardian(session[:datetime] || Date.today) rescue nil
+    
     redirect_to "/patients/birth_weight?user_id=#{params['user_id']}&patient_id=#{@patient.id}" and return if (@patient.birthweight.blank? rescue false)
-    #redirect_to "/patients/guardian?user_id=#{params['user_id']}&patient_id=#{@patient.id}" and return if (@patient.guardian.blank? rescue true)
-    
+
+    redirect_to "/patients/guardians?patient_id=#{@patient.id}" and return if @guardian.blank?
+     
     @task = TaskFlow.new(params[:user_id], @patient.id)
 
     @links = {}
@@ -79,7 +82,7 @@ class PatientsController < ApplicationController
 
     @demographics_url = get_global_property_value("patient.registration.url") rescue nil
 
-    if !@demographics_url.nil?
+    if !@demographics_url.blank?
       @demographics_url = @demographics_url + "/demographics/#{@patient.id}?user_id=#{@user.id}&ext=true"
     end
     
@@ -90,6 +93,55 @@ class PatientsController < ApplicationController
     
   end
 
+  def guardians
+
+    @patient = Patient.find(params[:patient_id])
+    relationship = RelationshipType.find_by_b_is_to_a("Guardian").id
+      
+    if params[:new_guardian].to_s == "true"
+
+      @patient_registration = get_global_property_value("patient.registration.url") rescue ""
+
+      redirect_to "#{@patient_registration}/search?user_id=#{@user_id}&ext=true&location_id=#{session[:location_id]}&patient_id=#{@patient.id}"
+
+    else
+    
+      unless params[:ext_patient_id]      
+
+        if params[:current_guardian].present?
+          
+          r = Relationship.find_by_person_a_and_person_b_and_relationship(@patient.id, params[:current_guardian], relationship)
+          r.update_attributes(:date_created => DateTime.now)
+
+          redirect_to "/patients/show/#{@patient.id}?patient_id=#{@patient.id}&user_id=#{session[:user_id]}&location_id=#{session[:location_id]}"
+          
+        end
+        
+        @guardians_map = @patient.guardians_map.uniq rescue []
+             
+        @previous_guardian = @guardians_map.first[0] rescue nil
+      
+        if @guardians_map.blank? and @mother.present?
+          
+          mother = @patient.mother.name + " (Mother)"        
+          @guardian_map << [mother, @patient.mother.id]
+          
+        end
+
+      else     
+        
+        Relationship.create(
+          :person_a => params[:patient_id],
+          :person_b => params[:ext_patient_id],
+          :relationship => relationship)
+
+        redirect_to "/patients/show?patient_id=#{@patient.id}&user_id=#{session[:user_id]}&location_id=#{session[:location_id]}"
+
+      end
+      
+    end
+  end
+  
   def done(scope = "", encounter_name = "", concept = "")
     return "notdone" if encounter_name.downcase == "notes"
     scope = "" if concept.blank?
@@ -209,15 +261,15 @@ class PatientsController < ApplicationController
   def demographics
     @patient = Patient.find(params[:id] || params[:patient_id]) rescue nil
 
-    if @patient.nil?
+    if @patient.blank?
       redirect_to "/encounters/no_patient" and return
     end
 
-    if params[:user_id].nil?
+    if params[:user_id].blank?
       redirect_to "/encounters/no_user" and return
     end
 
-    redirect_to "/encounters/no_user" and return if @user.nil?
+    redirect_to "/encounters/no_user" and return if @user.blank?
 
   end
 
@@ -241,7 +293,7 @@ class PatientsController < ApplicationController
   
     @quarter = params[:quarter]
     @arv_start_number = params[:arv_start_number]
-    @arv_end_number = params[:arv_end_number]  
+    @arv_end_number = params[:arv_end_number]
 
     @patient = Patient.find(params[:patient_id])
     return if @patient.blank?
@@ -279,8 +331,11 @@ class PatientsController < ApplicationController
     @dna_test = @patient.mastercard("DNA-PCR TEST") rescue {}
     @notes = @patient.mastercard("NOTES") rescue {}
     @visits = @patient.mastercard("EID VISIT") rescue {}
+    
     @guardian = @patient.guardian rescue ""
     
+    @guardian_details = @patient.guardian_details rescue []
+
     @phone_numbers = phone_numbers(@patient.mother) rescue "None" #pass guardian in parameter
     @phone_numbers = "None" if @phone_numbers.blank?
    
@@ -308,7 +363,7 @@ class PatientsController < ApplicationController
         @visits[visit]["WASTING"] = "Severe"
       elsif ((75 .. 79).include?(weightPercentile) rescue false) || ((75 .. 79).include?(heightPercentile) rescue false)
         @visits[visit]["WASTING"] = "Moderate"
-      end           
+      end
     }
     
     render :layout => false
@@ -346,7 +401,7 @@ class PatientsController < ApplicationController
         t2 = Thread.new{
           sleep(2)
           print(name, current_printer, Time.now)
-        }               
+        }
         sleep(1)
       end
     end
@@ -370,7 +425,7 @@ class PatientsController < ApplicationController
   protected
 
   def sync_user
-    if !session[:user].nil?
+    if !session[:user].blank?
       @user = session[:user]
     else
       @user = JSON.parse(RestClient.get("#{@link}/verify/#{(session[:user_id])}")) rescue {}
