@@ -23,10 +23,10 @@ class PatientsController < ApplicationController
     
     @guardian = @patient.recent_guardian(session[:datetime] || Date.today) rescue nil
     
-    redirect_to "/patients/birth_weight?user_id=#{params['user_id']}&patient_id=#{@patient.id}" and return if (@patient.birthweight.blank? rescue false)
-
     redirect_to "/patients/guardians?patient_id=#{@patient.id}" and return if @guardian.blank?
-     
+    
+    redirect_to "/patients/birth_weight?user_id=#{params['user_id']}&patient_id=#{@patient.id}" and return if (@patient.birthweight.blank? rescue false)
+    
     @task = TaskFlow.new(params[:user_id], @patient.id)
 
     @links = {}
