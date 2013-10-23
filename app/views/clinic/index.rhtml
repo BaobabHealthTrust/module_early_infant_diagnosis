@@ -53,7 +53,7 @@
   </select>
 
   <form id="register" action="<%= @patient_registration %>/search?user_id=<%= params[:user_id] 
-      %>&ext=true&location_id=<%= session[:location_id] || params[:location_id] %>" method="post">
+      %>&ext=true&app_name=<%= @project %>&location_id=<%= session[:location_id] || params[:location_id] %>" method="post">
 
     <% @selected.each do |item| %>
 
