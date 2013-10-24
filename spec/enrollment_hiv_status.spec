@@ -16,7 +16,7 @@ O.1.1.4.3. Positive
 
 Q.1.1.5. DNA-PCR Testing Age (months) [condition: __$("1.1.4").value.toLowerCase() != "not done", concept: DNA-PCR Testing Result given Age, absoluteMax: <%= @patient.age_in_months%>, field_type: number, tt_pageStyleClass: NumbersOnlyWithUnknown, pos: 4]
 
-Q.1.1.6. Confirmatory HIV test [pos: 5, tt_onLoad: setHIVStatusCheck("1.1.4"), tt_onUnLoad: unSetHIVStatus(), onchange: setHIVStatusCheck("1.1.4")]
+Q.1.1.6. Confirmatory HIV test [pos: 5, condition: __$("1.1.4").value.toLowerCase() != "not done" || __$("1.1.2").value.toLowerCase() != "not done", tt_onLoad: setHIVStatusCheck("1.1.4"), tt_onUnLoad: unSetHIVStatus(), onchange: setHIVStatusCheck("1.1.4")]
 O.1.1.6.1. Not confirmed
 O.1.1.6.2. Confirmed
 

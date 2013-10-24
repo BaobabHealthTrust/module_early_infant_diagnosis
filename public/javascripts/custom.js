@@ -45,7 +45,7 @@ function checkConfirmationStatus(status){
     }
     try{
         if(__$("touchscreenInput" + tstCurrentPage).value.trim().toLowerCase() == conStatus.trim().toLowerCase()){
-            showCategory("START ART!");
+            showMessage("START ART!");
 
             return;
         }
@@ -63,7 +63,7 @@ function setHIVStatusCheck(){
 
 function checkHIVStatus(){
     if(__$("touchscreenInput" + tstCurrentPage).value.trim().toLowerCase() == "confirmed"){
-        showMessage("START ART");
+        showMessage("START ART!");
         checkStatus = false;
     }
 
