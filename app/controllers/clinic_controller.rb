@@ -93,6 +93,19 @@ class ClinicController < ApplicationController
         :program_id => @program.id
       )
 
+      @current = PatientProgram.find_by_program_id(@program.id,
+        :conditions => ["patient_id = ? AND COALESCE(date_completed, '') = ''", patient.id])
+
+      if @current.blank?
+
+        @current = PatientProgram.create(
+          :patient_id => patient.id,
+          :program_id => @program.id,
+          :date_enrolled =>(session[:datetime].to_time rescue Time.now)
+        )
+
+      end
+
     end
 
   end
