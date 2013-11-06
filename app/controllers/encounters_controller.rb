@@ -343,13 +343,96 @@ class EncountersController < ApplicationController
       end
 
       @task = TaskFlow.new(params[:user_id] || User.first.id, patient.id, session_date)
-      if !params[:next_url].nil?
-        redirect_to params[:next_url] and return
+      
+      if !params[:next_url].blank?
+        redirect_to params[:next_url] and return rescue nil
       else
         redirect_to @task.next_task.url and return rescue nil
       end
     end
 
+  end
+
+  def update_dna_test
+
+    @patient = Patient.find(params[:patient_id])
+    return_url = request.referrer.sub("dna_pcr_test", "lab_results_dashboard")
+    session_date = session[:datetime].to_date rescue Date.today
+    encounter_id = @patient.dna_pcr_incomplete_test(session_date, "encounter_id")
+    @encounter = Encounter.find(encounter_id)
+    
+    params[:concept].each {|concept, item|
+      
+      next if concept.blank? || item.blank?
+      concept_id = ConceptName.find_by_name(concept).concept_id
+      next if concept_id.blank?
+       
+      concept_type = nil
+      
+      if item.strip.match(/^\d+$/)
+
+        concept_type = "number"
+
+      elsif item.strip.match(/^\d{4}-\d{2}-\d{2}$/)
+
+        concept_type = "date"
+
+      elsif item.strip.match(/^\d{2}\:\d{2}\:\d{2}$/)
+
+        concept_type = "time"
+
+      else
+
+        value_coded = ConceptName.find_by_name(item.strip) rescue nil
+
+        if !value_coded.nil?
+
+          concept_type = "value_coded"
+
+        else
+
+          concept_type = "text"
+
+        end
+
+      end
+     
+      obs = Observation.create(
+        :person_id => @encounter.patient_id,
+        :concept_id => concept_id,
+        :location_id => (session[:location_id] || @encounter.location_id),
+        :obs_datetime => session_date,
+        :encounter_id => @encounter.id
+      )
+
+      case concept_type
+      when "date"
+
+        obs.update_attribute("value_datetime", item)
+
+      when "time"
+
+        obs.update_attribute("value_datetime", "#{session_date.strftime("%Y-%m-%d")} " + item)
+
+      when "number"
+
+        obs.update_attribute("value_numeric", item)
+
+      when "value_coded"
+
+        obs.update_attribute("value_coded", value_coded.concept_id)
+        obs.update_attribute("value_coded_name_id", value_coded.concept_name_id)
+
+      else
+
+        obs.update_attribute("value_text", item)
+
+      end
+
+    }
+
+    redirect_to return_url and return
+    
   end
 
   def list_observations
@@ -419,6 +502,9 @@ class EncountersController < ApplicationController
       result = program.program_encounter_types.find(:all, :joins => [:encounter],
         :order => ["encounter_datetime DESC"]).collect{|e|
         next if e.encounter.blank?
+        next if params[:lab_results] && (!e.encounter.name.match(/DNA-PCR TEST|RAPID ANTIBODY TEST/i))
+        next if e.encounter.voided.to_s == "1"
+
         labl = labell(e.encounter_id, @label_encounter_map).titleize rescue nil
         labl = e.encounter.type.name.titleize if labl.blank?
         [
@@ -444,11 +530,11 @@ class EncountersController < ApplicationController
   end
 
   def static_locations
-		search_string = params[:search_string].upcase
-		filter_list = params[:filter_list].split(/, */) rescue []
-		locations =  Location.find(:all, :select =>'name', :conditions => ["name LIKE ?", '%' + search_string + '%'])
-		render :text => "<li>" + locations.map{|location| location.name }.join("</li><li>") + "</li>"
-	end
+    search_string = params[:search_string].upcase
+    filter_list = params[:filter_list].split(/, */) rescue []
+    locations =  Location.find(:all, :select =>'name', :conditions => ["name LIKE ?", '%' + search_string + '%'])
+    render :text => "<li>" + locations.map{|location| location.name }.join("</li><li>") + "</li>"
+  end
   
   def static_locations2
     search_string = (params[:search_string] || "").upcase
@@ -480,7 +566,7 @@ class EncountersController < ApplicationController
 
   end
 
-   def concept_set
+  def concept_set
 
     search_string         = (params[:search_string] || '').upcase
     set = params[:id].gsub(/\_/, " ")

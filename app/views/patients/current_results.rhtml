@@ -159,7 +159,7 @@
 
                           <div id="<%= "parent_program#{@programs[e][0]}" %>" style="display: table-row;"
                                onclick="__$('obs').innerHTML = '';checkRadio('program<%= @programs[e][0] %>', controlsSet1);
-                                   ajaxCustomRequest(__$('encounters'), '/list_encounters?user_id=<%= params[:user_id]
+                                   ajaxCustomRequest(__$('encounters'), '/list_encounters?lab_results=true&user_id=<%= params[:user_id]
                              %>&program_id=<%= @programs[e][0] %>', 'program')">
 
                             <div style="display: table-cell; vertical-align: middle; cursor: pointer;

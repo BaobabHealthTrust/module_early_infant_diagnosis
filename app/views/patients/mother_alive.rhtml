@@ -1,0 +1,52 @@
+<script type='text/javascript' language='javascript'>
+  <!--
+  tt_cancel_show = '/patients/show/<%= @patient.id %>?user_id=<%= session[:user_id] %>';
+  tt_cancel_destination = '/patients/show/<%= @patient.id %>?user_id=<%= session[:user_id] %>';
+</script>
+
+<form method='post' action='/encounters/create'>
+  <input type='hidden' name='program' value='EARLY INFANT DIAGNOSIS PROGRAM' />
+  <input type='hidden' name='encounter_type' value='Update Outcome' />
+  <input type='hidden' name='patient_id' value='<%= @patient.id %>' />
+  <input type='hidden' name='user_id' value='<%= session[:user_id] %>' />
+  <table>
+
+
+    <tr>
+      <td>
+				Mother Alive
+      </td>
+      <td>
+        <select id='1.1' name='concept[Mother deceased]' helpText='Is mother still alive? ' pos='0' field_type='text' >
+          <option></option>
+          <option value='Yes'>No</option>
+          <option value='No'>yes</option>
+        </select>
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+				Mother On ART?
+      </td>
+      <td>
+
+        <select id='1.2' condition = '<%= @art_q  %> && $("1.1").value.toUpperCase()  == "NO"' name='concept[Is mother on ART?]' helpText='Is mother on ART? ' pos='1' field_type='text' >
+          <option></option>
+          <option value='No'>No</option>
+          <option value='yes'>Yes</option>
+        </select>
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+				Mother ART Registration Number
+      </td>
+      <td>
+        <input type='text' id='1.3'  name='concept[Mother ART registration number]' helpText='Mother ART Registration Number '  condition='__$("1.2").value.toUpperCase()  == "YES"'  field_type='number'  pos='2' />
+      </td>
+    </tr>
+
+  </table>
+</form>

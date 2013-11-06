@@ -131,7 +131,7 @@
     <div id="content" style="background-color: #fff; border-top: 1px #fff solid; margin-top: 0px;">
 
       <h2 style="color: #6281a7; margin-top: -2px; margin-bottom: 0px; padding-left: 10px;">
-        Current Visit Summary
+        Patient Visit History
       </h2>
 
       <table id="stats" style="margin-bottom: 8px;" cellpadding="5">
@@ -159,7 +159,7 @@
 
                           <div id="<%= "parent_program#{@programs[e][0]}" %>" style="display: table-row;"
                                onclick="__$('obs').innerHTML = '';checkRadio('program<%= @programs[e][0] %>', controlsSet1);
-                                   ajaxCustomRequest(__$('encounters'), '/list_encounters?user_id=<%= params[:user_id]
+                                   ajaxCustomRequest(__$('encounters'), '/list_encounters?lab_results=true&user_id=<%= params[:user_id]
                              %>&program_id=<%= @programs[e][0] %>', 'program')">
 
                             <div style="display: table-cell; vertical-align: middle; cursor: pointer;
@@ -177,10 +177,10 @@
 
                               <%= @programs[e][1] %>
 
-                              <!--div style="font-size: 0.5em; font-style: italic;
+                              <div style="font-size: 0.5em; font-style: italic;
                                    vertical-align: middle;">
                                 (<%= @programs[e][3] %>)
-                              </div-->
+                              </div>
 
                             </div>
                           </div>
@@ -317,7 +317,7 @@
                 textcell.style.margin = "5px";
                 textcell.style.color = "#1f3b5e";
                 textcell.innerHTML = result[i][1].trim().split(":")[0];
-                
+
                 cell1.appendChild(textcell);
 
                 var imgRadio = document.createElement("img");
@@ -344,7 +344,7 @@
                 cell2.style.verticalAlign = "middle";
 
                 row.appendChild(cell2);
-                              
+
                 var imgDel = document.createElement("img");
                 imgDel.src = "/touchscreentoolkit/lib/images/cancel_flat_small_red.png";
                 imgDel.alt = "X";
@@ -396,7 +396,7 @@
               cell1.style.color = "#1f3b5e";
               cell1.style.verticalAlign = "top";
 
-              cell1.innerHTML = (result[i][0] == "drg")? result[i][1].split(":")[0].toString().replace(/null/g, " -- ") : result[i][1].trim().split("|")[0];
+              cell1.innerHTML = (result[i][0] == "drg")? result[i][1].split(":")[0].replace(/null/g, " -- ") : result[i][1].trim().split("|")[0];
 
               row.appendChild(cell1);
 
@@ -408,7 +408,7 @@
               cell2.style.textAlign = "left";
               cell2.style.color = "green";
               cell2.style.verticalAlign = "top";
-              cell2.innerHTML = (result[i][0] == "drg")? result[i][1].split(": ")[1].toString().replace(/null/g, " -- ") : result[i][1].trim().split("|")[1];
+              cell2.innerHTML = (result[i][0] == "drg")? result[i][1].split(": ")[1].replace(/null/g, " -- ") : result[i][1].trim().split("|")[1];
 
               row.appendChild(cell2);
 
@@ -418,7 +418,6 @@
       }
       
       function runCmd(id){
-      
         ajaxCustomRequest(__$('obs'), '/void?user_id=<%= @user["user_id"] %>&encounter_id=' + id);
 
         __$("encounters").removeChild(__$("tblEncounter" + id));

@@ -1,4 +1,4 @@
-P.1. HIV STATUS AT ENROLLMENT [program: EARLY INFANT DIAGNOSIS PROGRAM, label: Enrollment Status, scope: RECENT, concept: Mother HIV Status]
+P.1. HIV STATUS AT ENROLLMENT [program: EARLY INFANT DIAGNOSIS PROGRAM, label: Enrollment Status, scope: RECENT, concept: Confirmatory HIV test]
 C.1.1. Given an exposed child under 24 months, collect the following details on enrollment:
 Q.1.1.1. Age of child (months) [concept: Age of child, max: <%= @patient.age_in_months%>, value: <%= @patient.age_in_months %>, tt_onLoad: showCategory("Enrollment Status"), field_type: number, tt_pageStyleClass: NumbersOnlyWithUnknown, pos: 0]
 Q.1.1.2. Rapid Antibody Testing Result [pos: 1]
@@ -19,13 +19,4 @@ Q.1.1.5. DNA-PCR Testing Age (months) [condition: __$("1.1.4").value.toLowerCase
 Q.1.1.6. Confirmatory HIV test [pos: 5, condition: __$("1.1.4").value.toLowerCase() != "not done" || __$("1.1.2").value.toLowerCase() != "not done", tt_onLoad: setHIVStatusCheck("1.1.4"), tt_onUnLoad: unSetHIVStatus(), onchange: setHIVStatusCheck("1.1.4")]
 O.1.1.6.1. Not confirmed
 O.1.1.6.2. Confirmed
-
-Q.1.1.7. Mother HIV Status [pos: 6]
-O.1.1.7.1. Alive not on ART
-O.1.1.7.2. Alive On ART
-Q.1.1.7.2.1. Mother ART registration number
-O.1.1.7.3. Died
-O.1.1.7.4. Unknown
-
-Q.1.1.8. Mother ART Registration Number [pos: 7, concept: Mother ART registration number, field_type: number, condition: __$("1.1.7").value.toLowerCase().match(/alive/i)]
 

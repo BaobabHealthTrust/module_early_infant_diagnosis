@@ -24,13 +24,6 @@ Q.1.7.2.1. When was breast feeding stopped? [pos: 7, tt_onUnLoad: if(__$("1.7.2.
 O.1.7.2.1.1. Breastfeeding stopped in last 6 weeks
 O.1.7.2.1.2. Breastfeeding stopped over 6 weeks ago
 
-
-Q.1.8. Is mother on ART? [pos: 10]
-O.1.8.1. No ART
-O.1.8.2. On ART
-O.1.8.3. Died
-O.1.8.4. Unknown
-
 Q.1.9. TB status [pos: 11, helpText: Current TB Status of Child]
 O.1.9.1. TB suspected
 O.1.9.2. Confirmed TB on treatment

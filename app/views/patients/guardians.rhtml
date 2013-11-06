@@ -4,11 +4,11 @@
   var district = "<%= @district %>" 
  
   
-  tt_cancel_destination = "/patients/show?patient_id=<%= @patient.id%>?user_id=<%= session[:user_id] %>"
-  tt_cancel_show = "/patients/show?patient_id=<%= @patient.id%>?user_id=<%= session[:user_id] %>"
+  tt_cancel_destination = "/patients/show?patient_id=<%= @patient.id%>&user_id=<%= session[:user_id] %>"
+  tt_cancel_show = "/patients/show?patient_id=<%= @patient.id%>&user_id=<%= session[:user_id] %>"
   
   function gotto_reg(){
-    window.location = "/patients/guardians?patient_id=<%= @patient.id %>&new_guardian=true"
+    window.location = "/patients/guardians?patient_id=<%= @patient.id %>&new_guardian=true&user_id=<%= session[:user_id] %>"
   }
   
   function addExtraButtons(){
@@ -34,6 +34,7 @@
     color: white;
     font-weight:bold;
   }
+
 </style>
 
 <% form_tag :controller => "patients", :action => "guardians" do %>

@@ -1,0 +1,62 @@
+<script type='text/javascript' language='javascript'>
+  <!--
+  tt_cancel_show = '/patients/lab_results_dashboard/?patient_id=<%= @patient.id %>&user_id=<%= session[:user_id] %>';
+  tt_cancel_destination = '/patients/lab_results_dashboard/?patient_id=<%= @patient.id %>&user_id=<%= session[:user_id] %>';
+</script>
+<style>
+
+</style>
+
+<%@route = @patient.dna_pcr_incomplete_test.blank? ? "create" : "update_dna_test"%>
+<form method='post' action='/encounters/<%=@route%>'>
+  <input type='hidden' name='program' value='EARLY INFANT DIAGNOSIS PROGRAM' />
+  <input type='hidden' name='encounter_type' value='DNA-PCR TEST ' />
+  <input type='hidden' name='patient_id' value='<%= @patient.id %>' />
+  <input type='hidden' name='user_id' value='<%= session[:user_id] %>' />
+  <table>
+    <tr>
+      <td>
+				DNA-PCR Sample Date
+      </td>
+      <td>
+        <input type='text' id='1.1.1'  condition='<%= @dna_test.blank?%>' name='concept[DNA-PCR Testing Sample Date]'   helpText='DNA-PCR Sample Date'  field_type='date'  pos='0'  tt_onLoad='showCategory("DNA-PCR Test")'  absoluteMin='<%= @patient.person.birthdate%>' />
+      </td>
+    </tr>
+    <tr>
+      <td>
+				DNA-PCR Sample ID 
+      </td>
+      <td>
+        <input type='text' id='1.1.2' condition='<%= @dna_test.blank? %>' name='concept[DNA-PCR Testing Sample ID]'   helpText='DNA-PCR Sample ID'  pos='1' />
+      </td>
+    </tr>
+    <tr>
+      <td>
+				Date DNA-PCR Result Received 
+      </td>
+      <td>
+        <input type='text' id='1.1.3' condition='<%= @dna_test.length == 2 %>' name='concept[DNA-PCR Testing Result received Date]'   helpText='Date DNA-PCR Result Received'  field_type='date'  pos='2'  absoluteMin='<%= @patient.person.birthdate%>' />
+      </td>
+    </tr>
+    <tr>
+      <td>
+				DNA-PCR Result 
+      </td>
+      <td>
+        <select id='1.1.4'  condition='<%= @dna_test.length == 2 || @dna_test.length == 3  %>' name='concept[DNA-PCR Testing Result]'  helpText='DNA-PCR result'  pos='3' >
+          <option></option>
+          <option value='Positive'>Positive</option>
+          <option value='Negative'>Negative</option>
+        </select>
+      </td>
+    </tr>
+    <tr>
+      <td>
+				Date DNA-PCR Result Given 
+      </td>
+      <td>
+        <input type='text' id='1.1.5'  condition='<%=  @dna_test.length == 2 || @dna_test.length == 3 || @dna_test.length == 4 %>' name='concept[DNA-PCR Testing Result given Date]'   helpText='Date DNA-PCR Result Given'  field_type='date'  pos='4'  absoluteMin='<%= @patient.person.birthdate%>' />
+      </td>
+    </tr>
+  </table>
+</form>

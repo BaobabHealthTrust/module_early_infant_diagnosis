@@ -374,16 +374,55 @@ class Patient < ActiveRecord::Base
       [guardian_name, rel.person_b]
       
     }
+
+    if ((map.blank? and self.mother.present? and self.mother.person.dead.to_s == "0") rescue false)
+      map << [self.mother.name, self.mother.patient_id] rescue nil
+    end
+
+    map.compact
     
   end
   
-  def transfer_in_date    
-    self.program_encounters.find(:first, 
+  def transfer_in_date
+    self.program_encounters.find(:first,
       :select => ["date_time"],
       :order => ["date_time ASC"],
       :conditions => ["patient_id = ? AND program_id = ?",
         self.patient_id, Program.find_by_name("EARLY INFANT DIAGNOSIS PROGRAM").id]
     ).date_time.strftime("%d/%b/%Y") rescue nil
+  end
+
+  def mother_alive?
+
+    ob = Observation.find(:last,
+      :conditions => ["person_id = ? AND concept_id = ? ",
+        self.id,
+        ConceptName.find_by_name("Mother deceased").concept_id
+      ])
+        
+    ([((ob.answer_string.downcase.strip rescue "") == "yes" ? false : true), ob.obs_datetime.to_date] rescue [])
+
+  end
+
+  def mother_on_art?
+
+    ob_mother =   Observation.find(:last,
+      :conditions => ["person_id = ? AND concept_id = ? ",
+        self.mother.id,
+        ConceptName.find_by_name("on ART").concept_id
+      ]) if ((self.mother.present?) rescue false)
+    
+    return ([((ob_mother.answer_string.downcase.strip rescue "") == "yes" ? true : false), Date.today] rescue []) if ob_mother.present?
+    
+    
+    ob = Observation.find(:last,
+      :conditions => ["person_id = ? AND concept_id = ? ",
+        self.id,
+        ConceptName.find_by_name("Is mother on ART?").concept_id
+      ])
+
+    ([((ob.answer_string.downcase.strip rescue "") == "yes" ? true : false), ob.obs_datetime.to_date] rescue [])
+
   end
 
   def agreesFP
@@ -393,13 +432,13 @@ class Patient < ActiveRecord::Base
 
     ProgramEncounterDetail.find(:all, :joins => [:program_encounter],
       :conditions => ["program_encounter.program_id = ? AND program_encounter.patient_id = ? AND encounter_id IN (?)",
-        Program.find_by_name("EARLY INFANT DIAGNOSIS PROGRAM").program_id, 
+        Program.find_by_name("EARLY INFANT DIAGNOSIS PROGRAM").program_id,
         self.patient_id, encs]).collect{|enc| enc.encounter}.each{ |encounta|
       
       if encounta.observations.collect{|ob| ob.answer_string.upcase.strip}.include?("CONTINUE FOLLOW-UP")
         @agrees = "Y"
       end
-    } 
+    }
     @agrees
   end
 
@@ -473,6 +512,34 @@ class Patient < ActiveRecord::Base
 
     status = "Not HIV Infected" if status.blank?
     status
+  end
+
+  def dna_pcr_incomplete_test(session_date = Date.today, type = "")
+    map = {}
+    encounter_id = nil
+    
+    dna_tests = self.encounters.find(:all, :order => ["date_created ASC"], :conditions => ["voided = 0 AND encounter_type = ? AND DATE(encounter_datetime) <= ?",
+        EncounterType.find_by_name("DNA-PCR TEST").id, session_date.to_date])
+
+    dna_tests.each{|test|
+      
+      sample_id = test.observations.find_by_concept_id(ConceptName.find_by_name("DNA-PCR Testing Sample ID").concept_id).answer_string.strip rescue nil
+
+      next if sample_id.blank?
+      
+      concepts_array = test.observations.collect{|ob| ob.concept.name.name.upcase.strip rescue nil}.compact
+      
+      if !concepts_array.include?("DNA-PCR TESTING RESULT GIVEN DATE")
+        map[sample_id.upcase] =  concepts_array
+        encounter_id = test.encounter_id if encounter_id.blank?
+      end
+      
+    }
+
+    return encounter_id if dna_tests.present? and type == "encounter_id"
+    
+    map[map.keys.first] || []
+    
   end
 
 end

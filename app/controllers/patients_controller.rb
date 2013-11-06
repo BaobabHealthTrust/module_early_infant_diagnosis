@@ -17,13 +17,17 @@ class PatientsController < ApplicationController
       redirect_to "/encounters/no_user" and return
     end
 
-    @user = User.find(params[:user_id] || session[:user_id]) rescue nil
+    @user = User.find(params[:user_id] || session[:user_id])# rescue nil
     
     redirect_to "/encounters/no_user" and return if @user.blank?
     
     @guardian = @patient.recent_guardian(session[:datetime] || Date.today) rescue nil
-    
-    redirect_to "/patients/guardians?patient_id=#{@patient.id}" and return if @guardian.blank?
+
+    @mother = @patient.mother
+
+    redirect_to "/patients/guardians?patient_id=#{@patient.id}&user_id=#{session[:user_id]}" and return if @guardian.blank?
+
+    redirect_to "/patients/mother_alive?patient_id=#{@patient.id}&user_id=#{session[:user_id]}" and return unless params[:from_check]
     
     redirect_to "/patients/birth_weight?user_id=#{params['user_id']}&patient_id=#{@patient.id}" and return if (@patient.birthweight.blank? rescue false)
     
@@ -75,8 +79,15 @@ class PatientsController < ApplicationController
     }
 
     @links["Give Drugs"] = "/encounters/give_drugs?patient_id=#{@patient.id}&user_id=#{@user.id}"
- 
-    @first_level_order = ["Enrollment Status", "Pmtct History", "Rapid Antibody Test", "Dna Pcr Test", "Eid Visit", "Notes", "Give Drugs"]
+    
+    @lab_results_url = "/patients/lab_results_dashboard?patient_id=#{@patient.id}&user_id=#{@user.id}"
+
+    #show no task for dead patients
+    unless @patient.person.dead.to_s == "1"
+      @first_level_order = ["Enrollment Status", "Pmtct History", "Eid Visit", "Notes", "Give Drugs"]    
+    else
+      @first_level_order = []
+    end
 
     @project = get_global_property_value("project.name") rescue "Unknown"
 
@@ -93,9 +104,61 @@ class PatientsController < ApplicationController
     
   end
 
+  def lab_results_dashboard
+
+    @patient = Patient.find(params[:patient_id])
+    session_date = session[:datetime].to_date rescue Date.today   
+
+    @dna_test =  @patient.dna_pcr_incomplete_test(session_date, "data")
+
+    @prefix = @dna_test.blank?? "New " : "Update "
+
+    @first_level_order = ["#{@prefix}Dna Pcr Test", "Rapid Antibody Test"]
+     
+    @links = {"#{@prefix}Dna Pcr Test" => "/patients/dna_pcr_test?patient_id=#{@patient.id}&user_id=#{session[:user_id]}",
+      "Rapid Antibody Test" => "/patients/rapid_antibody_test?patient_id=#{@patient.id}&user_id=#{session[:user_id]}"
+    }  
+    
+  end
+
+  def rapid_antibody_test
+
+    @patient = Patient.find(params[:patient_id]) rescue nil
+
+    redirect_to '/encounters/no_patient' and return if @patient.blank?
+
+    if params[:user_id].blank?
+      redirect_to '/encounters/no_user' and return
+    end
+
+    @user = User.find(params[:user_id]) rescue nil
+
+    redirect_to '/encounters/no_patient' and return if @user.blank?
+
+	end
+
+  def dna_pcr_test
+
+    @patient = Patient.find(params[:patient_id]) rescue nil
+    session_date = session[:datetime].to_date rescue Date.today
+    @dna_test =  @patient.dna_pcr_incomplete_test(session_date, "data")
+
+    redirect_to '/encounters/no_patient' and return if @patient.blank?
+
+    if params[:user_id].blank?
+      redirect_to '/encounters/no_user' and return
+    end
+
+    @user = User.find(params[:user_id]) rescue nil
+
+    redirect_to '/encounters/no_patient' and return if @user.blank?
+
+	end
+
   def guardians
 
     @patient = Patient.find(params[:patient_id])
+   
     relationship = RelationshipType.find_by_b_is_to_a("Guardian").id
       
     if params[:new_guardian].to_s == "true"
@@ -111,13 +174,21 @@ class PatientsController < ApplicationController
         if params[:current_guardian].present?
           
           r = Relationship.find_by_person_a_and_person_b_and_relationship(@patient.id, params[:current_guardian], relationship)
-          r.update_attributes(:date_created => DateTime.now)
-
+          
+          if r.present?
+            r.update_attributes(:date_created => DateTime.now)
+          else           
+            Relationship.create(
+              :person_a => params[:patient_id],
+              :person_b => params[:current_guardian],
+              :relationship => relationship)
+          end
+          
           redirect_to "/patients/show/#{@patient.id}?patient_id=#{@patient.id}&user_id=#{session[:user_id]}&location_id=#{session[:location_id]}"
           
         end
         
-        @guardians_map = @patient.guardians_map.uniq rescue []
+        @guardians_map = @patient.guardians_map.uniq #rescue []
              
         @previous_guardian = @guardians_map.first[0] rescue nil
       
@@ -191,7 +262,7 @@ class PatientsController < ApplicationController
         p.id,
         p.to_s,
         p.program_encounter_types.collect{|e|
-          next if e.encounter.blank?
+          next if e.encounter.blank? || e.encounter.voided.to_s == "1" 
 
           [
             e.encounter_id, e.encounter.type.name,
@@ -234,7 +305,7 @@ class PatientsController < ApplicationController
         p.id,
         p.to_s,
         p.program_encounter_types.collect{|e|
-          next if e.encounter.blank?
+          next if e.encounter.blank? || e.encounter.voided.to_s == "1" 
           labl = label(e.encounter_id, @label_encounter_map) || e.encounter.type.name
           [
             e.encounter_id, labl,
@@ -242,6 +313,81 @@ class PatientsController < ApplicationController
             e.encounter.creator
           ] rescue []
         }.uniq,
+        p.date_time.strftime("%d-%b-%Y")
+      ]
+    } if !@patient.blank?
+
+    @programs.delete_if{|prg| prg[2].blank? || (prg[2].first.blank? rescue false)}
+    render :layout => false
+  end
+
+  def current_results
+    @patient = Patient.find(params[:id] || params[:patient_id]) rescue nil
+    d = (session[:datetime].to_date rescue Date.today)
+    t = Time.now
+    session_date = DateTime.new(d.year, d.month, d.day, t.hour, t.min, t.sec)
+
+    ProgramEncounter.current_date = session_date.to_date
+
+    @programs = @patient.program_encounters.find(:all,      
+      :order => ["date_time DESC"],
+      :conditions => ["DATE(date_time) = ?", session_date.to_date]).collect{|p|
+      [
+        p.id,
+        p.to_s,
+        p.program_encounter_types.collect{|e|
+          next if e.encounter.blank? || e.encounter.voided.to_s == "1" || !e.encounter.name.match(/DNA-PCR TEST|RAPID ANTIBODY TEST/i)
+
+          [
+            e.encounter_id, e.encounter.type.name,
+            e.encounter.encounter_datetime.strftime("%H:%M"),
+            e.encounter.creator
+          ]
+        }.compact.uniq,
+        p.date_time.strftime("%d-%b-%Y")
+      ]
+    } if !@patient.blank?
+
+    @programs.delete_if{|prg| prg[2].blank? || (prg[2].first.blank? rescue false)}
+     
+    render :layout => false
+  end
+
+  def lab_results_history
+    @patient = Patient.find(params[:id] || params[:patient_id]) rescue nil
+
+    @task = TaskFlow.new(params[:user_id], @patient.id)
+
+    if File.exists?("#{Rails.root}/config/protocol_task_flow.yml")
+      map = YAML.load_file("#{Rails.root}/config/protocol_task_flow.yml")["#{Rails.env
+        }"]["label.encounter.map"].split(",") rescue []
+    end
+
+    @label_encounter_map = {}
+
+    map.each{ |tie|
+      label = tie.split("|")[0]
+      encounter = tie.split("|")[1] rescue nil
+
+      concept = @task.task_scopes[label.titleize.downcase.strip][:concept].upcase rescue ""
+      key  = encounter + "|" + concept
+      @label_encounter_map[key] = label if !label.blank? && !encounter.blank?
+    }
+
+    @programs = @patient.program_encounters.find(:all, :order => ["date_time DESC"]).collect{|p|
+
+      [
+        p.id,
+        p.to_s,
+        p.program_encounter_types.collect{|e|
+          next if e.encounter.blank? || !e.encounter.name.match(/DNA-PCR TEST|RAPID ANTIBODY TEST/i) || e.encounter.voided.to_s == "1"
+          labl = label(e.encounter_id, @label_encounter_map) || e.encounter.type.name
+          [
+            e.encounter_id, labl,
+            e.encounter.encounter_datetime.strftime("%H:%M"),
+            e.encounter.creator
+          ] rescue []
+        }.compact.uniq,
         p.date_time.strftime("%d-%b-%Y")
       ]
     } if !@patient.blank?
@@ -373,6 +519,23 @@ class PatientsController < ApplicationController
     
     @patient = Patient.find(params[:patient_id])
     
+  end
+
+  def mother_alive
+
+    @patient = Patient.find(params[:patient_id])
+    
+    life_check =  @patient.mother_alive?
+    art_check = @patient.mother_on_art?
+
+    @art_q = (art_check[0] || (((!art_check.blank? && !art_check && art_check[1].to_date != Date.today)) rescue false)) ? false : true
+
+    unless ( life_check.blank? || (life_check[0] && life_check[1].to_date != Date.today))
+
+      redirect_to "/patients/show?patient_id=#{@patient.id}&from_check=true&user_id=#{session[:user_id]}"
+      
+    end
+
   end
 
   def print_mastercard

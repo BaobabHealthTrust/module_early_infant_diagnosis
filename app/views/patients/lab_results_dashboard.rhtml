@@ -1,7 +1,7 @@
 <script type='text/javascript' language='javascript'>
   <!--
-  tt_cancel_show = '/clinic?user_id=<%= params[:user_id] %>';
-  tt_cancel_destination = '/clinic?user_id=<%= params[:user_id] %>';
+  tt_cancel_show = '/patients/show?patient_id=<%= params[:patient_id] %>&user_id=<%= session[:user_id] || params[:user_id] %>';
+  tt_cancel_destination ='/patients/show?patient_id=<%= params[:patient_id] %>&user_id=<%= session[:user_id] || params[:user_id] %>';
 
 <%
 
@@ -78,7 +78,7 @@ next_task = @task.encounter_type.gsub('_',' ') rescue nil
       __$("patient-dashboard-application").appendChild(nextTask);
     }
 
-    __$("nextTask").innerHTML = "<b>Next Task:</b><br /><i><%= next_task.titleize %></i>";
+    __$("nextTask").innerHTML = "<b>Next Task:</b><br /><i><%= next_task rescue nil %></i>";
 
     changeContinueColor();
 
@@ -191,14 +191,14 @@ next_task = @task.encounter_type.gsub('_',' ') rescue nil
 <div id='contented'>
   <div id='description' style='color:#777;position:absolute;margin-top:-70px;'>
     <form id = 'dashboard' action='home.html'>
-      <div>Patient Dashboard</div>
+      <div>Lab Results Dashboard</div>
       <div id='project_name'>
         <div style="margin-top: 20px; color: #6281A7; font-size: 0.5em;">
-          <%= @project %>
+          Lab Results
         </div>
       </div>
       <span id='patient_name'>
-        <%= "#{@patient.name}" %>
+        Lab results for: <%= "#{@patient.name}" %>
       </span>
       <span id='patient_id'><%= "#{@patient.national_id}" %></span>
       <span id='patient_residence'><%= "#{@patient.address}" %></span>
@@ -208,8 +208,8 @@ next_task = @task.encounter_type.gsub('_',' ') rescue nil
       <span id='patient_age'><%= "#{@patient.age(session_date)} yr/s   &nbsp&nbsp&nbsp #{(@patient.age_in_months(session_date)% 12)} months" %></span>
       <span id='patient_gender'><%= "#{@patient.gender}" %></span>
       <select id="tabs">
-        <option value='/patients/current_visit/<%= @patient.id %>?user_id=<%= @user.id %>'>Current Visit</option>
-        <option value='/patients/visit_history/<%= @patient.id %>?user_id=<%= @user.id %>'>Visit History</option>
+        <option value='/patients/current_results/<%= @patient.id %>?user_id=<%= session[:user_id] || params[:user_id] %>'>Current Results</option>
+        <option value='/patients/lab_results_history/<%= @patient.id %>?user_id=<%= session[:user_id] || params[:user_id] %>'>Lab Results History</option>
       </select>
 
       <% if (@patient.age <= 6 rescue true)%>
@@ -220,14 +220,12 @@ next_task = @task.encounter_type.gsub('_',' ') rescue nil
             link = @links[encounter]
             unless @links[encounter].class.to_s.upcase == "HASH" %>
 
-              <optgroup value='<%= link %>' label="<%= (!@task.labels[encounter.downcase].nil? ?
-                            @task.labels[encounter.downcase] : encounter) %>" >
+              <optgroup value='<%= link %>' label="<%= encounter %>" >
               </optgroup>
 
             <% else %>
 
-              <optgroup label="<%= (!@task.labels[encounter.downcase].nil? ?
-                            @task.labels[encounter.downcase] : encounter) %>" >
+              <optgroup label="<%= encounter %>" >
 
                 <% link.each do |label, path| %>
 
@@ -248,21 +246,6 @@ next_task = @task.encounter_type.gsub('_',' ') rescue nil
 
       <% if (@patient.age <= 6 rescue true)%>
         <select id="navigation_links">
-
-          <% if !@demographics_url.nil? %>
-            <option link="<%= @demographics_url %>" ttSize = "160px">
-              Demographics
-            </option>
-          <% end %>
-          <option link="/patients/mastercard?patient_id=<%= @patient.id %>&user_id=<%= @user.id %>" ttSize = "160px">
-            Mastercard
-          </option>
-
-          <option link="<%= @lab_results_url  %>" ttSize = "160px">Lab Results</option>
-
-          <% if @task.url != "/patients/show/#{@patient.id}?user_id=#{@user.id}" && @patient.person.dead.to_s == "0"%>
-            <option link="<%= @task.url  %>" ttSize = "160px">Continue</option>
-          <% end %>
 
         </select>
       <%end%>
