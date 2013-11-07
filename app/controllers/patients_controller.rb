@@ -9,6 +9,10 @@ class PatientsController < ApplicationController
     
     @patient = Patient.find(params[:id] || params[:patient_id]) rescue nil
 
+    if @patient.age_in_months > 30
+      redirect_to "/encounters/age_limit" and return
+    end
+
     if @patient.blank?
       redirect_to "/encounters/no_patient" and return
     end

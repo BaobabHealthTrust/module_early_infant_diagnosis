@@ -4,7 +4,7 @@
   tt_cancel_destination = '/clinic?user_id=<%= params[:user_id] %>';
 
 <%
-
+session_date = session[:datetime].to_date rescue Date.today
 next_task = @task.encounter_type.gsub('_',' ') rescue nil
 
 %>
@@ -82,7 +82,7 @@ next_task = @task.encounter_type.gsub('_',' ') rescue nil
 
     changeContinueColor();
 
-<% if ((@patient.is_exposed?).present?) && (@patient.age <= 6 rescue true)%>
+<% if ((@patient.is_exposed?).present?) && (@patient.age_in_months(session_date) <= 30 rescue true)%>
       var exp = document.createElement("div");
       exp.id = "exposure";
       __$("mainContainer").appendChild(exp);
@@ -203,8 +203,6 @@ next_task = @task.encounter_type.gsub('_',' ') rescue nil
       <span id='patient_id'><%= "#{@patient.national_id}" %></span>
       <span id='patient_residence'><%= "#{@patient.address}" %></span>
 
-      <%session_date = session[:datetime].to_date rescue Date.today%>
-
       <span id='patient_age'><%= "#{@patient.age(session_date)} yr/s   &nbsp&nbsp&nbsp #{(@patient.age_in_months(session_date)% 12)} months" %></span>
       <span id='patient_gender'><%= "#{@patient.gender}" %></span>
       <select id="tabs">
@@ -212,7 +210,7 @@ next_task = @task.encounter_type.gsub('_',' ') rescue nil
         <option value='/patients/visit_history/<%= @patient.id %>?user_id=<%= @user.id %>'>Visit History</option>
       </select>
 
-      <% if (@patient.age <= 6 rescue true)%>
+      <% if (@patient.age_in_months(session_date) <= 30 rescue true)%>
         <select id="links">
 
           <%  @first_level_order.each do |encounter|
@@ -246,7 +244,7 @@ next_task = @task.encounter_type.gsub('_',' ') rescue nil
         </select>
       <%end%>
 
-      <% if (@patient.age <= 6 rescue true)%>
+      <% if (@patient.age_in_months(session_date) <= 30 rescue true)%>
         <select id="navigation_links">
 
           <% if !@demographics_url.nil? %>
