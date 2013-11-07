@@ -105,6 +105,11 @@ class TaskFlow
 
       return self
 
+    elsif (self.patient.birthweight.blank? rescue false)
+
+      self.url = "/patients/birth_weight?user_id=#{self.user.id}&patient_id=#{self.patient.id}"
+
+      return self
     end
 
     if File.exists?("#{Rails.root}/config/protocol_task_flow.yml")

@@ -9,17 +9,18 @@ class EncountersController < ApplicationController
     session_date = DateTime.new(d.year, d.month, d.day, t.hour, t.min, t.sec)
     
     User.current = User.find(session[:user]["user_id"])
-    redirect_to "/patients/show/#{params[:patient_id]}?user_id=#{User.current.user_id}" if params[:prescription].blank?
+   
+    redirect_to "/patients/show/#{params[:patient_id]}?user_id=#{User.current.user_id}" and return if  params.keys.include?("prescription")  && params[:prescription].blank?
 
     Location.current = Location.find(params[:location_id] || session[:location_id]) rescue nil
 
     patient = Patient.find(params[:patient_id]) rescue nil
 
-    if !patient.nil?
+    if !patient.blank?
 
       type = EncounterType.find_by_name(params[:encounter_type]).id rescue nil
 
-      if !type.nil?
+      if !type.blank?
         @encounter = Encounter.create(
           :patient_id => patient.id,
           :provider_id => (params[:user_id]),
@@ -340,15 +341,19 @@ class EncountersController < ApplicationController
           :value_text => baby_id
         ) if !baby_id.blank?
 
-      end
-
+      end      
+       
       @task = TaskFlow.new(params[:user_id] || User.first.id, patient.id, session_date)
+
+      route = nil
       
       if !params[:next_url].blank?
-        redirect_to params[:next_url] and return rescue nil
+        route = params[:next_url]
       else
-        redirect_to @task.next_task.url and return rescue nil
+        route = @task.next_task.url
       end
+
+      redirect_to route  and return 
     end
 
   end

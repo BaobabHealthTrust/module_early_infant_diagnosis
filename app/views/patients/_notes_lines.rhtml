@@ -33,7 +33,7 @@
       <tr>
         <td colspan="9"  style="font-size: 13px; text-align: left; min-width: 100%; border-bottom: 1px solid #000;">
           <%= "<span style='margin-right: 20px; font-size: 15px;'> (" + date.strftime("%d/%b/%Y  %H:%M") +
-            ")</span> - <i>&nbsp&nbsp&nbsp" +  @notes[date]["CLINICIAN NOTES"] + "</i>" %>
+            ")</span> - <i>&nbsp&nbsp&nbsp" +  (@notes[date]["CLINICIAN NOTES"].to_s rescue "") + "</i>" %>
         </td>
       </tr>
     <%}%>

@@ -145,8 +145,10 @@ class PatientsController < ApplicationController
 
     @patient = Patient.find(params[:patient_id]) rescue nil
     session_date = session[:datetime].to_date rescue Date.today
+    
     @dna_test =  @patient.dna_pcr_incomplete_test(session_date, "data")
-
+    @sample_id = @patient.dna_pcr_incomplete_test(session_date, "sample_id").titleize rescue "-"
+    
     redirect_to '/encounters/no_patient' and return if @patient.blank?
 
     if params[:user_id].blank?

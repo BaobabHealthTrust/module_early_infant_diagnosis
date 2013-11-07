@@ -1,4 +1,4 @@
-P.1. HIV STATUS AT ENROLLMENT [program: EARLY INFANT DIAGNOSIS PROGRAM, label: Enrollment Status, scope: RECENT, concept: Confirmatory HIV test]
+P.1. HIV STATUS AT ENROLLMENT [program: EARLY INFANT DIAGNOSIS PROGRAM, label: Enrollment Status, scope: RECENT, concept: Age of child]
 C.1.1. Given an exposed child under 24 months, collect the following details on enrollment:
 Q.1.1.1. Age of child (months) [concept: Age of child, max: <%= @patient.age_in_months%>, value: <%= @patient.age_in_months %>, tt_onLoad: showCategory("Enrollment Status"), field_type: number, tt_pageStyleClass: NumbersOnlyWithUnknown, pos: 0]
 Q.1.1.2. Rapid Antibody Testing Result [pos: 1]

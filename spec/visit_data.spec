@@ -34,7 +34,7 @@ O.1.9.5. Unknown
 Q.1.10. Any abnormalities or sicknesses [pos: 12, disabled: disabled]
 O.1.10.1. No
 O.1.10.2. Yes
-Q.1.10.2.1. Specify abnormality or sickness [pos: 13, concept: Specify]
+Q.1.10.2.1. Specify abnormality or sickness [pos: 13, field_type: textarea, concept: Specify]
 [
 Q.1.11. Childs current HIV status [pos: 14, helpText: Current HIV Status of Child]
 O.1.11.1. Confirmed

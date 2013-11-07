@@ -537,6 +537,7 @@ class Patient < ActiveRecord::Base
     }
 
     return encounter_id if dna_tests.present? and type == "encounter_id"
+    return map.keys.first || "" if dna_tests.present? and type == "sample_id"
     
     map[map.keys.first] || []
     

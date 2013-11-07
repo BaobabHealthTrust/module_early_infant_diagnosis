@@ -15,7 +15,7 @@
 				Visit date 
 			</td>
 			<td>
-<input type='text' id='1.1'  name='concept[Visit date ]' helpText='Visit date '  value='<%= session["datetime"].to_date rescue Date.today%>'  pos='0'  condition='false'  tt_onLoad='showCategory("EID Visit")'  field_type='date' />
+<input type='text' id='1.1'  name='concept[Visit date ]' helpText='Visit date '  value='<%= session["datetime"].to_date rescue Date.today%>'  field_type='date'  pos='0'  tt_onLoad='showCategory("EID Visit")'  condition='false' />
 			</td>
 		</tr>
 		<tr>
@@ -23,7 +23,7 @@
 				Height (cm) 
 			</td>
 			<td>
-<input type='text' id='1.3'  name='concept[Height (cm) ]'   absoluteMin='15'  pos='2'  field_type='number'  tt_onLoad='showCategory("EID Visit")'  tt_pageStyleClass='NumbersOnlyWithUnknown'  absoluteMax='160'  min='20'  helpText='Baby height (cm)'  max='120' />
+<input type='text' id='1.3'  name='concept[Height (cm) ]'   max='120'  helpText='Baby height (cm)'  field_type='number'  absoluteMax='160'  pos='2'  tt_pageStyleClass='NumbersOnlyWithUnknown'  tt_onLoad='showCategory("EID Visit")'  min='20'  absoluteMin='15' />
 			</td>
 		</tr>
 		<tr>
@@ -31,7 +31,7 @@
 				Weight (grams) 
 			</td>
 			<td>
-<input type='text' id='1.4'  name='concept[weight]' helpText='Weight (grams) '  absoluteMin='100'  pos='3'  helptext='Baby weight (grams)'  field_type='number'  tt_pageStyleClass='NumbersOnlyWithUnknown'  absoluteMax='30000'  min='2500'  max='10000' />
+<input type='text' id='1.4'  name='concept[weight]' helpText='Weight (grams) '  max='10000'  helptext='Baby weight (grams)'  field_type='number'  absoluteMax='30000'  pos='3'  tt_pageStyleClass='NumbersOnlyWithUnknown'  min='2500'  absoluteMin='100' />
 			</td>
 		</tr>
 		<tr>
@@ -39,7 +39,7 @@
 				MUAC 
 			</td>
 			<td>
-<input type='text' id='1.5'  name='concept[MUAC ]'   absoluteMin='5'  pos='4'  tt_onLoad='checkWasting()'  field_type='number'  tt_pageStyleClass='NumbersOnlyWithUnknown'  absoluteMax='200'  helpText='Mid Upper Arm Circumference (cm)' />
+<input type='text' id='1.5'  name='concept[MUAC ]'   helpText='Mid Upper Arm Circumference (cm)'  field_type='number'  absoluteMax='200'  pos='4'  tt_pageStyleClass='NumbersOnlyWithUnknown'  tt_onLoad='checkWasting()'  absoluteMin='5' />
 			</td>
 		</tr>
 		<tr>
@@ -47,7 +47,7 @@
 				Breast feeding 
 			</td>
 			<td>
-<select id='1.7' name='concept[Breast feeding ]'  pos='5'  helpText='Is Mother Breast Feeding?' >
+<select id='1.7' name='concept[Breast feeding ]'  helpText='Is Mother Breast Feeding?'  pos='5' >
 <option></option>
 <option value='No'>No</option>
  <option value='Yes'>Yes</option>
@@ -72,7 +72,7 @@
 				When was breast feeding stopped? 
 			</td>
 			<td>
-<select id='1.7.2.1' name='concept[When was breast feeding stopped? ]' helpText='When was breast feeding stopped? ' condition='__$("1.7").value == "No"'  pos='7'  tt_onUnLoad='if(__$("1.7.2.1").value == "Breastfeeding stopped over 6 weeks ago"){checkTimeForStoppingBreastFeeding()}' >
+<select id='1.7.2.1' name='concept[When was breast feeding stopped? ]' helpText='When was breast feeding stopped? ' condition='__$("1.7").value == "No"'  tt_onUnLoad='if(__$("1.7.2.1").value == "Breastfeeding stopped over 6 weeks ago"){checkTimeForStoppingBreastFeeding()}'  pos='7' >
 <option></option>
 <option value='Breastfeeding stopped over 6 weeks ago'>Breastfeeding stopped over 6 weeks ago</option>
  <option value='Breastfeeding stopped in last 6 weeks'>Breastfeeding stopped in last 6 weeks</option>
@@ -84,7 +84,7 @@
 				TB status 
 			</td>
 			<td>
-<select id='1.9' name='concept[TB status ]'  pos='11'  helpText='Current TB Status of Child' >
+<select id='1.9' name='concept[TB status ]'  helpText='Current TB Status of Child'  pos='11' >
 <option></option>
 <option value='Unknown'>Unknown</option>
  <option value='TB NOT suspected'>TB NOT suspected</option>
@@ -111,7 +111,7 @@
 				Specify abnormality or sickness 
 			</td>
 			<td>
-<input type='text' id='1.10.2.1'  name='concept[Specify]' helpText='Specify abnormality or sickness '  condition='__$("1.10").value == "Yes"'  pos='13' />
+<textarea type='text' id='1.10.2.1'  name='concept[Specify]' helpText='Specify abnormality or sickness '  condition='__$("1.10").value == "Yes"'  field_type='textarea'  pos='13' > </textarea>
 			</td>
 		</tr>
 		<tr>
@@ -119,7 +119,7 @@
 				Childs current HIV status 
 			</td>
 			<td>
-<select id='1.11' name='concept[Childs current HIV status ]'  pos='14'  helpText='Current HIV Status of Child' >
+<select id='1.11' name='concept[Childs current HIV status ]'  helpText='Current HIV Status of Child'  pos='14' >
 <option></option>
 <option value='Not confirmed'>Not confirmed</option>
  <option value='Confirmed'>Confirmed</option>
@@ -131,7 +131,7 @@
 				Confirmed 
 			</td>
 			<td>
-<select id='1.11.1.1' name='concept[Confirmed ]'  condition='__$("1.11").value == "Confirmed"'  value='<%=  @patient.confirmation_status rescue nil%>'  pos='15'  tt_onLoad='checkConfirmationStatus("HIV infected")'  onchange='checkConfirmationStatus("HIV infected")'  helpText='Confirmation Status' >
+<select id='1.11.1.1' name='concept[Confirmed ]'  condition='__$("1.11").value == "Confirmed"'  helpText='Confirmation Status'  value='<%=  @patient.confirmation_status rescue nil%>'  onchange='checkConfirmationStatus("HIV infected")'  pos='15'  tt_onLoad='checkConfirmationStatus("HIV infected")' >
 <option></option>
 <option value='HIV infected'>HIV infected</option>
  <option value='Not HIV infected'>Not HIV infected</option>
@@ -143,7 +143,7 @@
 				Not confirmed 
 			</td>
 			<td>
-<select id='1.11.2.1' name='concept[Not confirmed ]'  condition='__$("1.11").value == "Not confirmed"'  pos='16'  tt_onLoad='checkConfirmationStatus("Presumed Severe HIV Disease")'  helpText='Non-Confirmation Status' >
+<select id='1.11.2.1' name='concept[Not confirmed ]'  condition='__$("1.11").value == "Not confirmed"'  helpText='Non-Confirmation Status'  pos='16'  tt_onLoad='checkConfirmationStatus("Presumed Severe HIV Disease")' >
 <option></option>
 <option value='Presumed Severe HIV Disease'>Presumed Severe HIV Disease</option>
  <option value='Not ART eligible'>Not ART eligible</option>
@@ -155,7 +155,7 @@
 				Allergic to sulphur 
 			</td>
 			<td>
-<select id='1.12.1' name='concept[Allergic to sulphur ]'  value='<%= @patient.allergic_to_sulphur.titleize %>'  pos='17'  condition='<%= @patient.allergic_to_sulphur.downcase == "unknown" %>'  helpText='Is Child Allergic to Sulphur?' >
+<select id='1.12.1' name='concept[Allergic to sulphur ]'  helpText='Is Child Allergic to Sulphur?'  value='<%= @patient.allergic_to_sulphur.titleize %>'  pos='17'  condition='<%= @patient.allergic_to_sulphur.downcase == "unknown" %>' >
 <option></option>
 <option value='No'>No</option>
  <option value='Yes'>Yes</option>
@@ -183,7 +183,7 @@
 				Next appointment date 
 			</td>
 			<td>
-<input type='text' id='1.14'  name='concept[Appointment date]' helpText='Next appointment date '  value='<%= Date.today %>'  pos='20'  field_type='calendar'  tt_onLoad='showCategory("Next Appointment Date")'  tt_BeforeUnload='try{__$("category").style.display = "none"}catch(ee){}' />
+<input type='text' id='1.14'  name='concept[Appointment date]' helpText='Next appointment date '  tt_BeforeUnload='try{__$("category").style.display = "none"}catch(ee){}'  value='<%= Date.today %>'  field_type='calendar'  pos='20'  tt_onLoad='showCategory("Next Appointment Date")' />
 			</td>
 		</tr>
 	</table>
