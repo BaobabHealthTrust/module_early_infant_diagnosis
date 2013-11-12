@@ -543,4 +543,44 @@ class Patient < ActiveRecord::Base
     
   end
 
+  def art_reg_no
+    id_type = PatientIdentifierType.find_by_name("ARV NUMBER").id
+    pid = PatientIdentifier.find(:last, :conditions => ["patient_id = ? AND identifier_type = ?", self.id, id_type])
+    return "" if pid.blank?
+    return pid.identifier
+  end
+
+  def mother_art_reg_no
+    
+    reg_no = Observation.find(
+      :last, :order => ["obs_datetime"],
+      :conditions => ["concept_id = ? AND person_id = ? AND voided = 0",
+        ConceptName.find_by_name("Mother ART registration number").concept_id, self.id
+      ]).answer_string rescue nil
+
+    return reg_no if !reg_no.blank? and reg_no.downcase.strip != "unknown"
+
+    return self.mother.art_reg_no
+    
+  end
+
+  def mastercard_hiv_status
+    on_art = self.mother_on_art?
+    alive = self.mother_alive?
+
+    result = "Unknown"
+    if on_art and alive
+      result = "Alive on ART"
+    elsif !on_art and alive
+      result = "Alive No ART"
+    elsif on_art and !alive
+      result = "Died While On ART"
+    elsif !on_art and !alive
+      result = "Died"
+    end
+
+    result
+    
+  end
+
 end

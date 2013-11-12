@@ -34,8 +34,9 @@
         <td style="border-left: 2px solid #000; border-top: 2px solid #000;">
           &nbsp;<%= @rad_test[1]["RAPID ANTIBODY TESTING SAMPLE DATE"] rescue "&nbsp"%>
         </td>
+
         <td style="border-left: 1px solid #000; border-top: 2px solid #000;">
-          &nbsp;<%= (@rad_test[1]["RAPID ANTIBODY TESTING AGE"].blank? rescue false) ? "&nbsp;" : (@rad_test[1]["RAPID ANTIBODY TESTING AGE"].to_i.to_s rescue "") %>
+          &nbsp;<%= (@rad_test[1]["RAPID ANTIBODY TESTING SAMPLE AGE"].blank? rescue false) ? "&nbsp;" : (@rad_test[1]["RAPID ANTIBODY TESTING SAMPLE AGE"].to_s rescue "") %>
         </td>
         <td style="border-left: 1px solid #000; border-top: 2px solid #000;">
           &nbsp;<%= @rad_test[1]["RAPID ANTIBODY TESTING HTC SERIAL NO"] rescue "&nbsp"%>

@@ -8,7 +8,7 @@ class PatientsController < ApplicationController
   def show
     
     @patient = Patient.find(params[:id] || params[:patient_id]) rescue nil
-
+    
     if @patient.age_in_months > 30
       redirect_to "/encounters/age_limit" and return
     end
@@ -478,6 +478,8 @@ class PatientsController < ApplicationController
     @birthweight = @patient.birthweight rescue nil
     @mother = @patient.mother.name rescue ""
     @enrolment_details = @patient.mastercard("HIV STATUS AT ENROLLMENT") rescue {}
+    @enrolment_details["MOTHER HIV STATUS"] = @patient.mastercard_hiv_status rescue {}
+    @enrolment_details["MOTHER ART REGISTRATION NUMBER"] = @patient.mother_art_reg_no rescue {}
     @pmtct_history = @patient.mastercard("PMTCT HISTORY") rescue {}
     @rad_test = @patient.mastercard("RAPID ANTIBODY TEST") rescue {}
     @dna_test = @patient.mastercard("DNA-PCR TEST") rescue {}

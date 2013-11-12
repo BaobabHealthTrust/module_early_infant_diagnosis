@@ -44,7 +44,7 @@
 				Mother ART Registration Number
       </td>
       <td>
-        <input type='text' id='1.3'  name='concept[Mother ART registration number]' helpText='Mother ART Registration Number '  condition='__$("1.2").value.toUpperCase()  == "YES"'  field_type='number'  pos='2' />
+        <input type='text' id='1.3'  value="<%= @patient.mother.art_reg_no rescue nil %>" name='concept[Mother ART registration number]' helpText='Mother ART Registration Number '  condition='__$("1.2").value.toUpperCase()  == "YES"'  field_type='number'  pos='2' />
       </td>
     </tr>
 

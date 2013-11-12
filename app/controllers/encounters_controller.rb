@@ -142,6 +142,13 @@ class EncountersController < ApplicationController
                 :encounter_id => @encounter.id
               )
 
+              if key.match(/DNA-PCR Testing Sample Date/i)
+
+                accession_number = Observation.new_accession_number
+                obs.update_attribute("accession_number", accession_number)
+                  
+              end
+
               case concept_type
               when "date"
 
@@ -229,6 +236,13 @@ class EncountersController < ApplicationController
                   :encounter_id => @encounter.id
                 )
 
+                if key.match(/DNA-PCR Testing Sample Date/i)
+
+                  accession_number = Observation.new_accession_number
+                  obs.update_attribute("accession_number", accession_number)
+
+                end
+              
                 case concept_type
                 when "date"
 
@@ -344,6 +358,8 @@ class EncountersController < ApplicationController
       end      
        
       @task = TaskFlow.new(params[:user_id] || User.first.id, patient.id, session_date)
+      
+     
 
       route = nil
       
@@ -353,9 +369,74 @@ class EncountersController < ApplicationController
         route = @task.next_task.url
       end
 
-      redirect_to route  and return 
+      if @encounter.name.match(/DNA-PCR TEST/i)       
+        print_and_redirect("/encounters/lab_orders_label/?patient_id=#{patient.id}", route) and return
+      else
+        redirect_to route and return
+      end
+      
     end
 
+  end
+
+  def lab_orders_label
+    
+    patient = Patient.find(params[:patient_id])
+
+    label_commands = patient_lab_orders_label(patient.id)
+
+    send_data(label_commands.to_s,:type=>"application/label; charset=utf-8", :stream=> false, :filename=>"#{patient.id}#{rand(10000)}.lbs", :disposition => "inline")
+
+  end
+  
+  def patient_lab_orders_label(patient_id, type = "one")
+
+    patient = Patient.find(patient_id)
+    session_date = session[:datetime].to_date rescue Date.today
+    encounter_id = patient.dna_pcr_incomplete_test(session_date, "encounter_id")
+
+    lab_orders = Encounter.find(
+      :all,
+      :order => ["encounter_datetime DESC"],
+      :conditions => ["patient_id = ? AND encounter_type = ?",
+        patient_id, EncounterType.find_by_name("DNA-PCR TEST").id]).collect{|enc|
+
+      enc.observations.collect{|ob|
+        ob if ob.concept.name.name.match(/DNA-PCR Testing Sample Date/i)
+      }
+    }.flatten.compact if !encounter_id.blank?
+   
+		labels = []
+		i = 0
+
+    (0 .. lab_orders.size).each {|i|
+
+      next if lab_orders[i].blank?
+      accession_number = "#{lab_orders[i].accession_number rescue nil}"
+      national_id = patient.national_id
+      if accession_number != ""
+        label = 'label' + i.to_s
+        label = ZebraPrinter::Label.new(500,165)
+        label.font_size = 2
+        label.font_horizontal_multiplier = 1
+        label.font_vertical_multiplier = 1
+        label.left_margin = 750
+        label.draw_barcode(70,105,0,1,4,8,50,false,"#{accession_number}")
+				
+        label.draw_text("#{patient.name.titleize.delete("'")} #{national_id}",70,45,0,2,1,1)
+        label.draw_text("Dna-pcr test - #{accession_number rescue nil}",70,65,0,2,1,1)
+        label.draw_text("#{lab_orders[i].value_datetime.strftime("%d-%b-%Y %H:%M")}",70,90,0,2,1,1)
+        labels << label
+      end
+   
+    }
+
+    print_labels = []
+    label = 0
+    
+    data = labels[0].print(2)
+
+    data
   end
 
   def update_dna_test
