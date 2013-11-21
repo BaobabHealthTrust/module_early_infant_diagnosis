@@ -2,7 +2,7 @@
   tstUsername = "";
   tt_cancel_destination = '/user_logout/<%= params[:user_id] %>?location_id=<%= session[:location_id] || params[:location_id] %>';
   tt_cancel_show = '<%= @patient_registration %>/scan?user_id=<%= params[:user_id]
-%>&ext=true&location_id=<%= session[:location_id] || params[:location_id] %>';
+%>&ext=true&location_id=<%= session[:location_id] || params[:location_id] %>&min_date=<%= ((session[:datetime].to_date rescue Date.today) - 3.years) %>&max_date=<%= (session[:datetime].to_date rescue Date.today) %>&app_name=<%= @project %>&<%=  @selected.join("=true&") + (@selected.length > 0 ? "=true" : "") %>';
 </script>
 <div id="home">
   <div id="project_name">
@@ -53,14 +53,14 @@
   </select>
 
   <form id="register" action="<%= @patient_registration %>/search?user_id=<%= session[:user_id] || params[:user_id]
-      %>&ext=true&app_name=<%= @project %>&location_id=<%= session[:location_id] || params[:location_id] %>&min_date=<%= ((session[:datetime].to_date rescue Date.today) - 2.years) %>" method="post">
+      %>&ext=true&app_name=<%= @project %>&location_id=<%= session[:location_id] || params[:location_id] %>&min_date=<%= ((session[:datetime].to_date rescue Date.today) - 3.years) %>&max_date=<%= (session[:datetime].to_date rescue Date.today) %>" method="post">
 
-    <% @selected.each do |item| %>
+      <% @selected.each do |item| %>
 
-    <%= hidden_field_tag "#{item}", true %>
+        <%= hidden_field_tag "#{item}", true %>
 
-    <% end %>
+      <% end %>
 
-  </form>
+    </form>
 
-</div>
+  </div>
