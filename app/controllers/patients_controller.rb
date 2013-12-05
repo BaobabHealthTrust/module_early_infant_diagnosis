@@ -545,15 +545,19 @@ class PatientsController < ApplicationController
   end
 
   def mother_alive
-
+    
+    d = (session[:datetime].to_date rescue Date.today)
+    t = Time.now
+    session_date = DateTime.new(d.year, d.month, d.day, t.hour, t.min, t.sec)
+    
     @patient = Patient.find(params[:patient_id])
     
     life_check =  @patient.mother_alive?
     art_check = @patient.mother_on_art?
 
-    @art_q = (art_check[0] || (((!art_check.blank? && !art_check && art_check[1].to_date != Date.today)) rescue false)) ? false : true
+    @art_q = (art_check[0] || (((!art_check.blank? && !art_check && art_check[1].to_date != session_date.to_date)) rescue false)) ? false : true
 
-    unless ( life_check.blank? || (life_check[0] && life_check[1].to_date != Date.today))
+    unless ( life_check.blank? || (life_check[0] && life_check[1].to_date != session_date.to_date))
 
       redirect_to "/patients/show?patient_id=#{@patient.id}&from_check=true&user_id=#{session[:user_id]}"
       
