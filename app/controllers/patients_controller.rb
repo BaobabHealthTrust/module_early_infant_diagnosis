@@ -6,6 +6,10 @@ class PatientsController < ApplicationController
     :set_datetime, :update_datetime, :reset_datetime, :mastercard_printable]
 
   def show
+
+    d = (session[:datetime].to_date rescue Date.today)
+    t = Time.now
+    session_date = DateTime.new(d.year, d.month, d.day, t.hour, t.min, t.sec)
     
     @patient = Patient.find(params[:id] || params[:patient_id]) rescue nil
     
@@ -25,7 +29,7 @@ class PatientsController < ApplicationController
     
     redirect_to "/encounters/no_user" and return if @user.blank?
     
-    @guardian = @patient.recent_guardian(session[:datetime] || Date.today) rescue nil
+    @guardian = @patient.recent_guardian(session_date) rescue nil
 
     @mother = @patient.mother
 
@@ -163,6 +167,10 @@ class PatientsController < ApplicationController
 
   def guardians
 
+    d = (session[:datetime].to_date rescue Date.today)
+    t = Time.now
+    session_date = DateTime.new(d.year, d.month, d.day, t.hour, t.min, t.sec)
+
     @patient = Patient.find(params[:patient_id])
    
     relationship = RelationshipType.find_by_b_is_to_a("Guardian").id
@@ -179,15 +187,21 @@ class PatientsController < ApplicationController
 
         if params[:current_guardian].present?
           
-          r = Relationship.find_by_person_a_and_person_b_and_relationship(@patient.id, params[:current_guardian], relationship)
-          
+          #r = Relationship.find_by_person_a_and_person_b_and_relationship(@patient.id, params[:current_guardian], relationship)
+          r = Relationship.find(:first, :order => ["date_created DESC"], 
+            :conditions => ["person_a = ? AND person_b = ? AND relationship = ? AND DATE(date_created) <= ?",
+              @patient.id, params[:current_guardian], relationship, session_date.to_date
+            ])
+           
           if r.present?
-            r.update_attributes(:date_created => DateTime.now)
-          else           
+            r.update_attributes(:date_created => session_date.to_date)
+            
+          else
             Relationship.create(
               :person_a => params[:patient_id],
               :person_b => params[:current_guardian],
-              :relationship => relationship)
+              :relationship => relationship).update_attributes(:date_created => session_date.to_date)
+            
           end
           
           redirect_to "/patients/show/#{@patient.id}?patient_id=#{@patient.id}&user_id=#{session[:user_id]}&location_id=#{session[:location_id]}"
@@ -200,14 +214,15 @@ class PatientsController < ApplicationController
       
         if @guardians_map.blank? and @mother.present?
           
-          mother = @patient.mother.name + " (Mother)"        
+          mother = @patient.mother.name + " (Mother)"
           @guardian_map << [mother, @patient.mother.id]
           
         end
 
-      else     
+      else
         
         Relationship.create(
+          :date_created => session_date,
           :person_a => params[:patient_id],
           :person_b => params[:ext_patient_id],
           :relationship => relationship)
@@ -268,7 +283,7 @@ class PatientsController < ApplicationController
         p.id,
         p.to_s,
         p.program_encounter_types.collect{|e|
-          next if e.encounter.blank? || e.encounter.voided.to_s == "1" 
+          next if e.encounter.blank? || e.encounter.voided.to_s == "1"
 
           [
             e.encounter_id, e.encounter.type.name,
@@ -311,7 +326,7 @@ class PatientsController < ApplicationController
         p.id,
         p.to_s,
         p.program_encounter_types.collect{|e|
-          next if e.encounter.blank? || e.encounter.voided.to_s == "1" 
+          next if e.encounter.blank? || e.encounter.voided.to_s == "1"
           labl = label(e.encounter_id, @label_encounter_map) || e.encounter.type.name
           [
             e.encounter_id, labl,
@@ -335,7 +350,7 @@ class PatientsController < ApplicationController
 
     ProgramEncounter.current_date = session_date.to_date
 
-    @programs = @patient.program_encounters.find(:all,      
+    @programs = @patient.program_encounters.find(:all,
       :order => ["date_time DESC"],
       :conditions => ["DATE(date_time) = ?", session_date.to_date]).collect{|p|
       [
