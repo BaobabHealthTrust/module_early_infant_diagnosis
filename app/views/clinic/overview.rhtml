@@ -76,7 +76,7 @@
 
     <% @types.each do |type| %>
       <tr class="<%= cycle('even', 'odd') %>">
-        <td style="text-align:left;"><%= type.titleize %></td>
+        <td style="text-align:left;"><%= type.titleize.sub(/Hiv Status At Enrollment/i, "Enrollment Status") %></td>
         <td><%= @me[type] || 0 %></td>
         <td><%= @today[type] || 0%></td>
         <td><%= @year[type] || 0 %></td>

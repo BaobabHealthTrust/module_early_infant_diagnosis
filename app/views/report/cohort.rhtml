@@ -1,0 +1,47 @@
+<html>
+  <head>
+    <title>Maternity Cohort Report</title>
+
+    <script type="text/javascript">
+
+      tt_cancel_destination = "/clinic?user_id=<%= session[:user_id]%>&location_id=<%= session[:location_id] %>";
+      tt_cancel_show = "/clinic?user_id=<%= session[:user_id]%>&location_id=<%= session[:location_id] %>";  
+
+
+    </script>
+
+    <style>
+      #main {
+        width: 99.7%;
+        height: 88.5%;
+        overflow: auto;
+      }
+
+      button{
+        margin: 5px;
+      }
+    </style>
+  </head>
+  <body>
+
+    <iframe id="main" src="/report/cohort_printable?start_date=<%= @start_date%>&end_date=<%= @end_date%>"></iframe>
+
+
+    <div id = "nav" style="z-index:11;bottom:0px; height: 82px; width: 100%; left: 0px;
+         right: -66px; position: absolute; background-color: #333333; padding: 0px;">
+
+      <button onclick="window.location = tt_cancel_destination;" class="button navButton green"
+              id="nextButton" style="margin-top: 10px; margin-right: 20px;" ><span>Finish</span>
+      </button>
+
+      <button class="button navButton blue" style="margin-top: 10px;"
+              onclick="window.location = '/cohort_report/print_cohort?start_date=<%= @start_date %>+<%= @start_time
+            %>&end_date=<%= @end_date %>+<%= @end_time %>&reportType=<%= @reportType %>'" style="float: right; ">
+        <span>
+          Print
+        </span>
+      </button>
+
+    </div>
+  </body>
+</html>

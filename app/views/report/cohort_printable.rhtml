@@ -1,0 +1,81 @@
+<html>
+  <head>
+    <title>report</title>
+    <script>
+      
+    </script>
+    <style>
+      table {
+        font-family: verdana;
+        -moz-user-select: none;
+      }
+      #container td{
+        border: 1px solid #ccc;
+      }
+      #tb th{
+        border: 1px solid #ccc;
+        background-color: #6281A7;
+        color: #eee;
+      }
+      td{
+        text-align: center;
+        font-size: 1.1em;
+        padding: 4px;
+        text-align: left;
+        border: 1px solid;
+      }
+      .title {
+        padding: 11px;
+        text-align: left;
+      }
+      .group{
+        background: rgb(240, 240, 240);
+        text-align: left;
+        padding-left: 30px;
+      }
+      .value{
+        background: rgb(240, 240, 240);
+        text-align: center;
+        color: darkolivegreen;
+        font-weight: bold;
+      }
+
+      .sub-header{
+        padding-left: 0px;
+        text-align: left;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+
+    <table cellpadding="5" width="100%">
+      <th colspan="8">
+        <span style="font-size: 22px; color: gray">Exposed Child Under 24 Months - Follow-Up Report</span>
+      </th>
+      <tr style="border: 1px solid;">
+        <td colspan="2" style="border-bottom: 0px; border-right: 0px">
+          Clinic Name
+        </td>
+        <td colspan="6" style="border-bottom: 0px">
+          Bwaila Maternity Wing
+        </td>
+
+      </tr>
+      <tr style="border: 1px solid;">
+        <td colspan="2" style="border-top: 0px; border-right: 0px">
+          Reporting year and month
+        </td>
+        <td colspan="6" style="">
+          <span> <%= @year %> </span> &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+          &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<span> <%= @month %> </span>
+        </td>
+
+      </tr>
+
+      <tr>
+        
+      </tr>
+    </table>
+  </body>
+</html>
