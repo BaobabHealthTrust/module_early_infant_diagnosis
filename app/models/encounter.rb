@@ -110,54 +110,71 @@ EOF
       return rows.inject({}) {|result, row| result[encounter_types_hash[row['encounter_type']]] = row['number']; result }
     end
   end
-end
 
+  def self.encounter_patients(types, start_date = Date.today, end_date = Date.today)
 
-=begin
+    encounter_types = EncounterType.all(:conditions => ['name IN (?)', types]).map(&:encounter_type_id)
+    return [] if encounter_types.blank?
+    
+    Encounter.all(:conditions => ["encounter_type IN (?) AND DATE(encounter_datetime) BETWEEN (?) AND (?)",
+        encounter_types, start_date.to_date, end_date.to_date]).map(&:patient_id)
 
-  def to_s
-    if name == 'REGISTRATION'
-      "Patient was seen at the registration desk at #{encounter_datetime.strftime('%I:%M')}" 
-    elsif name == 'TREATMENT'
-      o = orders.collect{|order| order.drug_order}.join(", ")
-      # o = "TREATMENT NOT DONE" if self.patient.treatment_not_done
-      o = "No prescriptions have been made" if o.blank?
-      o
-    elsif name == 'VITALS'
-      temp = observations.select {|obs| obs.concept.concept_names.map(&:name).collect{|n| n.upcase}.include?("TEMPERATURE (C)") && "#{obs.answer_string}".upcase != 'UNKNOWN' }
-      weight = observations.select {|obs| obs.concept.concept_names.map(&:name).collect{|n| n.upcase}.include?("WEIGHT (KG)") && "#{obs.answer_string}".upcase != '0.0' }
-      height = observations.select {|obs| obs.concept.concept_names.map(&:name).collect{|n| n.upcase}.include?("HEIGHT (CM)") && "#{obs.answer_string}".upcase != '0.0' }
-      systo = observations.select {|obs| obs.concept.concept_names.map(&:name).collect{|n| n.upcase}.include?("SYSTOLIC BLOOD PRESSURE") && "#{obs.answer_string}".upcase != '0.0' }
-      diasto = observations.select {|obs| obs.concept.concept_names.map(&:name).collect{|n| n.upcase}.include?("DIASTOLIC BLOOD PRESSURE") && "#{obs.answer_string}".upcase != '0.0' }
-      vitals = [weight_str = weight.first.answer_string + 'KG' rescue 'UNKNOWN WEIGHT',
-        height_str = height.first.answer_string + 'CM' rescue 'UNKNOWN HEIGHT', bp_str = "BP: " + 
-          (systo.first.answer_string.to_i.to_s rescue "?") + "/" + (diasto.first.answer_string.to_i.to_s rescue "?")]
-      temp_str = temp.first.answer_string + '°C' rescue nil
-      vitals << temp_str if temp_str                          
-      vitals.join(', ')
-    elsif name == 'DIAGNOSIS'
-      diagnosis_array = []
-      observations.each{|observation|
-        next if observation.obs_group_id != nil
-        observation_string =  observation.answer_string
-        child_ob = observation.child_observation
-        while child_ob != nil
-          observation_string += " #{child_ob.answer_string}"
-          child_ob = child_ob.child_observation
-        end
-        diagnosis_array << observation_string
-        diagnosis_array << " : "
-      }
-      diagnosis_array.compact.to_s.gsub(/ : $/, "")    
-    elsif name == 'OBSERVATIONS' || name == 'CURRENT PREGNANCY'
-      observations.collect{|observation| observation.to_s.titleize.gsub("Breech Delivery", "Breech")}.join(", ")   
-    elsif name == 'SURGICAL HISTORY'
-      observations.collect{|observation| observation.to_s.titleize.gsub("Tuberculosis Test Date Received", "Date")}.join(", ")
-    elsif name == "ANC VISIT TYPE"
-      observations.collect{|o| "Visit No.: " + o.value_numeric.to_i.to_s}.join(", ")
-    else  
-      observations.collect{|observation| observation.to_s.titleize}.join(", ")
-    end  
   end
 
-=end
+  def self.cohort_data(patients = [], start_date = Date.today, end_date = Date.today)
+    
+    data = {}
+
+    #1. get outcomes for all patients in range
+    types = ["EID VISIT"]
+    
+    encounter_types = EncounterType.all(:conditions => ['name IN (?)', types]).map(&:encounter_type_id)
+    concept_names = ConceptName.all(:conditions => ['name IN (?)', ["OUTCOME"]]).map(&:concept_id)
+    outcomes = {}
+    confirmed = {}
+    nconfirmed = {}
+     
+    outcome_Q = "(SELECT c.name FROM concept_name c WHERE c.concept_name_id = o.value_coded_name_id)"
+
+    Encounter.find_by_sql(["SELECT #{outcome_Q} AS outcome, enc.patient_id FROM encounter enc
+                INNER JOIN obs o ON o.encounter_id = enc.encounter_id AND o.concept_id IN (?)
+                WHERE enc.encounter_type IN (?) AND DATE(encounter_datetime) > ?
+                AND enc.patient_id IN (?) ORDER BY encounter_datetime ASC",
+        concept_names, encounter_types, start_date.to_date, patients]).each do |obj|
+      
+      outcomes[obj.patient_id] = obj.outcome
+
+    end
+
+    concept_names = ConceptName.all(:conditions => ['name IN (?)', ["CONFIRMED"]]).map(&:concept_id)
+
+    Encounter.find_by_sql(["SELECT #{outcome_Q} AS conf, enc.patient_id FROM encounter enc
+                INNER JOIN obs o ON o.encounter_id = enc.encounter_id AND o.concept_id IN (?)
+                WHERE enc.encounter_type IN (?) AND DATE(encounter_datetime) > ?
+                AND enc.patient_id IN (?) ORDER BY encounter_datetime ASC",
+        concept_names, encounter_types, start_date.to_date, patients]).each do |obj|
+
+      confirmed[obj.patient_id] = obj.conf
+
+    end
+
+    concept_names = ConceptName.all(:conditions => ['name IN (?)', ["NOT CONFIRMED"]]).map(&:concept_id)
+
+    Encounter.find_by_sql(["SELECT #{outcome_Q} AS nconf, enc.patient_id FROM encounter enc
+                INNER JOIN obs o ON o.encounter_id = enc.encounter_id AND o.concept_id IN (?)
+                WHERE enc.encounter_type IN (?) AND DATE(encounter_datetime) > ?
+                AND enc.patient_id IN (?) ORDER BY encounter_datetime ASC",
+        concept_names, encounter_types, start_date.to_date, patients]).each do |obj|
+
+      nconfirmed[obj.patient_id] = obj.nconf
+
+    end
+    
+    data["outcomes"] = outcomes
+    data["conf"] = confirmed
+    data["nconf"] = nconfirmed
+    
+  end
+  
+  
+end

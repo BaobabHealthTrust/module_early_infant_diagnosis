@@ -73,8 +73,8 @@ class ClinicController < ApplicationController
 
       @program = Program.find_by_concept_id(ConceptName.find_by_name("EARLY INFANT DIAGNOSIS PROGRAM").concept_id) rescue nil
 
-      @program_encounter = ProgramEncounter.find_by_program_id(@program.id,
-        :conditions => ["patient_id = ? AND DATE(date_time) = ?",
+      @program_encounter = ProgramEncounter.find(:last,
+        :conditions => ["program_id = ? AND patient_id = ? AND DATE(date_time) = ?", @program.id,
           patient.id,  (session[:datetime].to_time rescue Time.now).to_date.strftime("%Y-%m-%d")])
 
       if @program_encounter.blank?
