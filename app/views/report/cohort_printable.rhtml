@@ -39,6 +39,10 @@
         color: darkolivegreen;
         font-weight: bold;
       }
+      .data-tabl td{
+        color: black;
+        background:  white;
+      }
 
       .sub-header{
         padding-left: 0px;
@@ -48,307 +52,350 @@
     </style>
   </head>
   <body>
+    <% unless params[:from_print] %>
+      <table cellpadding="5" width="99%" style="height: 28%">
+      <%else%>
+        <table cellpadding="5" width="100%" style="height: 28%">
+        <%end%>
+        <th colspan="8">
+          <span style="font-size: 22px; color: gray">Exposed Child Under 24 Months - Follow-Up Report</span>
+        </th>
+        <tr style="border: 1px solid;">
+          <td colspan="2" style="border-bottom: 0px; border-right: 0px">
+            Clinic Name
+          </td>
+          <td colspan="6" style="border-bottom: 0px">
+            <%= @facility %>
+          </td>
 
-    <table cellpadding="5" width="100%">
-      <th colspan="8">
-        <span style="font-size: 22px; color: gray">Exposed Child Under 24 Months - Follow-Up Report</span>
-      </th>
-      <tr style="border: 1px solid;">
-        <td colspan="2" style="border-bottom: 0px; border-right: 0px">
-          Clinic Name
-        </td>
-        <td colspan="6" style="border-bottom: 0px">
-          <%= @facility %>
-        </td>
+        </tr>
+        <tr style="border: 1px solid;">
+          <td colspan="2" style="border-top: 0px; border-right: 0px">
 
-      </tr>
-      <tr style="border: 1px solid;">
-        <td colspan="2" style="border-top: 0px; border-right: 0px">
+            Reporting year and month
 
-          Reporting year and month
+          </td>
+          <td colspan="6" style="">
 
-        </td>
-        <td colspan="6" style="">
+            <span> <%= @year %> </span> &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+            &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<span> <%= @month %> </span>
+          </td>
 
-          <span> <%= @year %> </span> &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
-          &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<span> <%= @month %> </span>
-        </td>
+        </tr>
 
-      </tr>
+        <tr>
+          <td colspan="2" style="width: 40%; font-size: 14px; text-align: left; font-style: italic; padding-left: 100px; padding-top: 10px; background: lightgray; border: 0px;">
 
-      <tr>
-        <td colspan="2" style="width: 40%; font-size: 14px; text-align: left; font-style: italic; padding-left: 100px; padding-top: 10px; background: lightgray; border: 0px;">
+            Birth Cohort (Current age)
+          </td>
+          <td  colspan="2" style="font-size: 18px; text-align: center; padding-left: 40px;  padding-top: 10px; background: lightgray; border: 0px;">
+            2 months <i style="font-size: 12px;">  <br />(Born in <%= (@end_date.to_date - 3.months).strftime("%B") %> <%= (@start_date.to_date - 3.months).year %>)</i>
+          </td>
+          <td colspan="2" style="font-size: 18px; text-align: center; padding-left: 40px; padding-top: 10px; background: lightgray; border: 0px;">
+            12 months <i style="font-size: 12px;">  <br />(Born in <%= (@end_date.to_date - 13.months).strftime("%B") %> <%= (@start_date.to_date - 13.months).year %>)</i>
+          </td>
+          <td colspan="2" style="font-size: 18px; text-align: center; padding-left: 40px;  padding-top: 10px; background: lightgray; border: 0px;">
+            24 months <i style="font-size: 12px;">  <br /> (Born in <%= (@end_date.to_date - 25.months).strftime("%B") %> <%= (@start_date.to_date - 25.months).year %>)</i>
+          </td>
+        </tr>
+      </table>
+      <% unless params[:from_print] %>
+        <div style="height: 72%; overflow: auto">
+        <%else%>
+          <div>
+          <%end%>
 
-          Birth Cohort (Current age)
-        </td>
-        <td  colspan="2" style="font-size: 18px; text-align: left; padding-left: 100px; padding-top: 10px; background: lightgray; border: 0px;">
-          2 months <i style="font-size: 12px;">  <br />(Born in <%= (@end_date.to_date - 3.months).strftime("%B") %> <%= (@start_date.to_date - 3.months).year %>)</i>
-        </td>
-        <td colspan="2" style="font-size: 18px; text-align: left; padding-left: 100px; padding-top: 10px; background: lightgray; border: 0px;">
-          12 months <i style="font-size: 12px;">  <br />(Born in <%= (@end_date.to_date - 13.months).strftime("%B") %> <%= (@start_date.to_date - 13.months).year %>)</i>
-        </td>
-        <td colspan="2" style="font-size: 18px; text-align: left; padding-left: 100px; padding-top: 10px; background: lightgray; border: 0px;">
-          24 months <i style="font-size: 12px;">  <br /> (Born in <%= (@end_date.to_date - 25.months).strftime("%B") %> <%= (@start_date.to_date - 25.months).year %>)</i>
-        </td>
-      </tr>
+          <table cellpadding="5" width="100%" class="data-tabl">
+            <tr>
+              <td colspan="2" style="width: 40%; font-size: 14px; text-align: left; padding-left: 100px; padding-top: 4px; border: 1px solid;">
 
-      <tr>
-        <td colspan="2" style="width: 40%; font-size: 14px; text-align: left; padding-left: 100px; padding-top: 4px; border: 1px solid;">
+                Total Registered
+              </td>
+              <td  colspan="2" style="font-size: 18px; text-align: center; padding-left: 100px; padding: 4px; border: 1px solid;  border-left: 0px">
+                &nbsp;<%=  @total_registered_2_months.length%>
+              </td>
+              <td colspan="2" style="font-size: 18px; text-align: center; padding-left: 100px; padding: 4px; border: 1px solid;  border-left: 0px">
+                &nbsp;<%=  @total_registered_12_months.length%>
+              </td>
+              <td colspan="2" style="font-size: 18px; text-align: center; padding-left: 100px; padding: 4px; border: 1px solid;  border-left: 0px">
+                &nbsp;<%=  @total_registered_24_months.length%>
+              </td>
+            </tr>
 
-          Total Registered
-        </td>
-        <td  colspan="2" style="font-size: 18px; text-align: center; padding-left: 100px; padding: 4px; border: 1px solid;">
-          &nbsp;<%=  @total_registered_2_months.length%>
-        </td>
-        <td colspan="2" style="font-size: 18px; text-align: center; padding-left: 100px; padding: 4px; border: 1px solid;">
-          &nbsp;<%=  @total_registered_12_months.length%>
-        </td>
-        <td colspan="2" style="font-size: 18px; text-align: center; padding-left: 100px; padding: 4px; border: 1px solid;">
-          &nbsp;<%=  @total_registered_24_months.length%>
-        </td>
-      </tr>
+            <tr>
+              <td colspan="2" style="width: 40%; font-size: 16px; font-weight: bold; text-align: left; padding-left: 20px; padding-top: 5px; border: 0px;">
+                HIV Status
+              </td>
+              <td  colspan="2" style="font-size: 18px; text-align: left; padding-left: 100px; padding: 4px; border: 1px;">
+                &nbsp;
+              </td>
+              <td colspan="2" style="font-size: 18px; text-align: left; padding-left: 100px; padding: 4px; border: 1px;">
+                &nbsp;
+              </td>
+              <td colspan="2" style="font-size: 18px; text-align: left; padding-left: 100px; padding: 1px; border: 1px;">
+                &nbsp;
+              </td>
+            </tr>
 
-      <tr>
-        <td colspan="2" style="width: 40%; font-size: 16px; font-weight: bold; text-align: left; padding-left: 20px; padding-top: 5px; border: 0px;">
-          HIV Status
-        </td>
-        <td  colspan="2" style="font-size: 18px; text-align: left; padding-left: 100px; padding: 4px; border: 1px;">
-          &nbsp;
-        </td>
-        <td colspan="2" style="font-size: 18px; text-align: left; padding-left: 100px; padding: 4px; border: 1px;">
-          &nbsp;
-        </td>
-        <td colspan="2" style="font-size: 18px; text-align: left; padding-left: 100px; padding: 1px; border: 1px;">
-          &nbsp;
-        </td>
-      </tr>
+            <tr>
+              <td colspan="2" style="width: 40%; font-size: 14px; text-align: left; padding-left: 100px; padding-top: 4px; border: 1px solid; border-bottom: 0px">
 
-      <tr>
-        <td colspan="2" style="width: 40%; font-size: 14px; text-align: left; padding-left: 100px; padding-top: 4px; border: 1px solid;">
+                Confirmed uninfected
+              </td>
+              <td  colspan="2" style="font-size: 18px; text-align: center; padding-left: 100px; padding: 4px; border: 1px solid; border-bottom: 0px;  border-left: 0px">
+                &nbsp;<%= @data_2_months["hiv_outcome"]["not hiv infected"].length  %>
+              </td>
+              <td colspan="2" style="font-size: 18px; text-align: center; padding-left: 100px; padding: 4px; border: 1px solid; border-bottom: 0px; border-left: 0px">
+                &nbsp;<%= @data_12_months["hiv_outcome"]["not hiv infected"].length  %>
+              </td>
+              <td colspan="2" style="font-size: 18px; text-align: center; padding-left: 100px; padding: 4px; border: 1px solid; border-bottom: 0px; border-left: 0px">
+                &nbsp;<%= @data_24_months["hiv_outcome"]["not hiv infected"].length  %>
+              </td>
+            </tr>
 
-          Confirmed uninfected
-        </td>
-        <td  colspan="2" style="font-size: 18px; text-align: left; padding-left: 100px; padding: 4px; border: 1px solid;">
-          &nbsp;
-        </td>
-        <td colspan="2" style="font-size: 18px; text-align: left; padding-left: 100px; padding: 4px; border: 1px solid;">
-          &nbsp;
-        </td>
-        <td colspan="2" style="font-size: 18px; text-align: left; padding-left: 100px; padding: 4px; border: 1px solid;">
-          &nbsp;
-        </td>
-      </tr>
+            <tr>
+              <td colspan="2" style="width: 40%; font-size: 14px; text-align: left; padding-left: 100px; padding-top: 4px; border: 1px solid; border-bottom: 0px">
 
-      <tr>
-        <td colspan="2" style="width: 40%; font-size: 14px; text-align: left; padding-left: 100px; padding-top: 4px; border: 1px solid;">
+                Confirmed infected
+              </td>
+              <td  colspan="2" style="font-size: 18px; text-align: center; padding-left: 100px; padding: 4px; border: 1px solid; border-bottom: 0px; border-left: 0px">
+                &nbsp;<%= @data_2_months["hiv_outcome"]["hiv infected"].length  %>
+              </td>
+              <td colspan="2" style="font-size: 18px; text-align: center; padding-left: 100px; padding: 4px; border: 1px solid; border-bottom: 0px; border-left: 0px">
+                &nbsp;<%= @data_12_months["hiv_outcome"]["hiv infected"].length  %>
+              </td>
+              <td colspan="2" style="font-size: 18px; text-align: center; padding-left: 100px; padding: 4px; border: 1px solid; border-bottom: 0px; border-left: 0px">
+                &nbsp;<%= @data_24_months["hiv_outcome"]["hiv infected"].length  %>
+              </td>
+            </tr>
 
-          Confirmed infected
-        </td>
-        <td  colspan="2" style="font-size: 18px; text-align: left; padding-left: 100px; padding: 4px; border: 1px solid;">
-          &nbsp;
-        </td>
-        <td colspan="2" style="font-size: 18px; text-align: left; padding-left: 100px; padding: 4px; border: 1px solid;">
-          &nbsp;
-        </td>
-        <td colspan="2" style="font-size: 18px; text-align: left; padding-left: 100px; padding: 4px; border: 1px solid;">
-          &nbsp;
-        </td>
-      </tr>
+            <tr>
+              <td colspan="2" style="width: 40%; font-size: 14px; text-align: left; padding-left: 100px; padding-top: 4px; border: 1px solid; border-bottom: 0px;">
 
-      <tr>
-        <td colspan="2" style="width: 40%; font-size: 14px; text-align: left; padding-left: 100px; padding-top: 4px; border: 1px solid;">
+                Not Confirmed, not eligible for ART
+              </td>
+              <td  colspan="2" style="font-size: 18px; text-align: center; padding-left: 100px; padding: 4px; border: 1px solid; border-bottom: 0px; border-left: 0px">
+                &nbsp;<%= @data_2_months["hiv_outcome"]["not art eligible"].length  %>
+              </td>
+              <td colspan="2" style="font-size: 18px; text-align: center; padding-left: 100px; padding: 4px; border: 1px solid; border-bottom: 0px; border-left: 0px">
+                &nbsp;<%= @data_12_months["hiv_outcome"]["not art eligible"].length  %>
+              </td>
+              <td colspan="2" style="font-size: 18px; text-align: center; padding-left: 100px; padding: 4px; border: 1px solid; border-bottom: 0px; border-left: 0px">
+                &nbsp;<%= @data_24_months["hiv_outcome"]["not art eligible"].length  %>
+              </td>
+            </tr>
 
-          Not Confirmed, not eligible for ART
-        </td>
-        <td  colspan="2" style="font-size: 18px; text-align: left; padding-left: 100px; padding: 4px; border: 1px solid;">
-          &nbsp;
-        </td>
-        <td colspan="2" style="font-size: 18px; text-align: left; padding-left: 100px; padding: 4px; border: 1px solid;">
-          &nbsp;
-        </td>
-        <td colspan="2" style="font-size: 18px; text-align: left; padding-left: 100px; padding: 4px; border: 1px solid;">
-          &nbsp;
-        </td>
-      </tr>
+            <tr>
+              <td colspan="2" style="width: 40%; font-size: 14px; text-align: left; padding-left: 100px; padding-top: 4px; border: 1px solid; border-bottom: 0px;">
 
-      <tr>
-        <td colspan="2" style="width: 40%; font-size: 14px; text-align: left; padding-left: 100px; padding-top: 4px; border: 1px solid;">
+                Not Confirmed, PSHD --> ART
+              </td>
+              <td  colspan="2" style="font-size: 18px; text-align: center; padding-left: 100px; padding: 4px; border: 1px solid; border-bottom: 0px; border-left: 0px">
+                &nbsp;<%= @data_2_months["hiv_outcome"]["presumed severe hiv disease"].length  %>
+              </td>
+              <td colspan="2" style="font-size: 18px; text-align: center; padding-left: 100px; padding: 4px; border: 1px solid; border-bottom: 0px; border-left: 0px">
+                &nbsp;<%= @data_12_months["hiv_outcome"]["presumed severe hiv disease"].length  %>
+              </td>
+              <td colspan="2" style="font-size: 18px; text-align: center; padding-left: 100px; padding: 4px; border: 1px solid; border-bottom: 0px; border-left: 0px">
+                &nbsp;<%= @data_24_months["hiv_outcome"]["presumed severe hiv disease"].length  %>
+              </td>
+            </tr>
 
-          Not Confirmed, PSHD --> ART
-        </td>
-        <td  colspan="2" style="font-size: 18px; text-align: left; padding-left: 100px; padding: 4px; border: 1px solid;">
-          &nbsp;
-        </td>
-        <td colspan="2" style="font-size: 18px; text-align: left; padding-left: 100px; padding: 4px; border: 1px solid;">
-          &nbsp;
-        </td>
-        <td colspan="2" style="font-size: 18px; text-align: left; padding-left: 100px; padding: 4px; border: 1px solid;">
-          &nbsp;
-        </td>
-      </tr>
+            <tr>
+              <td colspan="2" style="width: 40%; font-size: 14px; text-align: left; padding-left: 100px; padding-top: 4px; border: 1px solid;">
 
-      <tr>
-        <td colspan="2" style="width: 40%; font-size: 16px; font-weight: bold; text-align: left; padding-left: 20px; padding-top: 5px; border: 0px;">
-          CPT Status
-        </td>
-        <td  colspan="2" style="font-size: 18px; text-align: left; padding-left: 100px; padding: 4px; border: 1px;">
-          &nbsp;
-        </td>
-        <td colspan="2" style="font-size: 18px; text-align: left; padding-left: 100px; padding: 4px; border: 1px;">
-          &nbsp;
-        </td>
-        <td colspan="2" style="font-size: 18px; text-align: left; padding-left: 100px; padding: 1px; border: 1px;">
-          &nbsp;
-        </td>
-      </tr>
+                Unknown
+              </td>
+              <td  colspan="2" style="font-size: 18px; text-align: center; padding-left: 100px; padding: 4px; border: 1px solid; border-left: 0px; border-left: 0px">
+                &nbsp;<%= @data_2_months["hiv_outcome"]["unknown"].length  %>
+              </td>
+              <td colspan="2" style="font-size: 18px; text-align: center; padding-left: 100px; padding: 4px; border: 1px solid; border-left: 0px; border-left: 0px">
+                &nbsp;<%= @data_12_months["hiv_outcome"]["unknown"].length  %>
+              </td>
+              <td colspan="2" style="font-size: 18px; text-align: center; padding-left: 100px; padding: 4px; border: 1px solid; border-left: 0px; border-left: 0px">
+                &nbsp;<%= @data_24_months["hiv_outcome"]["unknown"].length  %>
+              </td>
+            </tr>
 
-      <tr>
-        <td colspan="2" style="width: 40%; font-size: 14px; text-align: left; padding-left: 100px; padding-top: 4px; border: 1px solid;">
+            <tr>
+              <td colspan="2" style="width: 40%; font-size: 16px; font-weight: bold; text-align: left; padding-left: 20px; padding-top: 5px; border: 0px; border-bottom: 0px;">
+                CPT Status
+              </td>
+              <td  colspan="2" style="font-size: 18px; text-align: left; padding-left: 100px; padding: 4px; border: 1px; border-left: 0px; ">
+                &nbsp;
+              </td>
+              <td colspan="2" style="font-size: 18px; text-align: left; padding-left: 100px; padding: 4px; border: 1px; border-left: 0px">
+                &nbsp;
+              </td>
+              <td colspan="2" style="font-size: 18px; text-align: left; padding-left: 100px; padding: 1px; border: 1px; border-left: 0px">
+                &nbsp;
+              </td>
+            </tr>
 
-          ON CPT
-        </td>
-        <td  colspan="2" style="font-size: 18px; text-align: left; padding-left: 100px; padding: 4px; border: 1px solid;">
-          &nbsp;
-        </td>
-        <td colspan="2" style="font-size: 18px; text-align: left; padding-left: 100px; padding: 4px; border: 1px solid;">
-          &nbsp;
-        </td>
-        <td colspan="2" style="font-size: 18px; text-align: left; padding-left: 100px; padding: 4px; border: 1px solid;">
-          &nbsp;
-        </td>
-      </tr>
+            <tr>
+              <td colspan="2" style="width: 40%; font-size: 14px; text-align: left; padding-left: 100px; padding-top: 4px; border: 1px solid;border-bottom: 0px;">
 
-      <tr>
-        <td colspan="2" style="width: 40%; font-size: 14px; text-align: left; padding-left: 100px; padding-top: 4px; border: 1px solid;">
+                ON CPT
+              </td>
+              <td  colspan="2" style="font-size: 18px; text-align: center; padding-left: 100px; padding: 4px; border: 1px solid; border-bottom: 0px; border-left: 0px">
+                &nbsp;<%= @data_2_months["cpt_outcome"]["yes"].length  %>
+              </td>
+              <td colspan="2" style="font-size: 18px; text-align: center; padding-left: 100px; padding: 4px; border: 1px solid; border-bottom: 0px; border-left: 0px">
+                &nbsp;<%= @data_12_months["cpt_outcome"]["yes"].length  %>
+              </td>
+              <td colspan="2" style="font-size: 18px; text-align: center; padding-left: 100px; padding: 4px; border: 1px solid; border-bottom: 0px; border-left: 0px">
+                &nbsp;<%= @data_24_months["cpt_outcome"]["yes"].length  %>
+              </td>
+            </tr>
 
-          Not on CPT
-        </td>
-        <td  colspan="2" style="font-size: 18px; text-align: left; padding-left: 100px; padding: 4px; border: 1px solid;">
-          &nbsp;
-        </td>
-        <td colspan="2" style="font-size: 18px; text-align: left; padding-left: 100px; padding: 4px; border: 1px solid;">
-          &nbsp;
-        </td>
-        <td colspan="2" style="font-size: 18px; text-align: left; padding-left: 100px; padding: 4px; border: 1px solid;">
-          &nbsp;
-        </td>
-      </tr>
+            <tr>
+              <td colspan="2" style="width: 40%; font-size: 14px; text-align: left; padding-left: 100px; padding-top: 4px; border: 1px solid;">
+
+                Not on CPT
+              </td>
+              <td  colspan="2" style="font-size: 18px; text-align: center; padding-left: 100px; padding: 4px; border: 1px solid; border-left: 0px">
+                &nbsp;<%= @data_2_months["cpt_outcome"]["no"].length  %>
+              </td>
+              <td colspan="2" style="font-size: 18px; text-align: center; padding-left: 100px; padding: 4px; border: 1px solid; border-left: 0px">
+                &nbsp;<%= @data_12_months["cpt_outcome"]["no"].length  %>
+              </td>
+              <td colspan="2" style="font-size: 18px; text-align: center; padding-left: 100px; padding: 4px; border: 1px solid; border-left: 0px">
+                &nbsp;<%= @data_24_months["cpt_outcome"]["no"].length  %>
+              </td>
+            </tr>
 
 
-      <tr>
-        <td colspan="2" style="width: 40%; font-size: 16px; font-weight: bold; text-align: left; padding-left: 20px; padding-top: 5px; border: 0px;">
-          Primary Outcome
-        </td>
-        <td  colspan="2" style="font-size: 18px; text-align: left; padding-left: 100px; padding: 4px; border: 1px;">
-          &nbsp;
-        </td>
-        <td colspan="2" style="font-size: 18px; text-align: left; padding-left: 100px; padding: 4px; border: 1px;">
-          &nbsp;
-        </td>
-        <td colspan="2" style="font-size: 18px; text-align: left; padding-left: 100px; padding: 1px; border: 1px;">
-          &nbsp;
-        </td>
-      </tr>
+            <tr>
+              <td colspan="2" style="width: 40%; font-size: 16px; font-weight: bold; text-align: left; padding-left: 20px; padding-top: 5px; border: 0px;">
+                Primary Outcome
+              </td>
+              <td  colspan="2" style="font-size: 18px; text-align: left; padding-left: 100px; padding: 4px; border: 1px;">
+                &nbsp;
+              </td>
+              <td colspan="2" style="font-size: 18px; text-align: left; padding-left: 100px; padding: 4px; border: 1px;">
+                &nbsp;
+              </td>
+              <td colspan="2" style="font-size: 18px; text-align: left; padding-left: 100px; padding: 1px; border: 1px;">
+                &nbsp;
+              </td>
+            </tr>
 
-      <tr>
-        <td colspan="2" style="width: 40%; font-size: 14px; text-align: left; padding-left: 100px; padding-top: 4px; border: 1px solid;">
+            <tr>
+              <td colspan="2" style="width: 40%; font-size: 14px; text-align: left; padding-left: 100px; padding-top: 4px; border: 1px solid; border-bottom: 0px;">
 
-          Continue Follow Up
-        </td>
-        <td  colspan="2" style="font-size: 18px; text-align: left; padding-left: 100px; padding: 4px; border: 1px solid;">
-          &nbsp;
-        </td>
-        <td colspan="2" style="font-size: 18px; text-align: left; padding-left: 100px; padding: 4px; border: 1px solid;">
-          &nbsp;
-        </td>
-        <td colspan="2" style="font-size: 18px; text-align: left; padding-left: 100px; padding: 4px; border: 1px solid;">
-          &nbsp;
-        </td>
-      </tr>
+                Continue Follow Up
+              </td>
+              <td  colspan="2" style="font-size: 18px; text-align: center; padding-left: 100px; padding: 4px; border: 1px solid; border-bottom: 0px; border-left: 0px">
+                &nbsp;<%= @data_2_months["primary_outcome"]["continue follow-up"].length  %>
+              </td>
+              <td colspan="2" style="font-size: 18px; text-align: center; padding-left: 100px; padding: 4px; border: 1px solid; border-bottom: 0px; border-left: 0px">
+                &nbsp;<%= @data_12_months["primary_outcome"]["continue follow-up"].length  %>
+              </td>
+              <td colspan="2" style="font-size: 18px; text-align: center; padding-left: 100px; padding: 4px; border: 1px solid; border-bottom: 0px; border-left: 0px">
+                &nbsp;<%= @data_24_months["primary_outcome"]["continue follow-up"].length  %>
+              </td>
+            </tr>
 
-      <tr>
-        <td colspan="2" style="width: 40%; font-size: 14px; text-align: left; padding-left: 100px; padding-top: 4px; border: 1px solid;">
+            <tr>
+              <td colspan="2" style="width: 40%; font-size: 14px; text-align: left; padding-left: 100px; padding-top: 4px; border: 1px solid; border-bottom: 0px;">
 
-          Discharged uninfected
-        </td>
-        <td  colspan="2" style="font-size: 18px; text-align: left; padding-left: 100px; padding: 4px; border: 1px solid;">
-          &nbsp;
-        </td>
-        <td colspan="2" style="font-size: 18px; text-align: left; padding-left: 100px; padding: 4px; border: 1px solid;">
-          &nbsp;
-        </td>
-        <td colspan="2" style="font-size: 18px; text-align: left; padding-left: 100px; padding: 4px; border: 1px solid;">
-          &nbsp;
-        </td>
-      </tr>
+                Discharged Uninfected
+              </td>
+              <td  colspan="2" style="font-size: 18px; text-align: center; padding-left: 100px; padding: 4px; border: 1px solid; border-bottom: 0px; border-left: 0px">
+                &nbsp;<%= @data_2_months["primary_outcome"]["discharged uninfected"].length  %>
+              </td>
+              <td colspan="2" style="font-size: 18px; text-align: center; padding-left: 100px; padding: 4px; border: 1px solid; border-bottom: 0px; border-left: 0px">
+                &nbsp;<%= @data_12_months["primary_outcome"]["discharged uninfected"].length  %>
+              </td>
+              <td colspan="2" style="font-size: 18px; text-align: center; padding-left: 100px; padding: 4px; border: 1px solid; border-bottom: 0px; border-left: 0px">
+                &nbsp;<%= @data_24_months["primary_outcome"]["discharged uninfected"].length  %>
+              </td>
+            </tr>
 
-      <tr>
-        <td colspan="2" style="width: 40%; font-size: 14px; text-align: left; padding-left: 100px; padding-top: 4px; border: 1px solid;">
+            <tr>
+              <td colspan="2" style="width: 40%; font-size: 14px; text-align: left; padding-left: 100px; padding-top: 4px; border: 1px solid;border-bottom: 0px;">
 
-          Started ART
-        </td>
-        <td  colspan="2" style="font-size: 18px; text-align: left; padding-left: 100px; padding: 4px; border: 1px solid;">
-          &nbsp;
-        </td>
-        <td colspan="2" style="font-size: 18px; text-align: left; padding-left: 100px; padding: 4px; border: 1px solid;">
-          &nbsp;
-        </td>
-        <td colspan="2" style="font-size: 18px; text-align: left; padding-left: 100px; padding: 4px; border: 1px solid;">
-          &nbsp;
-        </td>
-      </tr>
+                Started ART
+              </td>
+              <td  colspan="2" style="font-size: 18px; text-align: center; padding-left: 100px; padding: 4px; border: 1px solid; border-bottom: 0px; border-left: 0px">
+                &nbsp;<%= @data_2_months["primary_outcome"]["art started"].length  %>
+              </td>
+              <td colspan="2" style="font-size: 18px; text-align: center; padding-left: 100px; padding: 4px; border: 1px solid; border-bottom: 0px; border-left: 0px">
+                &nbsp;<%= @data_12_months["primary_outcome"]["art started"].length  %>
+              </td>
+              <td colspan="2" style="font-size: 18px; text-align: center; padding-left: 100px; padding: 4px; border: 1px solid; border-bottom: 0px; border-left: 0px">
+                &nbsp;<%= @data_24_months["primary_outcome"]["art started"].length  %>
+              </td>
+            </tr>
 
-      <tr>
-        <td colspan="2" style="width: 40%; font-size: 14px; text-align: left; padding-left: 100px; padding-top: 4px; border: 1px solid;">
+            <tr>
+              <td colspan="2" style="width: 40%; font-size: 14px; text-align: left; padding-left: 100px; padding-top: 4px; border: 1px solid; border-bottom: 0px;">
 
-          Transferred Out
-        </td>
-        <td  colspan="2" style="font-size: 18px; text-align: left; padding-left: 100px; padding: 4px; border: 1px solid;">
-          &nbsp;
-        </td>
-        <td colspan="2" style="font-size: 18px; text-align: left; padding-left: 100px; padding: 4px; border: 1px solid;">
-          &nbsp;
-        </td>
-        <td colspan="2" style="font-size: 18px; text-align: left; padding-left: 100px; padding: 4px; border: 1px solid;">
-          &nbsp;
-        </td>
-      </tr>
+                Transferred Out
+              </td>
+              <td  colspan="2" style="font-size: 18px; text-align: center; padding-left: 100px; padding: 4px; border: 1px solid; border-bottom: 0px; border-left: 0px">
+                &nbsp;<%= @data_2_months["primary_outcome"]["transferred out"].length  %>
+              </td>
+              <td colspan="2" style="font-size: 18px; text-align: center; padding-left: 100px; padding: 4px; border: 1px solid; border-bottom: 0px; border-left: 0px">
+                &nbsp;<%= @data_12_months["primary_outcome"]["transferred out"].length  %>
+              </td>
+              <td colspan="2" style="font-size: 18px; text-align: center; padding-left: 100px; padding: 4px; border: 1px solid; border-bottom: 0px; border-left: 0px">
+                &nbsp;<%= @data_24_months["primary_outcome"]["transferred out"].length  %>
+              </td>
+            </tr>
 
-      <tr>
-        <td colspan="2" style="width: 40%; font-size: 14px; text-align: left; padding-left: 100px; padding-top: 4px; border: 1px solid;">
+            <tr>
+              <td colspan="2" style="width: 40%; font-size: 14px; text-align: left; padding-left: 100px; padding-top: 4px; border: 1px solid; border-bottom: 0px;">
 
-          Defaulted
-        </td>
-        <td  colspan="2" style="font-size: 18px; text-align: left; padding-left: 100px; padding: 4px; border: 1px solid;">
-          &nbsp;
-        </td>
-        <td colspan="2" style="font-size: 18px; text-align: left; padding-left: 100px; padding: 4px; border: 1px solid;">
-          &nbsp;
-        </td>
-        <td colspan="2" style="font-size: 18px; text-align: left; padding-left: 100px; padding: 4px; border: 1px solid;">
-          &nbsp;
-        </td>
-      </tr>
+                Defaulted
+              </td>
+              <td  colspan="2" style="font-size: 18px; text-align: center; padding-left: 100px; padding: 4px; border: 1px solid; border-bottom: 0px; border-left: 0px">
+                &nbsp;<%= @data_2_months["primary_outcome"]["defaulted"].length  %>
+              </td>
+              <td colspan="2" style="font-size: 18px; text-align: center; padding-left: 100px; padding: 4px; border: 1px solid; border-bottom: 0px; border-left: 0px">
+                &nbsp;<%= @data_12_months["primary_outcome"]["defaulted"].length  %>
+              </td>
+              <td colspan="2" style="font-size: 18px; text-align: center; padding-left: 100px; padding: 4px; border: 1px solid; border-bottom: 0px; border-left: 0px">
+                &nbsp;<%= @data_24_months["primary_outcome"]["defaulted"].length  %>
+              </td>
+            </tr>
 
-      <tr>
-        <td colspan="2" style="width: 40%; font-size: 14px; text-align: left; padding-left: 100px; padding-top: 4px; border: 1px solid;">
+            <tr>
+              <td colspan="2" style="width: 40%; font-size: 14px; text-align: left; padding-left: 100px; padding-top: 4px; border: 1px solid;border-bottom: 0px;">
 
-          Died
-        </td>
-        <td  colspan="2" style="font-size: 18px; text-align: left; padding-left: 100px; padding: 4px; border: 1px solid;">
-          &nbsp;
-        </td>
-        <td colspan="2" style="font-size: 18px; text-align: left; padding-left: 100px; padding: 4px; border: 1px solid;">
-          &nbsp;
-        </td>
-        <td colspan="2" style="font-size: 18px; text-align: left; padding-left: 100px; padding: 4px; border: 1px solid;">
-          &nbsp;
-        </td>
-      </tr>
+                Died
+              </td>
+              <td  colspan="2" style="font-size: 18px; text-align: center; padding-left: 100px; padding: 4px; border: 1px solid; border-bottom: 0px; border-left: 0px">
+                &nbsp;<%= @data_2_months["primary_outcome"]["died"].length  %>
+              </td>
+              <td colspan="2" style="font-size: 18px; text-align: center; padding-left: 100px; padding: 4px; border: 1px solid; border-bottom: 0px; border-left: 0px">
+                &nbsp;<%= @data_12_months["primary_outcome"]["died"].length  %>
+              </td>
+              <td colspan="2" style="font-size: 18px; text-align: center; padding-left: 100px; padding: 4px; border: 1px solid; border-bottom: 0px; border-left: 0px">
+                &nbsp;<%= @data_24_months["primary_outcome"]["died"].length  %>
+              </td>
+            </tr>
 
-      <tr>
+            <tr>
+              <td colspan="2" style="width: 40%; font-size: 14px; text-align: left; padding-left: 100px; padding-top: 4px; border: 1px solid;">
 
-      </tr>
-    </table>
-  </body>
-</html>
+                Unknown
+              </td>
+              <td  colspan="2" style="font-size: 18px; text-align: center; padding-left: 100px; padding: 4px; border: 1px solid; border-left: 0px">
+                &nbsp;<%= @data_2_months["primary_outcome"]["unknown"].length  %>
+              </td>
+              <td colspan="2" style="font-size: 18px; text-align: center; padding-left: 100px; padding: 4px; border: 1px solid; border-left: 0px">
+                &nbsp;<%= @data_12_months["primary_outcome"]["unknown"].length  %>
+              </td>
+              <td colspan="2" style="font-size: 18px; text-align: center; padding-left: 100px; padding: 4px; border: 1px solid; border-left: 0px">
+                &nbsp;<%= @data_24_months["primary_outcome"]["unknown"].length  %>
+              </td>
+            </tr>
+
+            <tr>
+
+            </tr>
+          </table>
+        </div>
+        </body>
+        </html>

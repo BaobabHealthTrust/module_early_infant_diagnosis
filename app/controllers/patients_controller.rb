@@ -176,11 +176,16 @@ class PatientsController < ApplicationController
     relationship = RelationshipType.find_by_b_is_to_a("Guardian").id
       
     if params[:new_guardian].to_s == "true"
-
+      
       @patient_registration = get_global_property_value("patient.registration.url") rescue ""
 
-      redirect_to "#{@patient_registration}/search?user_id=#{@user_id}&ext=true&location_id=#{session[:location_id]}&patient_id=#{@patient.id}"
+      @selected = YAML.load_file("#{Rails.root}/config/application.yml")["#{Rails.env
+        }"]["demographic.fields"].split(",").uniq rescue []
+    
+      link =  "#{@patient_registration}/search?user_id=#{@user_id}&ext=true&max_date=#{session_date.to_date - 9.years}&location_id=#{session[:location_id]}&patient_id=#{@patient.id}&#{@selected.join("=true&")}#{@selected.length > 0 ? '=true' : ''}"
 
+      redirect_to link and return
+      
     else
     
       unless params[:ext_patient_id]      

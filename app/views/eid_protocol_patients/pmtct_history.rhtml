@@ -15,7 +15,7 @@
 				What ARVs Were Given During Pregnancy? 
 			</td>
 			<td>
-<input type='text' id='1.1.1'  name='concept[ARVs in Pregnancy]' helpText='What ARVs Were Given During Pregnancy? '  ajaxUrl='/encounters/concept_set/ARVs_in_pregnancy?search_string='  pos='0'  tt_onLoad='$("keyboard").style.display = "none"; showCategory("PMTCT History")' />
+<input type='text' id='1.1.1'  name='concept[ARVs in Pregnancy]' helpText='What ARVs Were Given During Pregnancy? '  ajaxUrl='/encounters/concept_set/ARVs_in_pregnancy?search_string='  tt_onLoad='$("keyboard").style.display = "none"; showCategory("PMTCT History")'  pos='0' />
 			</td>
 		</tr>
 		<tr>
@@ -39,7 +39,7 @@
 				Baby ARVs Continued 
 			</td>
 			<td>
-<input type='text' id='1.1.4'  name='concept[Baby ARVs Continued ]'   helpText='What Baby ARVs Are Being Continued?'  ajaxUrl='/encounters/concept_set/Baby_ARVs_continued?search_string='  pos='3'  tt_onLoad='$("keyboard").style.display = "none"' />
+<input type='text' id='1.1.4'  name='concept[Baby ARVs Continued ]'   ajaxUrl='/encounters/concept_set/Baby_ARVs_continued?search_string='  pos='3'  tt_onLoad='$("keyboard").style.display = "none"'  helpText='What Baby ARVs Are Being Continued?' />
 			</td>
 		</tr>
 		<tr>
@@ -47,7 +47,7 @@
 				Number of weeks ARVs taken 
 			</td>
 			<td>
-<input type='text' id='1.1.5'  name='concept[Number of weeks ARVs taken ]'   helpText='Number of weeks baby ARVs taken'  field_type='number'  pos='4'  tt_pageStyleClass='NumbersOnlyWithUnknown'  condition='$("1.1.4").value.trim() != "Unknown"' />
+<input type='text' id='1.1.5'  name='concept[Number of weeks ARVs taken ]'   field_type='number'  condition='$("1.1.4").value.trim() != "Unknown"'  pos='4'  tt_pageStyleClass='NumbersOnlyWithUnknown'  helpText='Number of weeks baby ARVs taken' />
 			</td>
 		</tr>
 	</table>

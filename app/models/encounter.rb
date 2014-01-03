@@ -121,6 +121,17 @@ EOF
 
   end
 
+  def self.encounter_patients_by_birthdate(types, start_date = Date.today, end_date = Date.today)
+
+    encounter_types = EncounterType.all(:conditions => ['name IN (?)', types]).map(&:encounter_type_id)
+    return [] if encounter_types.blank?
+
+    Encounter.all(:joins => ["INNER JOIN person ON person.birthdate IS NOT NULL AND person.voided = 0 AND encounter.patient_id = person.person_id"],
+      :conditions => ["encounter_type IN (?) AND DATE(birthdate) BETWEEN (?) AND (?)",
+        encounter_types, start_date.to_date, end_date.to_date]).map(&:patient_id)
+
+  end
+
   def self.cohort_data(patients = [], start_date = Date.today, end_date = Date.today)
     
     data = {}
@@ -129,51 +140,97 @@ EOF
     types = ["EID VISIT"]
     
     encounter_types = EncounterType.all(:conditions => ['name IN (?)', types]).map(&:encounter_type_id)
-    concept_names = ConceptName.all(:conditions => ['name IN (?)', ["OUTCOME"]]).map(&:concept_id)
-    outcomes = {}
-    confirmed = {}
-    nconfirmed = {}
-     
+    
+    outcomes = {"presumed severe hiv disease" => [],
+      "hiv infected" => [],
+      "not hiv infected" => [],
+      "not art eligible" => [],
+      "unknown" => []
+    }
+
+    primary_outcome = {"defaulted" => [],
+      "continue follow-up" => [],
+      "art started" => [],
+      "transferred out" => [],
+      "discharged uninfected" => [],
+      "died" => []
+    }
+
+    cpt = {"yes" => [],
+      "no" => []
+    }
+
+    #probe for HIV outcomes of infants
+
+    concept_names = ConceptName.all(:conditions => ['name IN (?)', ["CONFIRMED", "NOT CONFIRMED"]]).map(&:concept_id)
     outcome_Q = "(SELECT c.name FROM concept_name c WHERE c.concept_name_id = o.value_coded_name_id)"
 
     Encounter.find_by_sql(["SELECT #{outcome_Q} AS outcome, enc.patient_id FROM encounter enc
                 INNER JOIN obs o ON o.encounter_id = enc.encounter_id AND o.concept_id IN (?)
-                WHERE enc.encounter_type IN (?) AND DATE(encounter_datetime) > ?
-                AND enc.patient_id IN (?) ORDER BY encounter_datetime ASC",
-        concept_names, encounter_types, start_date.to_date, patients]).each do |obj|
+                WHERE enc.encounter_type IN (?) AND DATE(encounter_datetime) BETWEEN (?) AND (?)
+                AND enc.patient_id IN (?) ORDER BY encounter_datetime DESC",
+        concept_names, encounter_types, start_date.to_date, end_date.to_date, patients]).each do |obj|
+
+      category = obj.outcome.downcase.strip
+      pid = obj.patient_id
       
-      outcomes[obj.patient_id] = obj.outcome
-
+      next if outcomes.values.flatten.include?(pid)
+      
+      unless outcomes.has_key?(category)
+        outcomes[category] = [pid]
+      else         
+        outcomes[category] << [pid]
+      end
+          
     end
 
-    concept_names = ConceptName.all(:conditions => ['name IN (?)', ["CONFIRMED"]]).map(&:concept_id)
+    outcomes["unknown"] = patients - outcomes.values.flatten.uniq
 
-    Encounter.find_by_sql(["SELECT #{outcome_Q} AS conf, enc.patient_id FROM encounter enc
+    #probe for primary outcomes
+    concept_names = ConceptName.all(:conditions => ['name IN (?)', ["OUTCOME"]]).map(&:concept_id)
+
+    Encounter.find_by_sql(["SELECT #{outcome_Q} AS outcome, enc.patient_id FROM encounter enc
                 INNER JOIN obs o ON o.encounter_id = enc.encounter_id AND o.concept_id IN (?)
-                WHERE enc.encounter_type IN (?) AND DATE(encounter_datetime) > ?
-                AND enc.patient_id IN (?) ORDER BY encounter_datetime ASC",
-        concept_names, encounter_types, start_date.to_date, patients]).each do |obj|
+                WHERE enc.encounter_type IN (?) AND DATE(encounter_datetime) BETWEEN (?) AND (?)
+                AND enc.patient_id IN (?) ORDER BY encounter_datetime DESC",
+        concept_names, encounter_types, start_date.to_date, end_date.to_date, patients]).each do |obj|
 
-      confirmed[obj.patient_id] = obj.conf
+      category = obj.outcome.downcase.strip
+      pid = obj.patient_id
 
-    end
+      next if primary_outcome.values.flatten.include?(pid)
 
-    concept_names = ConceptName.all(:conditions => ['name IN (?)', ["NOT CONFIRMED"]]).map(&:concept_id)
-
-    Encounter.find_by_sql(["SELECT #{outcome_Q} AS nconf, enc.patient_id FROM encounter enc
-                INNER JOIN obs o ON o.encounter_id = enc.encounter_id AND o.concept_id IN (?)
-                WHERE enc.encounter_type IN (?) AND DATE(encounter_datetime) > ?
-                AND enc.patient_id IN (?) ORDER BY encounter_datetime ASC",
-        concept_names, encounter_types, start_date.to_date, patients]).each do |obj|
-
-      nconfirmed[obj.patient_id] = obj.nconf
+      unless primary_outcome.has_key?(category)
+        primary_outcome[category] = [pid]
+      else
+        primary_outcome[category] << [pid]
+      end
 
     end
+    primary_outcome["unknown"] = patients - primary_outcome.values.flatten.uniq
+     
+    cpt["yes"] = Encounter.cpt_patients_filter(patients, start_date, end_date)
+    cpt["no"] = patients - cpt["yes"]
+
+    data["hiv_outcome"] = outcomes
+    data["primary_outcome"] = primary_outcome
+    data["cpt_outcome"] = cpt
+
+
+    data
     
-    data["outcomes"] = outcomes
-    data["conf"] = confirmed
-    data["nconf"] = nconfirmed
+  end
+
+  def self.cpt_patients_filter(patients = [], start_date = Date.today, end_date = Date.today)
     
+    result = Order.find(:all, :joins => [[:drug_order => :drug], :encounter],
+      :select => ["encounter.patient_id"],
+      :group => [:patient_id],
+      :conditions => ["drug.name REGEXP 'COTRIMOXAZOLE' AND DATE(encounter_datetime) BETWEEN (?) AND (?)" +
+          " AND encounter.patient_id IN (?) AND orders.voided = 0 AND encounter.voided = 0",
+        start_date.to_date, end_date.to_date, patients]).map(&:patient_id)
+    
+    result    
   end
   
   

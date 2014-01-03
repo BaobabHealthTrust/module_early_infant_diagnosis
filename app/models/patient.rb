@@ -63,6 +63,7 @@ class Patient < ActiveRecord::Base
   end
 
   def age_in_months(today = Date.today)
+    today = Date.today if today.blank?
     years = (today.year - self.person.birthdate.year)
     months = (today.month - self.person.birthdate.month)
     (years * 12) + months

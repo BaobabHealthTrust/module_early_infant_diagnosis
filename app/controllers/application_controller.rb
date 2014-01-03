@@ -4,7 +4,7 @@ class ApplicationController < ActionController::Base
 
   before_filter :start_session
 
-  before_filter :check_user, :except => [:user_login, :user_logout, :missing_program,
+  before_filter :check_user, :except => [:user_login, :user_logout, :missing_program, :cohort_printable,
     :missing_concept, :no_user, :no_patient, :age_limit, :project_users_list, :check_role_activities, :mastercard_printable]
   
   def get_global_property_value(global_property)

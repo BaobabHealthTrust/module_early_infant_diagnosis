@@ -45,7 +45,7 @@ class ClinicController < ApplicationController
     end
 
     @selected = YAML.load_file("#{Rails.root}/config/application.yml")["#{Rails.env
-        }"]["demographic.fields"].split(",") rescue []
+        }"]["demographic.fields"].split(",").uniq rescue []
 
   end
 

@@ -34,9 +34,8 @@
               id="nextButton" style="margin-top: 10px; margin-right: 20px;" ><span>Finish</span>
       </button>
 
-      <button class="button navButton blue" style="margin-top: 10px;"
-              onclick="window.location = '/cohort_report/print_cohort?start_date=<%= @start_date %>+<%= @start_time
-            %>&end_date=<%= @end_date %>+<%= @end_time %>&reportType=<%= @reportType %>'" style="float: right; ">
+      <button class="button navButton blue" style="margin-top: 10px;float:right"
+              onclick="window.location = '/report/print_cohort?start_date=<%= @start_date %>&end_date=<%= @end_date %>&user_id=<%= session[:user_id] %>'">
         <span>
           Print
         </span>
