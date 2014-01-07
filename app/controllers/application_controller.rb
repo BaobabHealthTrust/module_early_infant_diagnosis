@@ -58,6 +58,7 @@ class ApplicationController < ActionController::Base
     end
 
     # Track final destination
+    Dir::mkdir("#{RAILS_ROOT}/tmp") rescue nil
     file = "#{File.expand_path("#{Rails.root}/tmp", __FILE__)}/current.path.yml"
 
     f = File.open(file, "w")
