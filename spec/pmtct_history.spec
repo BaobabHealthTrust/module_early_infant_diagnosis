@@ -8,4 +8,4 @@ Q.1.1.3. What Baby ARVs Were Given at Birth? [tt_onLoad: $("keyboard").style.dis
 
 Q.1.1.4. Baby ARVs Continued [tt_onLoad: $("keyboard").style.display = "none", pos: 3, helpText: What Baby ARVs Are Being Continued?, ajaxUrl: /encounters/concept_set/Baby_ARVs_continued?search_string=]
 
-Q.1.1.5. Number of weeks ARVs taken [pos: 4, helpText: Number of weeks baby ARVs taken, field_type: number, tt_pageStyleClass: NumbersOnlyWithUnknown, condition: $("1.1.4").value.trim() != "Unknown"]
+Q.1.1.5. Number of weeks ARVs taken [pos: 4, helpText: Number of weeks baby ARVs taken, field_type: number, tt_pageStyleClass: NumbersOnlyWithUnknown, condition: $("1.1.4").value.trim() != "Unknown" && $("1.1.4").value.trim() != "None"]
