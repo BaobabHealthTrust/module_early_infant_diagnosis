@@ -208,6 +208,7 @@ next_task = @task.encounter_type.gsub('_',' ') rescue nil
       <select id="tabs">
         <option value='/patients/current_visit/<%= @patient.id %>?user_id=<%= @user.id %>'>Current Visit</option>
         <option value='/patients/visit_history/<%= @patient.id %>?user_id=<%= @user.id %>'>Visit History</option>
+        <option value='/patients/treatment_details/<%= @patient.id %>?user_id=<%= @user.id %>'>Treatment Details</option>
       </select>
 
       <% if (@patient.age_in_months(session_date) <= 30 rescue true)%>

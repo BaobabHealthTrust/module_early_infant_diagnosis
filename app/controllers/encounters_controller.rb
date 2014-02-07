@@ -948,5 +948,19 @@ class EncountersController < ApplicationController
     redirect_to "/patients/show/#{params[:patient_id]}?user_id=#{User.current.user_id}"
 
   end
+
+  def void_order
+    order = Order.find(params[:order_id])
+
+    if order.present?
+      encounter = order.encounter
+      order.void
+      if encounter.orders.blank? && encounter.name.match(/TREATMENT/i)
+        encounter.void
+      end
+    end
+
+    return render :text => {"ok" => true}.to_json
+  end
   
 end

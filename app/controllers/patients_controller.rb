@@ -616,6 +616,30 @@ class PatientsController < ApplicationController
       end
     end
   end
+
+  def treatment_details
+    @patient = Patient.find(params[:id] || params[:patient_id])
+    @user = User.find(session[:user_id] || params[:user_id])
+
+    @drug_dispensations = ProgramEncounterDetail.find_by_sql(["
+      SELECT pr.name program, o.creator, o.creator order_creator, o.order_id, o.date_created, dg.name drug, REPLACE(REPLACE(o.instructions, 'null', ''), CONCAT(dg.name, ':'), '') instructions
+      FROM program_encounter_details details
+          INNER JOIN program pr ON details.program_id = pr.program_id
+          INNER JOIN encounter enc ON details.encounter_id = enc.encounter_id AND enc.voided = 0
+              AND enc.encounter_type = ? AND enc.patient_id = ?
+          INNER JOIN orders o ON enc.encounter_id = o.encounter_id AND o.voided = 0
+          INNER JOIN drug_order do ON o.order_id = do.order_id
+          INNER JOIN drug dg ON do.drug_inventory_id = dg.drug_id
+      GROUP BY o.order_id
+      ORDER BY o.date_created DESC
+
+        ", EncounterType.find_by_name("TREATMENT").id, @patient.id]).collect{|data|
+      data.creator = User.find(data.creator).name
+      data
+    }
+
+    render :layout => false
+  end
   
   protected
 

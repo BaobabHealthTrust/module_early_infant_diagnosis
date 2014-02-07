@@ -1,0 +1,223 @@
+<style type="text/css">
+  .selected{
+    color: #f00;
+    font-weight: bold;
+  }
+
+  table {
+    font-size: 0.97em;
+  }
+
+  button {
+    min-height: 50px;
+    min-width: 50px;
+    margin: 0px;
+    margin-bottom: 5px;
+    font-size: 1.2em;
+    background-color: #6281a7;
+    color: #FFF;
+    font-weight: normal;
+    border: 5px outset #000;
+    padding: 10px;
+    cursor: pointer;
+    background:url(/touchscreentoolkit/lib/images/btn_blue.png) right repeat;
+    -moz-user-select:none;
+    -moz-user-focus:disabled;
+    float: right;
+  }
+
+  button:hover {
+    background:url(/touchscreentoolkit/lib/images/btn_blue_hover.png) right repeat;
+    -moz-user-select:none;
+    -moz-user-focus:disabled;
+  }
+
+  button:active {
+    background:url(/touchscreentoolkit/lib/images/btn_yellow.png) right repeat;
+    border: 3px inset #000;
+  }
+
+  #tbl1 td {
+    padding: 1px;
+    padding-top: 5.4px;
+    padding-bottom: 5px;
+  }
+
+  #tbl2{
+    width: 100%;
+    background: white;
+
+  }
+
+  #tbl2 th {
+    font-weight: bold;
+    font-size: 1em;
+    border: 0px;
+    padding: 2px;
+    max-height: 15px;
+    background-color: #ff;
+    color: white;
+  }
+
+  #tbl2 td {
+    border: 1px solid #ccc;
+    padding: 2px;
+    color: #1f3b5e;
+    font-style: normal;
+  }
+  .odd{
+    background-color: lightblue;
+  }
+
+  .messageBar {
+    left: 140px;
+    width: 450px;
+    position: absolute;
+    top: 1px;
+    font-size: 1.8em;
+    text-align: center;
+    background-color: tomato;
+    padding: 10px;
+    z-index: 999;
+    border: 5px outset tomato;
+    display: none;
+    border-radius: 15px;
+  }
+
+  .messageBar button {
+    font-size: 0.7em;
+    margin: 5px;
+  }
+
+
+
+</style>
+<script>
+  function removeOrder(order_id){
+    url = "/encounters/void_order?user_id=<%= session[:user_id] || params[:user_id] %>&order_id=" + order_id
+    
+    ajaxCustomRequest(url);
+
+    setTimeout((function (){
+      parent.window.location =  parent.window.location;
+    }), 130);
+  }
+
+  function ajaxCustomRequest(aUrl) {
+    var httpRequest = new XMLHttpRequest();
+    httpRequest.onreadystatechange = function() {
+      
+    };
+    try {
+      httpRequest.open('POST', aUrl, true);
+      httpRequest.send(null);
+    } catch(e){
+    }
+  }
+  
+  function confirmDeletion(message, id) {
+    if (!tstMessageBar) {
+
+      var tstMessageBar = document.createElement("div");
+      tstMessageBar.id = "messageBar";
+      tstMessageBar.className = "messageBar";
+
+      tstMessageBar.innerHTML = message + "<br/>" +
+        "<button onmousedown=\"__$('content').removeChild(document.getElementById('messageBar')); " +
+        "removeOrder('" + id + "');\"><span>Yes</span></button><button onmousedown=\"__$('content')" +
+        ".removeChild(document.getElementById('messageBar'));\"><span>No</span></button>";
+
+      tstMessageBar.style.display = "block";
+      __$('content').appendChild(tstMessageBar);
+    }
+
+    return false;
+
+  }
+
+  function __$(id){
+    return document.getElementById(id);
+  }
+</script>
+
+<table id ="content" width="100%" border="0" style="height: 100%" cellpadding="0">
+
+  <% unless @drug_dispensations.blank? %>
+    <tr>
+      <th style="color: #6281a7; height: 20px; margin-top: -5px; margin-bottom: 4px; padding-left: 10px; font-size: 25px; float: left; font-weight: bold;">
+        Patient Treatment Details
+      </th>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">
+        <table id="tbl2">
+
+          <tr style="background-color: #6281a7;">
+            <th>
+              &nbsp;
+            </th>
+            <th>
+              Date
+            </th>
+
+            <th>
+              Drug name
+            </th>
+            <th>
+              Instructions
+            </th>
+            <th>
+              Drug given by
+            </th>
+            <th>
+
+            </th>
+          </tr>
+
+
+          <%
+          pos = 0
+          (@drug_dispensations || []).each do |data| %>
+            <tr class="<%= cycle('even', 'odd') %>">
+              <td>
+
+                <% pos = pos + 1 %>
+                <%= pos %> &nbsp;
+
+              </td>
+              <td style="width: 12%">
+                <%= data.date_created.to_date.strftime("%d %b, %Y") %> &nbsp;
+              </td>
+
+              <td style="width: 28%">
+                <%= data.drug.titleize %> &nbsp;
+              </td>
+              <td>
+                <%= data.instructions.titleize %> &nbsp;
+              </td>
+              <td style="width: 13%">
+                <%= data.creator %>
+              </td>
+
+              <% if data.order_creator.to_i == session[:user_id].to_i || @user.admin? %>
+                <td onclick="confirmDeletion('Are you sure you want to delete this dispensation', <%= data.order_id %>)" style="width: 4%">
+                  <img src="/touchscreentoolkit/lib/images/cancel_flat_small_red.png" height="30"
+                       alt="delete" /> &nbsp;
+                </td>
+              <%else%>
+                <td>
+                  &nbsp;
+                </td>
+              <%end%>
+
+            </tr>
+
+          <% end %>
+
+        </table>
+      </td>
+    </tr>
+  <% else %>
+    <tr><td style="padding-left: 20%; vertical-align: middle; font-size: 20px; color:#1f3b5e;">No drugs dispensed for <%= @patient.name %></td></tr>
+  <%end%>
+</table>
